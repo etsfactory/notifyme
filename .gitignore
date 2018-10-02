@@ -1,3 +1,6 @@
+# Config file (with passwords)
+config_development.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
