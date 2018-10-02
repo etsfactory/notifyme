@@ -3,23 +3,12 @@ import pika
 class RabbitMqHandler:
     server = 'localhost'
     channel = ''
+    queue = 'hello'
     keys = []
 
     def __init__(self, server):
         self.server = server
         self.keys.append('black')
-
-    def consume(self, queue):
-        for key in self.keys:
-            print "Watching key %s" % key
-            bind_promise = self.channel.queue_bind(exchange='direct_logs', queue=queue, routing_key=key)
-            consumer.wait(bind_promise)
-
-        self.channel.basic_consume(self.on_message,
-                                queue=queue)
-
-        print(' [*] Waiting for messages. To exit press CTRL+C')
-        self.channel.start_consuming()
 
     def init(self):
 
@@ -27,13 +16,24 @@ class RabbitMqHandler:
         self.channel = connection.channel()
 
         # It ensures that the queue exists
-        self.channel.queue_declare(queue='hello')
-        self.consume('hello')
+        self.channel.queue_declare(queue=self.queue)
+        self.consume(self.queue)
+
+    def consume(self, queue_name):
+        for key in self.keys:
+            print "Watching key %s" % key
+            self.channel.queue_bind(exchange='direct_logs', queue=queue_name, routing_key=key)
+
+        self.channel.basic_consume(self.on_message,
+                              queue=queue_name,
+                              no_ack=True)
+        print(' [*] Waiting for messages. To exit press CTRL+C')
+        self.channel.start_consuming()
 
     # This funcions is executed when a message is received
-    def on_message(ch, method, properties, body):
-        print(" [x] Received %r" % body)
+    def on_message(ch, method, properties, body, message):
+        print(" [x] Received %r" % message)
 
         # ACK, if the worker dies, the message will be redelivered
-        ch.basic_ack(delivery_tag = method.delivery_tag)
+        # ch.basic_ack(delivery_tag = method.delivery_tag)
 
