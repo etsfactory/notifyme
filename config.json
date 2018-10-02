@@ -1,0 +1,9 @@
+{
+  "rabbitmq": {
+    "server": "localhost"
+  },
+  "email": {
+    "username": "#YOUR_EMAIL#",
+    "password": "#YOUR_PASSWORD#"
+  }
+}
