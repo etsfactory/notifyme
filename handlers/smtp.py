@@ -3,13 +3,17 @@ class SMTPHandler:
 
     username = ''
     password = 'Frost45200'
+    host = ''
+    port = ''
     server = None
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, host, port):
         self.username = username
         self.passwod = password
+        self.host = host
+        self.port = port
         try:
-            self.server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+            self.server = smtplib.SMTP_SSL(host, port)
             self.server.ehlo()
             self.server.login(username, password)
         except:
