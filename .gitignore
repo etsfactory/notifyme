@@ -1,5 +1,5 @@
 # Config file (with passwords)
-config.json
+config_development.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
