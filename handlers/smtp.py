@@ -39,7 +39,6 @@ class SMTPHandler(object):
         try:
             message = 'Subject: {}\n\n{}'.format(subject, email_text)
             self.server.sendmail(self.username, sent_to, message)
-            self.server.close()
             print 'Email sent to ', sent_to
         except SMTPSendEmailError:
             print 'Error sending email'

@@ -1,27 +1,15 @@
 import pika
 
 class RabbitMqHandler:
-    server = 'localhost'
-    channel = ''
     keys = []
 
-    def __init__(self, server):
+    def __init__(self, server, email_handler):
+        print server
         self.server = server
         self.keys.append('black')
+        self.email_handler = email_handler
 
-    def consume(self, queue):
-        for key in self.keys:
-            print "Watching key %s" % key
-            bind_promise = self.channel.queue_bind(exchange='direct_logs', queue=queue, routing_key=key)
-            consumer.wait(bind_promise)
-
-        self.channel.basic_consume(self.on_message,
-                                queue=queue)
-
-        print(' [*] Waiting for messages. To exit press CTRL+C')
-        self.channel.start_consuming()
-
-    def init(self):
+    def connect(self):
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(self.server))
         self.channel = connection.channel()
@@ -30,10 +18,19 @@ class RabbitMqHandler:
         self.channel.queue_declare(queue='hello')
         self.consume('hello')
 
-    # This funcions is executed when a message is received
-    def on_message(ch, method, properties, body):
-        print(" [x] Received %r" % body)
+    def consume(self, queue):
+        print 'eeeee'
+        for key in self.keys:
+            print "Watching key %s" % key
+            self.channel.queue_bind(exchange='direct_logs', queue=queue, routing_key=key)
 
-        # ACK, if the worker dies, the message will be redelivered
-        ch.basic_ack(delivery_tag = method.delivery_tag)
+        self.channel.basic_consume(self.on_message,
+                                queue=queue)
+
+        print(' [*] Waiting for messages. To exit press CTRL+C')
+        self.channel.start_consuming()
+
+    def on_message(self, ch, method, properties,  message):
+        print(" [x] Received %r" % message)
+        self.email_handler.send_email('dlopez@ets.es', 'Pruebas desde python con rabbitMQ', message)
 
