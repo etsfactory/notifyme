@@ -7,13 +7,12 @@ class RabbitMqHandler(object):
     """
     Class to manage connection with a rabbitMQ server
     """
-    keys = []
-
-    def __init__(self, server, email_handler):
+    def __init__(self, server, queue, exchange, keys=[]):
         print server
         self.server = server
-        self.keys.append('black')
-        self.email_handler = email_handler
+        self.keys = keys
+        self.queue = queue
+        self.exchange = exchange
 
     def connect(self):
         """
@@ -23,8 +22,8 @@ class RabbitMqHandler(object):
         self.channel = connection.channel()
 
         # It ensures that the queue exists
-        self.channel.queue_declare(queue='hello')
-        self.consume('hello')
+        self.channel.queue_declare(queue=self.queue)
+        self.consume(self.queue)
 
     def consume(self, queue):
         """
@@ -32,7 +31,10 @@ class RabbitMqHandler(object):
         """
         for key in self.keys:
             print "Watching key %s" % key
-            self.channel.queue_bind(exchange='direct_logs', queue=queue, routing_key=key)
+            self.channel.queue_bind(exchange=self.exchange, queue=queue, routing_key=key)
+        
+        if len(self.keys) == 0: 
+            self.channel.queue_bind(exchange=self.exchange, queue=queue)
 
         self.channel.basic_consume(self.on_message,
                                    queue=queue)
@@ -45,4 +47,3 @@ class RabbitMqHandler(object):
         When a message is received
         """
         print ' [x] Received %r' % message
-        self.email_handler.send_email('dlopez@ets.es', 'Pruebas desde python con rabbitMQ', message)
