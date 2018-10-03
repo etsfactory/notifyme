@@ -1,8 +1,8 @@
 """
 SMTP Handler
 """
-
 import smtplib
+
 class SMTPAuthenticationError(Exception):
     """
     SMTP Auth error
@@ -32,13 +32,16 @@ class SMTPHandler(object):
         except SMTPAuthenticationError:
             print 'Error login with username: ', username, 'and password: ', password
 
-    def send_email(self, sent_to, subject, email_text):
+    def send_email(self, send_to, subject, body):
         """
-        Send temail trough SMTP from account to a list of emails (sent_to) with a message
+        Send temail trough SMTP from account to a list of emails with a message
+        :send_to: List of emails to send email
+        :subject: The subject of the email
+        :body: The body of the email
         """
         try:
-            message = 'Subject: {}\n\n{}'.format(subject, email_text)
-            self.server.sendmail(self.username, sent_to, message)
-            print 'Email sent to ', sent_to
+            message = 'Subject: {}\n\n{}'.format(subject, body)
+            self.server.sendmail(self.username, send_to, message)
+            print 'Email sent to ', send_to
         except SMTPSendEmailError:
             print 'Error sending email'
