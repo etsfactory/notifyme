@@ -6,13 +6,22 @@ Notify.me es un servicio creado en python para el manejo de notificaciones en Ra
 
 ### Instrucciones
 
-Para arrancar el servicio ejecutar el comando 
+Para poder ejecutar el servicio hay que tener instalado **python**
+
+Además, hay que instalar los paquetes con la versión indicada en el fichero advisory/requirements.txt.
+Para ello, abrir una ventana de comandos y ejecutar:
+
+```bash
+pip install -r requirements.txt
+```
+
+Para arrancar el servicio ejecutar el comando:
 
 ```bash
 python main.py
 ```
 
-Para ejecutar los tests instalar py.test y ejecutar
+Para ejecutar los tests instalar py.test y ejecutar:
 
 ```bash
 py.test
