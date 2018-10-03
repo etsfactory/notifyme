@@ -16,10 +16,13 @@ except IOError:
 
 with open(config_file) as json_data:
     d = json.load(json_data)
+
+    rabbitmq_conf = d["rabbitmq"]
     email_conf = d["email"]
+
     smtp = SMTPHandler(email_conf["username"], email_conf["password"],
                        email_conf["smtp_host"], email_conf["smtp_port"])
-    smtp.send_email('dlopez@ets.es', 'Pruebas desde python', 'Otro correo desde python')
 
-# handler = RabbitMqHandler(server)
-# handler.init()
+    rabbit_handler = RabbitMqHandler(rabbitmq_conf["server"], smtp)
+    rabbit_handler.connect()
+
