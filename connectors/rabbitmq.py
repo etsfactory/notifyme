@@ -7,12 +7,12 @@ class RabbitMqHandler(object):
     """
     Class to manage connection with a rabbitMQ server
     """
-    def __init__(self, server, queue, exchange, keys=[]):
-        print server
+    def __init__(self, server, queue, exchange, smtp=None, keys=[]):
         self.server = server
         self.keys = keys
         self.queue = queue
         self.exchange = exchange
+        self.smtp = smtp
 
     def connect(self):
         """
@@ -47,3 +47,4 @@ class RabbitMqHandler(object):
         When a message is received
         """
         print ' [x] Received %r' % message
+        self.smtp.send_email('dlopez@ets.es', 'Prueba para release 0.1.0', message)
