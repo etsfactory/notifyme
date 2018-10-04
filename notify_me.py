@@ -1,28 +1,25 @@
 """
 Main file program.
 """
+import sys
 import json
 import os.path
+
+import errors
+import settings as st
 
 from connectors.rabbitmq import RabbitMqHandler
 from connectors.smtp import SMTPHandler
 
-try:
-    config_file = 'config.json'
-    if os.path.isfile('config_development.json'):
-        config_file = 'config_development.json'
-except IOError:
-    print 'JSON loading problem'
+def main():
 
-with open(config_file) as json_data:
-    d = json.load(json_data)
+    smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS,
+                st.SMTP_HOST, st.SMTP_PORT)
 
-    rabbitmq_conf = d["rabbitmq"]
-    email_conf = d["email"]
-
-    smtp = SMTPHandler(email_conf["username"], email_conf["password"],
-                    email_conf["smtp_host"], email_conf["smtp_port"])
-    # TODO: queue and exchange from setinngs file
-
-    rabbit_handler = RabbitMqHandler(rabbitmq_conf["server"], 'hello', 'direct_logs', smtp)
+    rabbit_handler = RabbitMqHandler(st.RABBITMQ_SERVER, 'hello', 'direct_logs', smtp)
     rabbit_handler.connect()
+
+    # Captures not controlled exceptions
+    sys.excepthook = errors.log_unhandled_exception
+
+main()
