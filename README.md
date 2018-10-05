@@ -24,5 +24,5 @@ python main.py
 Para ejecutar los tests instalar py.test y ejecutar:
 
 ```bash
-py.test
+py.test -sv
 ```
