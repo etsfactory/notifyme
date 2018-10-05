@@ -3,7 +3,7 @@
     "server": "localhost"
   },
   "smtp": {
-    "host": "smtp.gmail.com", 
+    "server": "smtp.gmail.com", 
     "port": 465, 
     "email": "#YOUR_EMAIL#",
     "password": "#YOUR_PASSWORD#"
