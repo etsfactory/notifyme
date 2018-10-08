@@ -16,7 +16,7 @@ class RabbitMqHandler(object):
 
     def connect(self):
         """
-        Connect wit a raabbitMQ server
+        Connect wit a rabbitMQ server
         """
         connection = pika.BlockingConnection(pika.ConnectionParameters(self.server))
         self.channel = connection.channel()
