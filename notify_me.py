@@ -1,6 +1,8 @@
 """
 Main file program.
 """
+# To run a sample database: sudo docker run --memory=4G --memory-swap=0 rethinkdb
+
 import sys
 import json
 import os.path
