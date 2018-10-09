@@ -10,46 +10,51 @@ import time
 
 import errors
 import settings as st
-from threading import Thread
 
+from threading import Thread
 from connectors.rabbitmq import RabbitMqHandler
 from connectors.smtp import SMTPHandler
-from connectors.rethink import RethinkHandler
-from connectors.data_streaming import DataStreaming
+from bussiness.users import UsersHandler
 
 def rabbit():
     smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
     rabbit_handler = RabbitMqHandler(st.RABBITMQ_SERVER, 'hello', 'direct_logs', smtp)
     rabbit_handler.connect()
 
-def bd_get(db):  
+def bd_get(users):  
+    
     print "Watching for changes..."
-    cursor = db.get_data("users")
+    cursor = users.get_users_streaming()
     for document in cursor:
         print document
 
-def bd_set(db):
+def bd_set(users):
+    name = 0    
     while True:
         print "Inserting user...."
-        db.insert_data("users", [
-            { "name": "Diego", "email": "dlopez@ets.es" },
-            { "name": "Diego", "email": "dlopez@ets.es" }
+        users.insert_user([
+            { "name": "aa", "email": "eee@ets.es" }
         ])
-        time.sleep(5)
+        time.sleep(4)
+        print "Updating user...."
+        users.edit_user(
+            { "name": name, "email": "eee@ets.es" }
+        )
+        time.sleep(4)
+        name = name + 1
 
 def main():
     # smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
-
-    db = RethinkHandler(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
-    watcher = DataStreaming(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
-    db.create_table("users")
-
-    bd_set_thread = Thread(target=bd_set, args=(db,))
-    bd_set_thread.start()
+    users = UsersHandler()
+    users.insert_user(st.USERS)
+    users.insert_user(st.USERS)
+    
+    bd_get_thread = Thread(target=bd_get, args=(users,))
+    bd_get_thread.start()
 
     time.sleep(1)
-    bd_get_thread = Thread(target=bd_get, args=(watcher,))
-    bd_get_thread.start()
+    bd_set_thread = Thread(target=bd_set, args=(users,))
+    bd_set_thread.start()
 
     # rabbit_handler = RabbitMqHandler(st.RABBITMQ_SERVER, 'hello', 'direct_logs', smtp)
     # rabbit_handler.connect()

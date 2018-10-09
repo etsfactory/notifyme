@@ -40,6 +40,8 @@ DB_PORT = os.getenv('DB_HOST', 28015)
 
 DB_NAME = 'notify_me'
 
+USERS = config['users']
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
