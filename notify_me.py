@@ -15,6 +15,7 @@ from threading import Thread
 from connectors.rabbitmq import RabbitMqHandler
 from connectors.smtp import SMTPHandler
 from bussiness.users import UsersHandler
+from bussiness.users import User
 
 def rabbit():
     smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
@@ -32,22 +33,17 @@ def bd_set(users):
     name = 0    
     while True:
         print "Inserting user...."
-        users.insert_user([
-            { "name": "aa", "email": "eee@ets.es" }
-        ])
+        users.insert_user(User("Diego", "dlopez@ets.es"))
         time.sleep(4)
         print "Updating user...."
-        users.edit_user(
-            { "name": name, "email": "eee@ets.es" }
-        )
+        users.edit_user(User("Diego Lopez", "dlopez@ets.es"))
         time.sleep(4)
         name = name + 1
 
 def main():
     # smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
     users = UsersHandler()
-    users.insert_user(st.USERS)
-    users.insert_user(st.USERS)
+    # users.insert_user(st.USERS)
     
     bd_get_thread = Thread(target=bd_get, args=(users,))
     bd_get_thread.start()
