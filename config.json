@@ -3,10 +3,16 @@
     "server": "localhost"
   },
   "smtp": {
-    "host": "smtp.gmail.com", 
-    "port": 465, 
+    "server": "smtp.gmail.com",
+    "port": 465,
     "email": "#YOUR_EMAIL#",
     "password": "#YOUR_PASSWORD#"
   },
-  "loggin": "./"
+  "loggin": "./",
+  "users": [
+    {
+      "name": "Diego",
+      "email": "d.lopez@ets.es"
+    }
+  ]
 }

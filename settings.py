@@ -15,7 +15,7 @@ try:
     if os.path.isfile(CONFIGURATION_FILE_DEV):
         config_file = CONFIGURATION_FILE_DEV
 except IOError:
-    print 'JSON loading problem'
+    print 'Error finding config file'
 
 # Loads confid from file
 with open(config_file) as json_data:
@@ -31,9 +31,16 @@ RABBITMQ_SERVER = RABBITMQ['server']
 
 SMTP = config['smtp']
 SMTP_EMAIL = SMTP['email']
-SMTP_HOST = SMTP['host']
+SMTP_HOST = SMTP['server']
 SMTP_PORT = SMTP['port']
 SMTP_PASS = SMTP['password']
+
+DB_SERVER = os.getenv('DB_SERVER', '172.17.0.3')
+DB_PORT = os.getenv('DB_HOST', 28015)
+
+DB_NAME = 'notify_me'
+
+USERS = config['users']
 
 LOGGING = {
     'version': 1,
