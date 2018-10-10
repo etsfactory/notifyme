@@ -24,7 +24,8 @@ class DBHandler(object):
         """
         Creates the table in database and regenerates if it already exists
         """
-        self.db.create_table(self.table_name, primary_key=primary_key)
+        print self.table_name
+        self.db.create_table(self.table_name, primary_key)
 
     def get_data(self):
         """
@@ -60,6 +61,7 @@ class DBHandler(object):
         """
         self.db.filter_data(self.table_name, data)  
     
+   
     def convert_to_json_list(self, data): 
         """
         Converts list of objects to json list 
@@ -73,3 +75,7 @@ class DBHandler(object):
         """
         entry = json.dumps(data.__dict__)
         return ast.literal_eval(entry)
+
+    def join_tables(self, table1, table2, table3, key1, key2):
+       return self.db.join_tables(table1, table2, table3, key1, key2)
+ 

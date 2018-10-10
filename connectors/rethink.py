@@ -12,7 +12,7 @@ class RethinkHandler(object):
         self.db_name = db_name
         self.con = r.connect(host=server, port=port,
                              db=db_name).repl()
-        self.create_database()
+       # self.create_database()
 
     def create_database(self):
         """
@@ -24,7 +24,7 @@ class RethinkHandler(object):
             r.db_drop(db_name).run(con)
         r.db_create(db_name).run(con)
 
-    def create_table(self, table_name, primary_key='id'):
+    def create_table(self, table_name, key='id'):
         """
         Table creation. If the Table exists drops it and recreates
         """
@@ -32,7 +32,7 @@ class RethinkHandler(object):
         con = self.con
         if table_name in r.db(db_name).table_list().run(con):
             r.db(db_name).table_drop(table_name).run(con)
-        r.db(db_name).table_create(table_name, primary_key=primary_key).run(con)
+        r.db(db_name).table_create(table_name, primary_key=key).run(con)
 
     def insert_data(self, table_name, data):
         """
@@ -40,10 +40,8 @@ class RethinkHandler(object):
         """
         db_name = self.db_name
         con = self.con
-        if table_name not in r.db(db_name).table_list().run(con):
-            print "Creating table"
-            self.create_table(table_name, None)
-        r.table(table_name).insert(data).run(con)
+        if table_name in r.db(db_name).table_list().run(con):
+            r.table(table_name).insert(data).run(con)
 
     def get_data(self, table_name):
         """"
@@ -74,3 +72,7 @@ class RethinkHandler(object):
             return r.table(table_name).filter(filter).run(con)
         except:
             print 'Error filtering data'
+
+    def join_tables(self, table1, table2, table3, key1, key2):
+        con = self.con
+        return r.table(table1).eq_join(key1, r.table(table2)).zip().eq_join(key2, r.table(table3)).zip().run(con)
