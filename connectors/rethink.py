@@ -12,17 +12,16 @@ class RethinkHandler(object):
         self.db_name = db_name
         self.con = r.connect(host=server, port=port,
                              db=db_name).repl()
-        # self.create_database()
+        self.create_database()
 
     def create_database(self):
         """
-        Database creation. If the database exists drops it and recreates
+        Database creation. If the database exists drops it and recreates. If it doesn't exist, create it
         """
         db_name = self.db_name
         con = self.con
-        if db_name in r.db_list().run(con):
-            r.db_drop(db_name).run(con)
-        r.db_create(db_name).run(con)
+        if db_name not in r.db_list().run(con):
+            r.db_create(db_name).run(con)
 
     def create_table(self, table_name, key='id'):
         """
@@ -63,13 +62,13 @@ class RethinkHandler(object):
         except:
             print 'Error editing data'
 
-    def filter_data(self, table_name, filter):
+    def filter_data(self, table_name, filter_data):
         """
         Returns filtered documents from database
         """
         con = self.con
         try:
-            return r.table(table_name).filter(filter).run(con)
+            return r.table(table_name).filter(filter_data).run(con)
         except:
             print 'Error filtering data'
 

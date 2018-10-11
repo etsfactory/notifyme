@@ -4,7 +4,7 @@ Data streaming from the DB.
 """
 import rethinkdb as r
 
-class DataStreaming(object): 
+class BDRealtime(object): 
     def __init__(self, server, port, db_name):
         self.db_name = db_name
         self.con = r.connect(host=server, port=port,

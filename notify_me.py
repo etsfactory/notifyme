@@ -79,18 +79,22 @@ def main():
     users = UsersHandler()
     filters = BusFiltersHandler()
     subscriptions = SubscriptionHandler()
-    users.insert_user(User("Bruno", "bcontreras@ets.es"))
-    users.insert_user(User("Diego", "dlopez@ets.es"))
-    users.edit_user(User("eeeee", "dlopez@ets.es"))
-    filters.insert_bus_filter(BusFilter("logs", "important"))
+    users.insert(User("Bruno", "bcontreras@ets.es"))
+    users.insert(User("Diego", "dlopez@ets.es"))
+    users.edit(User("Diego Lopez", "dlopez@ets.es"))
+    filters.insert(BusFilter("logs", "important"))
+    print users.get_by_email("dlopez@ets.es").name
     # for filter in filters.get_bus_filters():
     #    print filter
-    subscriptions.insert_subscription(Subscription("dlopez@ets.es", ['logs', 'important']))
-    subscriptions.insert_subscription(Subscription("bcontreras@ets.es", ['logs', 'important']))
+    subscriptions.insert(Subscription("dlopez@ets.es", ['logs', 'important']))
+    subscriptions.insert(Subscription("bcontreras@ets.es", ['logs', 'important']))
 
     print '------------'
-    print subscriptions.get_users_by_filter(BusFilter('logs', 'important'))
-    print subscriptions.get_filters_by_user(User("Bruno", "bcontreras@ets.es"))
+    for user in subscriptions.get_users_by_filter(BusFilter('logs', 'important')):
+        print str(user.__dict__)
+    
+    for bus_filter in subscriptions.get_filters_by_user(User("Bruno", "bcontreras@ets.es")):
+        print str(bus_filter.__dict__)
     
     # users.insert_user(st.USERS)
     # print parser.to_json(User("Diego", "dlopez@ets.es"))

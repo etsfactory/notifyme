@@ -1,16 +1,12 @@
 """
 Users handler
 """
+import ast
 
 import settings as st
 import utils.json_parser as json_parser
-
-import ast
-
 from connectors.rethink import RethinkHandler
-from connectors.data_streaming import DataStreaming
-
-import json
+from connectors.rethink_realtime import BDRealtime
 
 class DBHandler(object):
     """
@@ -19,14 +15,13 @@ class DBHandler(object):
 
     def __init__(self, table_name):
         self.db = RethinkHandler(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
-        self.db_streaming = DataStreaming(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
+        self.db_realtime = BDRealtime(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
         self.table_name = table_name
 
     def create_table(self, primary_key='id'):
         """
         Creates the table in database and regenerates if it already exists
         """
-        print self.table_name
         self.db.create_table(self.table_name, primary_key)
 
     def get_data(self):
@@ -41,7 +36,7 @@ class DBHandler(object):
         If data is added or modified in the db it returns the change.
         This method blocks the current thread so use this method in a separated thread
         """
-        return self.db_streaming.get_data(self.table_name)
+        return self.db_realtime.get_data(self.table_name)
 
     def insert_data(self, data):
         """
@@ -69,7 +64,15 @@ class DBHandler(object):
    
 
     def join_tables(self, table1, table2, table3, key1, key2):
-       return self.db.join_tables(table1, table2, table3, key1, key2)
+        """
+        Joins two tables
+        :table1: Table with the foreign keys
+        :table2: Lelft table to join
+        :table3: Right table to join
+        :key1: Foering key from the left table
+        :key2: Foering key for the right table
+        """
+        return self.db.join_tables(table1, table2, table3, key1, key2)
 
     def table_join_streaming(self, table1, table2, table3, key1, key2):
-         return self.db_streaming.table_join_streaming(table1, table2, table3, key1, key2)
+         return self.db_realtime.table_join_streaming(table1, table2, table3, key1, key2)

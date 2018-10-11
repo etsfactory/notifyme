@@ -5,8 +5,6 @@ Users handler
 import settings as st
 
 from connectors.rethink import RethinkHandler
-from connectors.data_streaming import DataStreaming
-
 from bussiness.db_handler import DBHandler
 from bussiness.users import UsersHandler
 from bussiness.bus_filters import BusFiltersHandler
@@ -28,19 +26,19 @@ class SubscriptionHandler(object):
         self.users = UsersHandler()
         self.filters = BusFiltersHandler()
 
-    def get_subscriptions(self):
+    def get(self):
         """
         Get all the users from the database
         """
         return self.db_handler.get_data()
 
-    def get_subscriptions_join(self):
+    def get_with_relationships(self):
         """
         Get subscriptions joining users and bus_filtes tables
         """
         return self.db_handler.join_tables("subscriptions", "users", "bus_filters", "email", "exchange")
 
-    def get_subscription_streaming(self):
+    def get_realtime(self):
         """
         Get all subscriptions from the database in realtime.
         If user is added or modified in the db it returns the change.
@@ -53,10 +51,10 @@ class SubscriptionHandler(object):
         Get user associates with filter
         """
         users = []
-        subscriptions = self.get_subscription_by_filter(filter)
+        subscriptions = self.get_by_filter(filter)
         for subscription in subscriptions:
             email = subscription['email']
-            user = (self.users.get_user_by_email(email))
+            user = (self.users.get_by_email(email))
             users.append(user)
         return users
     
@@ -65,39 +63,39 @@ class SubscriptionHandler(object):
         Get filters associates with user
         """
         filters = []
-        subscriptions = self.get_subscription_by_user(user)
+        subscriptions = self.get_by_user(user)
         for subscription in subscriptions:
             exchange_key = subscription['exchange_key']
-            bus_filter = (self.filters.get_filter_by_exchange_key(exchange_key))
+            bus_filter = (self.filters.get_by_exchange_key(exchange_key))
             filters.append(bus_filter)
         return filters
 
-    def get_subscription_by_id(self, subsc_id):
+    def get_by_id(self, subsc_id):
         """
         Get subscription by his id
         """
         return self.db_handler.filter_data({'id': subsc_id})
      
-    def get_subscription_by_filter(self, filter):
+    def get_by_filter(self, filter):
         """
         Get subscription by his id
         """
         exchange_key = [filter.exchange, filter.key]
         return self.db_handler.filter_data({'exchange_key': exchange_key})
      
-    def get_subscription_by_user(self, user):
+    def get_by_user(self, user):
         """
         Get subscription by his id
         """
         return self.db_handler.filter_data({'email': user.email})
 
-    def insert_subscription(self, subscription):
+    def insert(self, subscription):
         """
         Insert subscriptions to the database
         """
         self.db_handler.insert_data(subscription)
 
-    def edit_subscription(self, subscription):
+    def edit(self, subscription):
         """
         Modify subscriptions
         """

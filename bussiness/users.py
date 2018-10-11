@@ -4,10 +4,7 @@ Users handler
 """
 import settings as st
 
-
 from connectors.rethink import RethinkHandler
-from connectors.data_streaming import DataStreaming
-
 from bussiness.db_handler import DBHandler
 
 class User(object):
@@ -24,13 +21,13 @@ class UsersHandler(object):
         self.db_handler = DBHandler("users")
         self.db_handler.create_table('email')
 
-    def get_users(self):
+    def get(self):
         """
         Get all the users from the database
         """
         return self.db_handler.get_data()
 
-    def get_users_streaming(self):
+    def get_realtime(self):
         """
         Get all users from the database in realtime.
         If user is added or modified in the db it returns the change.
@@ -38,20 +35,27 @@ class UsersHandler(object):
         """
         return self.db_handler.get_data_streaming()
 
-    def insert_user(self, user):
+    def insert(self, user):
         """
         Insert user or users to the database
         """
         self.db_handler.insert_data(user)
 
-    def edit_user(self, user):
+    def edit(self, user):
         """
         Modify user by his email
         """
         self.db_handler.edit_data(user, user.email, 'email')
     
-    def get_user_by_email(self, email):
+    def get_by_email(self, email):
         """
         Get user by his email
         """
-        return self.db_handler.filter_data({'email': email})
+        return self.to_object(self.db_handler.filter_data({'email': email}))[0]
+     
+    def to_object(self, data):
+        users = []
+        for user in data:
+            users.append(User(user['name'], user['email']))
+        return users
+        
