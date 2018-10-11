@@ -17,15 +17,15 @@ from connectors.smtp import SMTPHandler
 from bussiness.users import UsersHandler
 from bussiness.users import User
 
-from bussiness.notification_types import NotificationTypeHandler
-from bussiness.notification_types import NotificationType
+from bussiness.bus_filters import BusFiltersHandler
+from bussiness.bus_filters import BusFilter
 
-from bussiness.subscription import SubscriptionHandler
-from bussiness.subscription import Subscription
+from bussiness.subscriptions import SubscriptionHandler
+from bussiness.subscriptions import Subscription
 
-def rabbit():
+def rabbit(exchange, key):
     smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
-    rabbit_handler = RabbitMqHandler(st.RABBITMQ_SERVER, 'hello', 'direct_logs', smtp)
+    rabbit_handler = RabbitMqHandler(st.RABBITMQ_SERVER, 'hello', exchange, smtp, [key] )
     rabbit_handler.connect()
 
 def bd_get_users(users):  
@@ -45,10 +45,10 @@ def bd_get_notifications(notifications):
 def bd_get_subscriptions(subscriptions):  
     
     time.sleep(4)
-    while True:
-        print subscriptions.get_subscription()
-        time.sleep(4)
-
+    cursor = subscriptions.get_subscription_streaming()
+    for document in cursor:
+         print document
+         # Thread(target=rabbit, args=(document['new_val']['exchange'], document['new_val']['key'],)).start()
 
 def bd_set_user(users,):
     name = 0
@@ -58,11 +58,11 @@ def bd_set_user(users,):
         name = name + 1
         time.sleep(4)
 
-def bd_set_notification(notifications,):
+def bd_set_notification(filters,):
     name = 0
     while True:
-        print "Inserting notification ...."
-        notifications.insert_notification_type(NotificationType("exchange" + str(name), "key"))
+        print "Inserting filter ...."
+        filters.insert_bus_filter(BusFilter("exchange", "key"))
         name = name + 1
         time.sleep(4)
         
@@ -70,27 +70,44 @@ def bd_set_subscription(subscriptions,):
     name = 0
     while True:
         print "Inserting subscription ...."
-        subscriptions.insert_subscription(Subscription("dlopez@ets.es1", "exchange" + str(name), "key"))
+        # subscriptions.insert_subscription(Subscription("dlopez@ets.es1", "exchange", "key"))
         name = name + 1
         time.sleep(4)
         
 def main():
     # smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
     users = UsersHandler()
-    notifications = NotificationTypeHandler()
+    filters = BusFiltersHandler()
     subscriptions = SubscriptionHandler()
+    users.insert_user(User("Bruno", "bcontreras@ets.es"))
+    users.insert_user(User("Diego", "dlopez@ets.es"))
+    users.edit_user(User("eeeee", "dlopez@ets.es"))
+    filters.insert_bus_filter(BusFilter("logs", "important"))
+    # for filter in filters.get_bus_filters():
+    #    print filter
+    subscriptions.insert_subscription(Subscription("dlopez@ets.es", ['logs', 'important']))
+    subscriptions.insert_subscription(Subscription("bcontreras@ets.es", ['logs', 'important']))
 
-    Thread(target=bd_set_user, args=(users,)).start()
+    print '------------'
+    print subscriptions.get_users_by_filter(BusFilter('logs', 'important'))
+    print subscriptions.get_filters_by_user(User("Bruno", "bcontreras@ets.es"))
+    
+    # users.insert_user(st.USERS)
+    # print parser.to_json(User("Diego", "dlopez@ets.es"))
+    time.sleep(1)
+
+    # Thread(target=bd_set_user, args=(users,)).start()
 
     # Thread(target=bd_get_users, args=(users,)).start()
     
-    Thread(target=bd_set_notification, args=(notifications,)).start()
+    # Thread(target=bd_set_notification, args=(filters,)).start()
 
     # Thread(target=bd_get_notifications, args=(notifications,)).start()
+    #time.sleep(4)
 
-    Thread(target=bd_set_subscription, args=(subscriptions,)).start()
+    # Thread(target=bd_set_subscription, args=(subscriptions,)).start()
 
-    Thread(target=bd_get_subscriptions, args=(subscriptions,)).start()
+    # Thread(target=bd_get_subscriptions, args=(subscriptions,)).start()
 
     # rabbit_handler = RabbitMqHandler(st.RABBITMQ_SERVER, 'hello', 'direct_logs', smtp)
     # rabbit_handler.connect()

@@ -35,7 +35,7 @@ SMTP_HOST = SMTP['server']
 SMTP_PORT = SMTP['port']
 SMTP_PASS = SMTP['password']
 
-DB_SERVER = os.getenv('DB_SERVER', '172.17.0.3')
+DB_SERVER = os.getenv('DB_SERVER', '172.17.0.2')
 DB_PORT = os.getenv('DB_HOST', 28015)
 
 DB_NAME = 'notify_me'

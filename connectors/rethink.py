@@ -12,7 +12,7 @@ class RethinkHandler(object):
         self.db_name = db_name
         self.con = r.connect(host=server, port=port,
                              db=db_name).repl()
-       # self.create_database()
+        # self.create_database()
 
     def create_database(self):
         """
@@ -41,7 +41,7 @@ class RethinkHandler(object):
         db_name = self.db_name
         con = self.con
         if table_name in r.db(db_name).table_list().run(con):
-            r.table(table_name).insert(data).run(con)
+            return r.table(table_name).insert(data).run(con)
 
     def get_data(self, table_name):
         """"
@@ -76,3 +76,4 @@ class RethinkHandler(object):
     def join_tables(self, table1, table2, table3, key1, key2):
         con = self.con
         return r.table(table1).eq_join(key1, r.table(table2)).zip().eq_join(key2, r.table(table3)).zip().run(con)
+    

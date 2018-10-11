@@ -48,5 +48,10 @@ class UsersHandler(object):
         """
         Modify user by his email
         """
-        self.db_handler.edit_data(user, 'email', user.email)
-
+        self.db_handler.edit_data(user, user.email, 'email')
+    
+    def get_user_by_email(self, email):
+        """
+        Get user by his email
+        """
+        return self.db_handler.filter_data({'email': email})

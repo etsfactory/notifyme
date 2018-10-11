@@ -3,6 +3,8 @@ Users handler
 """
 
 import settings as st
+import utils.json_parser as json_parser
+
 import ast
 
 from connectors.rethink import RethinkHandler
@@ -45,37 +47,29 @@ class DBHandler(object):
         """
         Inserts data into the database
         """
-        self.db.insert_data(self.table_name, self.convert_to_json_list(data))
+        return self.db.insert_data(self.table_name, json_parser.to_json_list(data))
 
-    def edit_data(self, data, key, key_value, primary_key ='id'):
+    def edit_data(self, data, key_value, key='id'):
         """
         Modifies data 
         """
         entries = self.db.filter_data(self.table_name, {key: key_value})
         for document in entries:
-           self.db.edit_data(self.table_name, document[primary_key], self.convert_to_json(data))
+           self.db.edit_data(self.table_name, document[key], json_parser.to_json(data))
 
-    def filter_data(self, data):
+    def filter_data(self, filter):
         """
         Filters data from the database
         """
-        self.db.filter_data(self.table_name, data)  
-    
+        data = self.db.filter_data(self.table_name, filter)      
+        data_list = []
+        for entry in data:
+            data_list.append(entry)
+        return data_list
    
-    def convert_to_json_list(self, data): 
-        """
-        Converts list of objects to json list 
-        """
-        entry = json.dumps([data.__dict__])
-        return ast.literal_eval(entry)
-
-    def convert_to_json(self, data): 
-        """
-        Converts list of objects to json list 
-        """
-        entry = json.dumps(data.__dict__)
-        return ast.literal_eval(entry)
 
     def join_tables(self, table1, table2, table3, key1, key2):
        return self.db.join_tables(table1, table2, table3, key1, key2)
- 
+
+    def table_join_streaming(self, table1, table2, table3, key1, key2):
+         return self.db_streaming.table_join_streaming(table1, table2, table3, key1, key2)
