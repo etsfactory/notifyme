@@ -23,14 +23,22 @@ class RabbitMqHandler(threading.Thread):
         Connect wit a rabbitMQ server
         """
         try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(self.server))
-            self.channel = connection.channel()
+            self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.server))
+            self.channel = self.connection.channel()
+            self.channel.exchange_declare(exchange=self.bus_filter.exchange,
+                         exchange_type='direct')
+            """
+            NOTE: No queue name to let rabbit choouse a random name for us. 
+            Is exclusive because it will be deleted when the connection closes
+            """
             result = self.channel.queue_declare(exclusive=True)
             queue_name = result.method.queue
 
             self.channel.queue_bind(exchange=self.bus_filter.exchange,
-                   queue=queue_name)
+                                    queue=queue_name,
+                                    routing_key=self.bus_filter.key)
 
+            print(self.bus_filter.key)
             st.logger.info('Waiting for bus messagges....')
             
             self.channel.basic_consume(self.on_message,
@@ -48,11 +56,11 @@ class RabbitMqHandler(threading.Thread):
         try:
             self.channel.start_consuming()
         except Exception as e:
-            st.logger.error('Error')
+            st.logger.error(e)
 
     def on_message(self, ch, method, properties, message):
         """"
         When a message is received
         """
-        st.logger.info(' [x] Received %r' % message)
+        st.logger.info(' [x] Received from  %r:  |  %r' % (method.routing_key, message))
         # self.smtp.send_email('dlopez@ets.es', 'Prueba', message)

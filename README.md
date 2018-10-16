@@ -18,7 +18,7 @@ pip install -r requirements.txt
 Para arrancar el servicio ejecutar el comando:
 
 ```bash
-python main.py
+python notifyme.py
 ```
 
 Para ejecutar los tests instalar py.test y ejecutar:
