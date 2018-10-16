@@ -8,6 +8,8 @@ import utils.json_parser as json_parser
 from connectors.rethink import RethinkHandler
 from connectors.rethink_realtime import BDRealtime
 
+created = False
+
 class DBHandler(object):
     """
     Users handlers class to get, edit, and streaming users from the database
@@ -22,7 +24,13 @@ class DBHandler(object):
         """
         Creates the table in database and regenerates if it already exists
         """
-        self.db.create_table(self.table_name, primary_key)
+        global created
+        if (not created):
+            self.db.reset_database()
+            st.logger.info('Reseting the database...')
+            created = True
+        else:
+            self.db.create_table(self.table_name, primary_key)
 
     def get_data(self):
         """
@@ -62,7 +70,6 @@ class DBHandler(object):
             data_list.append(entry)
         return data_list
    
-
     def join_tables(self, table1, table2, table3, key1, key2):
         """
         Joins two tables

@@ -2,49 +2,57 @@
 RabbitMQ handler
 """
 import pika
+import threading
+import settings as st
 
-class RabbitMqHandler(object):
+
+class RabbitMqHandler(threading.Thread):
     """
     Class to manage connection with a rabbitMQ server
     """
-    def __init__(self, server, queue, exchange, smtp=None, keys=[]):
+    def __init__(self, server, queue, bus_filter, users, smtp ):
         self.server = server
-        self.keys = keys
         self.queue = queue
-        self.exchange = exchange
+        self.bus_filter = bus_filter
         self.smtp = smtp
+        self.connect()
+        super().__init__()
 
     def connect(self):
         """
         Connect wit a rabbitMQ server
         """
-        connection = pika.BlockingConnection(pika.ConnectionParameters(self.server))
-        self.channel = connection.channel()
+        try:
+            connection = pika.BlockingConnection(pika.ConnectionParameters(self.server))
+            self.channel = connection.channel()
+            result = self.channel.queue_declare(exclusive=True)
+            queue_name = result.method.queue
 
-        # It ensures that the queue exists
-        self.channel.queue_declare(queue=self.queue)
-        self.consume(self.queue)
+            self.channel.queue_bind(exchange=self.bus_filter.exchange,
+                   queue=queue_name)
 
-    def consume(self, queue):
+            st.logger.info('Waiting for bus messagges....')
+            
+            self.channel.basic_consume(self.on_message,
+                                    queue=queue_name)
+
+        except Exception as e:
+            st.logger.error(e)
+            
+
+    def run(self):
         """
-        Start listening for a queue with a list of keys
+        Start listening for a queue
         """
-        for key in self.keys:
-            print "Watching key %s" % key
-            self.channel.queue_bind(exchange=self.exchange, queue=queue, routing_key=key)
-        
-        if len(self.keys) == 0: 
-            self.channel.queue_bind(exchange=self.exchange, queue=queue)
-
-        self.channel.basic_consume(self.on_message,
-                                   queue=queue)
-
-        print ' [*] Waiting for messages. To exit press CTRL+C'
-        self.channel.start_consuming()
+        st.logger.info('Starting listening for messagges....')
+        try:
+            self.channel.start_consuming()
+        except Exception as e:
+            st.logger.error('Error')
 
     def on_message(self, ch, method, properties, message):
         """"
         When a message is received
         """
-        print ' [x] Received %r' % message
-        self.smtp.send_email('dlopez@ets.es', 'Prueba para release 0.1.0', message)
+        st.logger.info(' [x] Received %r' % message)
+        # self.smtp.send_email('dlopez@ets.es', 'Prueba', message)

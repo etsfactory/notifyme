@@ -15,15 +15,15 @@ try:
     if os.path.isfile(CONFIGURATION_FILE_DEV):
         config_file = CONFIGURATION_FILE_DEV
 except IOError:
-    print 'Error finding config file'
+    print('Error finding config file')
 
 # Loads confid from file
 with open(config_file) as json_data:
     try:    
-        print config_file   
+        print(config_file)
         config = json.load(json_data)
     except IOError:
-        print 'JSON loading problem'
+        print('JSON loading problem')
 
 LOG_ROOT_PATH = config['loggin']
 RABBITMQ = config['rabbitmq']

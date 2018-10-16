@@ -16,12 +16,22 @@ class RethinkHandler(object):
 
     def create_database(self):
         """
-        Database creation. If the database exists drops it and recreates. If it doesn't exist, create it
+        Database creation. 
         """
         db_name = self.db_name
         con = self.con
         if db_name not in r.db_list().run(con):
             r.db_create(db_name).run(con)
+
+    def reset_database(self):
+        """
+        Database reset. If the database exists drops it and recreates. If it doesn't exist, create it
+        """
+        db_name = self.db_name
+        con = self.con
+        if db_name in r.db_list().run(con):
+            r.db_drop(db_name).run(con)  
+            r.db_create(db_name).run(con)  
 
     def create_table(self, table_name, key='id'):
         """
@@ -29,9 +39,8 @@ class RethinkHandler(object):
         """
         db_name = self.db_name
         con = self.con
-        if table_name in r.db(db_name).table_list().run(con):
-            r.db(db_name).table_drop(table_name).run(con)
-        r.db(db_name).table_create(table_name, primary_key=key).run(con)
+        if table_name not in r.db(db_name).table_list().run(con):
+            r.db(db_name).table_create(table_name, primary_key=key).run(con)
 
     def insert_data(self, table_name, data):
         """
@@ -50,7 +59,7 @@ class RethinkHandler(object):
         try:
             return r.table(table_name).run(con)
         except:
-            print 'Error reading database'
+            print('Error reading database')
 
     def edit_data(self, table_name, primary_key, new_data):
         """
@@ -60,7 +69,7 @@ class RethinkHandler(object):
         try:
             return r.table(table_name).get(primary_key).update(new_data).run(con)
         except:
-            print 'Error editing data'
+            print('Error editing data')
 
     def filter_data(self, table_name, filter_data):
         """
@@ -70,7 +79,7 @@ class RethinkHandler(object):
         try:
             return r.table(table_name).filter(filter_data).run(con)
         except:
-            print 'Error filtering data'
+            print('Error filtering data')
 
     def join_tables(self, table1, table2, table3, key1, key2):
         con = self.con
