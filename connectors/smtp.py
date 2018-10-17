@@ -30,7 +30,7 @@ class SMTPHandler(object):
             self.server.ehlo()
             self.server.login(username, password)
         except SMTPAuthenticationError:
-            print 'Error login with username: ', username, 'and password: ', password
+            print('Error login with username: ', username, 'and password: ', password)
 
     def send_email(self, send_to, subject, body):
         """
@@ -42,6 +42,6 @@ class SMTPHandler(object):
         try:
             message = 'Subject: {}\n\n{}'.format(subject, body)
             self.server.sendmail(self.username, send_to, message)
-            print 'Email sent to ', send_to
+            print ('Email sent to ', send_to)
         except SMTPSendEmailError:
-            print 'Error sending email'
+            print('Error sending email')

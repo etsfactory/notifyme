@@ -15,15 +15,15 @@ try:
     if os.path.isfile(CONFIGURATION_FILE_DEV):
         config_file = CONFIGURATION_FILE_DEV
 except IOError:
-    print 'Error finding config file'
+    print('Error finding config file')
 
 # Loads confid from file
 with open(config_file) as json_data:
     try:    
-        print config_file   
+        print(config_file)
         config = json.load(json_data)
     except IOError:
-        print 'JSON loading problem'
+        print('JSON loading problem')
 
 LOG_ROOT_PATH = config['loggin']
 RABBITMQ = config['rabbitmq']
@@ -35,7 +35,7 @@ SMTP_HOST = SMTP['server']
 SMTP_PORT = SMTP['port']
 SMTP_PASS = SMTP['password']
 
-DB_SERVER = os.getenv('DB_SERVER', '172.17.0.3')
+DB_SERVER = os.getenv('DB_SERVER', '172.17.0.2')
 DB_PORT = os.getenv('DB_HOST', 28015)
 
 DB_NAME = 'notify_me'

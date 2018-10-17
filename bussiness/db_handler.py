@@ -1,0 +1,85 @@
+"""
+Users handler
+"""
+import ast
+
+import settings as st
+import utils.json_parser as json_parser
+from connectors.rethink import RethinkHandler
+from connectors.rethink_realtime import BDRealtime
+
+created = False
+
+class DBHandler(object):
+    """
+    Users handlers class to get, edit, and streaming users from the database
+    """
+
+    def __init__(self, table_name):
+        self.db = RethinkHandler(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
+        self.db_realtime = BDRealtime(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
+        self.table_name = table_name
+
+    def create_table(self, primary_key='id'):
+        """
+        Creates the table in database and regenerates if it already exists
+        """
+        global created
+        if (not created):
+            self.db.reset_database()
+            st.logger.info('Reseting the database...')
+            created = True
+        else:
+            self.db.create_table(self.table_name, primary_key)
+
+    def get_data(self):
+        """
+        Get data from the database
+        """
+        return self.db.get_data(self.table_name)
+
+    def get_data_streaming(self):
+        """
+        Get data from the database in realtime.
+        If data is added or modified in the db it returns the change.
+        This method blocks the current thread so use this method in a separated thread
+        """
+        return self.db_realtime.get_data(self.table_name)
+
+    def insert_data(self, data):
+        """
+        Inserts data into the database
+        """
+        return self.db.insert_data(self.table_name, json_parser.to_json_list(data))
+
+    def edit_data(self, data, key_value, key='id'):
+        """
+        Modifies data 
+        """
+        entries = self.db.filter_data(self.table_name, {key: key_value})
+        for document in entries:
+           self.db.edit_data(self.table_name, document[key], json_parser.to_json(data))
+
+    def filter_data(self, filter):
+        """
+        Filters data from the database
+        """
+        data = self.db.filter_data(self.table_name, filter)      
+        data_list = []
+        for entry in data:
+            data_list.append(entry)
+        return data_list
+   
+    def join_tables(self, table1, table2, table3, key1, key2):
+        """
+        Joins two tables
+        :table1: Table with the foreign keys
+        :table2: Lelft table to join
+        :table3: Right table to join
+        :key1: Foering key from the left table
+        :key2: Foering key for the right table
+        """
+        return self.db.join_tables(table1, table2, table3, key1, key2)
+
+    def table_join_streaming(self, table1, table2, table3, key1, key2):
+         return self.db_realtime.table_join_streaming(table1, table2, table3, key1, key2)
