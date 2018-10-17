@@ -10,14 +10,17 @@ class RabbitMqHandler(threading.Thread):
     """
     Class to manage connection with a rabbitMQ server
     """
-    def __init__(self, server, queue, bus_filter, users, smtp ):
+    def __init__(self, server, queue, bus_filter, users, notification_module ):
         self.server = server
         self.queue = queue
         self.bus_filter = bus_filter
-        self.smtp = smtp
+        self.notification_module = notification_module
         self.connect()
         super().__init__()
-
+    
+    def stop(self):
+        self.channel.stop_consuming()
+            
     def connect(self):
         """
         Connect wit a rabbitMQ server
@@ -63,4 +66,4 @@ class RabbitMqHandler(threading.Thread):
         When a message is received
         """
         st.logger.info(' [x] Received from  %r:  |  %r' % (method.routing_key, message))
-        # self.smtp.send_email('dlopez@ets.es', 'Prueba', message)
+        # self.notification_module.send('dlopez@ets.es', 'Prueba', message)
