@@ -54,6 +54,9 @@ def main():
     time.sleep(5)
     filters.insert(BusFilter("logs", "info"))
     
+    time.sleep(5)
+    filters.delete(BusFilter("logs", "info"))
+
     # Captures not controlled exceptions
     sys.excepthook = errors.log_unhandled_exception
 

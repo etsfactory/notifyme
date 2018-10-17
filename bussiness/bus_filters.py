@@ -49,7 +49,10 @@ class BusFiltersHandler(object):
         """
         Modify bus_filter by his email
         """
-        self.db_handler.edit_data(bus_filter, 'id', bus_filter.id)
+        self.db_handler.edit_data(bus_filter, bus_filter.exchange_key, 'exchange_key')
+
+    def delete(self, bus_filter):
+        self.db_handler.delete_data(bus_filter.exchange_key)
 
     def get_by_exchange_key(self, exchange_key):
         return self.to_object(self.db_handler.filter_data({'exchange_key': exchange_key}))[0]

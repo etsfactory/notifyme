@@ -100,3 +100,6 @@ class SubscriptionHandler(object):
         Modify subscriptions
         """
         self.db_handler.edit_data(subscription, subscription.id)
+
+    def delete(self, subscription):
+        self.db_handler.delete_data(subscription.id)

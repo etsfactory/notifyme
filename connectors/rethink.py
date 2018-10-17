@@ -73,13 +73,25 @@ class RethinkHandler(object):
 
     def filter_data(self, table_name, filter_data):
         """
-        Returns filtered documents from database
+        Returns filtered documents from database.
+        :filter_data: Object with a key and his value
         """
         con = self.con
         try:
             return r.table(table_name).filter(filter_data).run(con)
         except:
             print('Error filtering data')
+    
+    def delete_data(self, table_name, data_to_delete):
+        """
+        Delete documents from database
+        :filter_data: Object with a key and his value
+        """
+        con = self.con
+        try:
+            return r.table(table_name).get(data_to_delete).delete().run(con)
+        except:
+            print('Error deleting data')
 
     def join_tables(self, table1, table2, table3, key1, key2):
         con = self.con

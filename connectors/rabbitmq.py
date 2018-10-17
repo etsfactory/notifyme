@@ -41,7 +41,6 @@ class RabbitMqHandler(threading.Thread):
                                     queue=queue_name,
                                     routing_key=self.bus_filter.key)
 
-            print(self.bus_filter.key)
             st.logger.info('Waiting for bus messagges....')
             
             self.channel.basic_consume(self.on_message,

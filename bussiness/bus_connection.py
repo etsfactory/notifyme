@@ -22,3 +22,5 @@ class BusConnectionHandler(object):
     def stop(self):
         self.bus_thread.stop()
 
+    def get_filter(self):
+        return self.bus_filter
