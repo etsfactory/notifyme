@@ -8,6 +8,7 @@ import settings as st
 from bussiness.bus_filters import BusFilter
 from bussiness.bus_filters import BusFiltersHandler
 from bussiness.subscriptions import SubscriptionHandler
+from bussiness.subscriptions import Subscription
 from bussiness.bus_connection import BusConnectionHandler
 from connectors.smtp import SMTPHandler
 
@@ -28,32 +29,32 @@ class Realtime(object):
         If a filter is removed, the bus connection stops listening and the thread is stopped
         If a filter is updated, the thread stops and creates and new thread
         """
-        cursor = filters.get_realtime()
+        cursor = subscriptions.get_realtime()
         smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
         
-        for bus_filter in cursor:
-            st.logger.info(bus_filter)
-            parsed_filter = self.parse_filter(bus_filter)
-            if bus_filter['old_val']:
+        for subscription in cursor:
+            st.logger.info(subscription)
+            parsed_subscription = self.parse_subscription(subscription)
+            if subscription['old_val']:
                 '''
-                When a filter is deleted
+                When a subscription is deleted
                 '''
                 st.logger.info('-----------------------')
-                st.logger.info('Deleting filter change...')
-                st.logger.info('Watching for key:  ' + str(parsed_filter.__dict__))
-                self.delete_connection(parsed_filter)
-            if bus_filter['new_val']:
+                st.logger.info('Deleting subscription change...')
+                thread = self.search_by_filter(parsed_subscription.exchange_key)
+                self.delete_connection(thread)
+            if subscription['new_val']:
                 '''
-                When a filter is added or edited
+                When a subscription is added or edited
                 '''
                 st.logger.info('-----------------------')
                 st.logger.info('New filter change...')
-                st.logger.info('Watching for key:  ' + str(parsed_filter.__dict__))
-                users = subscriptions.get_users_by_filter(parsed_filter)
+                bus_filter = filters.get_by_exchange_key(parsed_subscription.exchange_key)
+                users = subscriptions.get_users_by_filter(bus_filter)
                 st.logger.info('Notification to:  ' + str(users))
-                self.create_connection(parsed_filter, users, smtp)
+                self.create_connection(bus_filter, users, smtp)
                 
-            
+
     def create_connection(self, bus_filter, users, notification_module):
         """
         Creates a thread with a new rabbitmq connection
@@ -62,14 +63,24 @@ class Realtime(object):
         self.threads.append(bus_connection)
         bus_connection.start()
 
-    def delete_connection(self, bus_filter):
+    def delete_connection(self, thread):
         """
         Search for a thread with the bus_filter to pause and delete it
         """
+        st.logger.info('Stopping thread')
+        thread.stop()
+    
+    def search_by_filter(self, filter_key):
         for thread in self.threads:
-            if thread.get_filter().exchange_key == bus_filter.exchange_key:
-                st.logger.info('Stopping thread')
-                thread.stop()
+            if thread.get_filter().exchange_key == filter_key:
+                return thread
+    
+
+    def search_by_user(self, user):
+        for thread in self.threads:
+            for user_thread in thread.get_users():
+                if user_thread.email == user.email:
+                    return thread
 
     def parse_filter(self, bus_filter):
         """
@@ -82,5 +93,13 @@ class Realtime(object):
 
         return BusFilter(bus_filter[parse_key]['exchange'],
                          bus_filter[parse_key]['key'])
-    
-    
+        
+    def parse_subscription(self, subscription):
+       
+        if subscription['new_val']:
+            parse_key = 'new_val'
+        else: 
+            parse_key = 'old_val'
+
+        return Subscription(subscription[parse_key]['email'],
+                        subscription[parse_key]['exchange_key'])

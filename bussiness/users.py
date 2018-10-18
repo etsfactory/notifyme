@@ -25,7 +25,7 @@ class UsersHandler(object):
         """
         Get all the users from the database
         """
-        return self.db_handler.get_data()
+        return self.to_object(self.db_handler.get_data())
 
     def get_realtime(self):
         """
@@ -57,6 +57,9 @@ class UsersHandler(object):
         return self.to_object(self.db_handler.filter_data({'email': email}))[0]
      
     def to_object(self, data):
+        """
+        Parse db user object to User instance
+        """
         users = []
         for user in data:
             users.append(User(user['name'], user['email']))

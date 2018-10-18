@@ -29,7 +29,7 @@ class BusFiltersHandler(object):
         """
         Get all the bus_filters from the database
         """
-        return self.db_handler.get_data()
+        return self.to_object(self.db_handler.get_data())
 
     def get_realtime(self):
         """
@@ -52,12 +52,21 @@ class BusFiltersHandler(object):
         self.db_handler.edit_data(bus_filter, bus_filter.exchange_key, 'exchange_key')
 
     def delete(self, bus_filter):
+        """
+        Delete bus_filter by his exchange_key 
+        """
         self.db_handler.delete_data(bus_filter.exchange_key)
 
     def get_by_exchange_key(self, exchange_key):
+        """
+        Returns exchange searching by his exchange key
+        """
         return self.to_object(self.db_handler.filter_data({'exchange_key': exchange_key}))[0]
     
     def to_object(self, data):
+        """
+        Parse db filter object to Filter instance
+        """
         filters = []
         for bus_filter in data:
             filters.append(BusFilter(bus_filter['exchange'], bus_filter['key']))

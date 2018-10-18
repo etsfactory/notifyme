@@ -30,7 +30,7 @@ class SubscriptionHandler(object):
         """
         Get all the users from the database
         """
-        return self.db_handler.get_data()
+        return self.to_object(self.db_handler.get_data())
 
     def get_with_relationships(self):
         """
@@ -44,7 +44,7 @@ class SubscriptionHandler(object):
         If user is added or modified in the db it returns the change.
         This method blocks the curren thread so use this method in a separated thread
         """
-        return self.db_handler.table_join_streaming("subscriptions", "users", "bus_filters", "email", "exchange")
+        return self.db_handler.get_data_streaming()
 
     def get_users_by_filter(self, filter):
         """
@@ -102,4 +102,23 @@ class SubscriptionHandler(object):
         self.db_handler.edit_data(subscription, subscription.id)
 
     def delete(self, subscription):
-        self.db_handler.delete_data(subscription.id)
+        """
+        Delete subscription. If no id is pased it will search it 
+        """
+        if hasattr(subscription, 'id'):
+            self.db_handler.delete_data(subscription.id)
+        else:
+            subscriptions = self.db_handler.get_data()
+            for sub in subscriptions:
+                if sub['email'] == subscription.email and sub['exchange_key'] == subscription.exchange_key:
+                    self.db_handler.delete_data(sub['id'])
+
+
+    def to_object(self, data):
+        """
+        Parse db subscription object to Subscription instance
+        """
+        subscriptions = []
+        for subs in data:
+            subscriptions.append(Subscription(subs['email'], subs['exchange_key']))
+        return subscriptions
