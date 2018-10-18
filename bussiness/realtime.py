@@ -31,29 +31,40 @@ class Realtime(object):
         """
         cursor = subscriptions.get_realtime()
         smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
-        
+
         for subscription in cursor:
             st.logger.info(subscription)
             parsed_subscription = self.parse_subscription(subscription)
             if subscription['old_val']:
-                '''
+                """
                 When a subscription is deleted
-                '''
-                st.logger.info('-----------------------')
-                st.logger.info('Deleting subscription change...')
-                thread = self.search_by_filter(parsed_subscription.exchange_key)
-                self.delete_connection(thread)
+                """
+                self.on_subscription_deleted(parsed_subscription)
             if subscription['new_val']:
-                '''
+                """
                 When a subscription is added or edited
-                '''
-                st.logger.info('-----------------------')
-                st.logger.info('New filter change...')
-                bus_filter = filters.get_by_exchange_key(parsed_subscription.exchange_key)
-                users = subscriptions.get_users_by_filter(bus_filter)
-                st.logger.info('Notification to:  ' + str(users))
-                self.create_connection(bus_filter, users, smtp)
-                
+                """
+                self.on_subscription_added(filters, subscriptions, parsed_subscription, smtp)
+
+    def on_subscription_deleted(self, subscription_deleted):
+        """
+        Subscriptions deleted. Searchs and delete a connection thread
+        """
+        st.logger.info('-----------------------')
+        st.logger.info('Deleting subscription change...')
+        thread = self.search_by_filter(subscription_deleted.exchange_key)
+        self.delete_connection(thread)
+
+    def on_subscription_added(self, filters, subscriptions, subscription_added, notification_module):
+        """
+        Subscriptions added. Creates a new connection thread
+        """
+        st.logger.info('-----------------------')
+        st.logger.info('New filter change...')
+        bus_filter = filters.get_by_exchange_key(subscription_added.exchange_key)
+        users = subscriptions.get_users_by_filter(bus_filter)
+        st.logger.info('Notification to:  ' + str(users))
+        self.create_connection(bus_filter, users, notification_module)
 
     def create_connection(self, bus_filter, users, notification_module):
         """
@@ -68,15 +79,21 @@ class Realtime(object):
         Search for a thread with the bus_filter to pause and delete it
         """
         st.logger.info('Stopping thread')
+        self.threads.remove(thread)
         thread.stop()
-    
+
     def search_by_filter(self, filter_key):
+        """
+        Searchs for a thread listening to a filter
+        """
         for thread in self.threads:
             if thread.get_filter().exchange_key == filter_key:
                 return thread
-    
 
     def search_by_user(self, user):
+        """
+        Searchs for a thread listening to a list of users
+        """
         for thread in self.threads:
             for user_thread in thread.get_users():
                 if user_thread.email == user.email:
@@ -88,18 +105,20 @@ class Realtime(object):
         """
         if bus_filter['new_val']:
             parse_key = 'new_val'
-        else: 
+        else:
             parse_key = 'old_val'
 
         return BusFilter(bus_filter[parse_key]['exchange'],
                          bus_filter[parse_key]['key'])
-        
+
     def parse_subscription(self, subscription):
-       
+        """
+        Returns a Subscription object from a realtime rethink object
+        """
         if subscription['new_val']:
             parse_key = 'new_val'
-        else: 
+        else:
             parse_key = 'old_val'
 
         return Subscription(subscription[parse_key]['email'],
-                        subscription[parse_key]['exchange_key'])
+                            subscription[parse_key]['exchange_key'])

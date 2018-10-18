@@ -20,6 +20,9 @@ class RabbitMqHandler(threading.Thread):
     
     def stop(self):
         self.channel.stop_consuming()
+        if self.channel.is_open:
+                self.channel.stop_consuming()
+                self.connection.close()
             
     def connect(self):
         """
@@ -49,7 +52,6 @@ class RabbitMqHandler(threading.Thread):
         except Exception as e:
             st.logger.error(e)
             
-
     def run(self):
         """
         Start listening for a queue
