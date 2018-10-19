@@ -38,18 +38,15 @@ def main():
     filters.insert(BusFilter("logs", "important"))
     filters.insert(BusFilter("logs", "info"))
     
-    subscriptions.insert(Subscription("dlopez@ets.es", ['logs', 'important']))
-    subscriptions.insert(Subscription("bcontreras@ets.es", ['logs', 'important']))
-
     st.logger.info('Starting service')
 
     Realtime()
 
     time.sleep(5)
-    subscriptions.insert(Subscription("dlopez@ets.es", ['logs', 'info']))
+    subscriptions.insert(Subscription("dlopez@ets.es", filters.get()[0].id))
 
     time.sleep(5)
-    subscriptions.delete(Subscription("dlopez@ets.es", ['logs', 'info']))
+    subscriptions.delete(Subscription("dlopez@ets.es", filters.get()[0].id))
 
     # Captures not controlled exceptions
     sys.excepthook = errors.log_unhandled_exception

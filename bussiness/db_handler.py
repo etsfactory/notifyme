@@ -32,11 +32,18 @@ class DBHandler(object):
         else:
             self.db.create_table(self.table_name, primary_key)
 
-    def get_data(self):
+    def get_data(self, key=None):
         """
         Get data from the database
         """
-        return self.db.get_data(self.table_name)
+        data = self.db.get_data(self.table_name, key)
+        if (not key):
+            data_list = []
+            for entry in data:
+                data_list.append(entry)
+            return data_list
+        else:
+            return data
 
     def get_data_streaming(self):
         """

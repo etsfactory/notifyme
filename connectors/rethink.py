@@ -51,12 +51,14 @@ class RethinkHandler(object):
         if table_name in r.db(db_name).table_list().run(con):
             return r.table(table_name).insert(data).run(con)
 
-    def get_data(self, table_name):
+    def get_data(self, table_name, key):
         """"
         Returns data from table
         """
         con = self.con
         try:
+            if key:
+                return r.table(table_name).get(key).run(con)
             return r.table(table_name).run(con)
         except:
             print('Error reading database')

@@ -52,7 +52,7 @@ class Realtime(object):
         """
         st.logger.info('-----------------------')
         st.logger.info('Deleting subscription change...')
-        thread = self.search_by_filter(subscription_deleted.exchange_key)
+        thread = self.search_by_filter_id(subscription_deleted.filter_id)
         self.delete_connection(thread)
 
     def on_subscription_added(self, filters, subscriptions, subscription_added, notification_module):
@@ -60,8 +60,8 @@ class Realtime(object):
         Subscriptions added. Creates a new connection thread
         """
         st.logger.info('-----------------------')
-        st.logger.info('New filter change...')
-        bus_filter = filters.get_by_exchange_key(subscription_added.exchange_key)
+        st.logger.info('New subscription change...')
+        bus_filter = filters.get(subscription_added.filter_id)
         users = subscriptions.get_users_by_filter(bus_filter)
         st.logger.info('Notification to:  ' + str(users))
         self.create_connection(bus_filter, users, notification_module)
@@ -79,15 +79,15 @@ class Realtime(object):
         Search for a thread with the bus_filter to pause and delete it
         """
         st.logger.info('Stopping thread')
-        self.threads.remove(thread)
         thread.stop()
+        self.threads.remove(thread)
 
-    def search_by_filter(self, filter_key):
+    def search_by_filter_id(self, filter_id):
         """
         Searchs for a thread listening to a filter
         """
         for thread in self.threads:
-            if thread.get_filter().exchange_key == filter_key:
+            if thread.get_filter().id == filter_id:
                 return thread
 
     def search_by_user(self, user):
@@ -109,7 +109,7 @@ class Realtime(object):
             parse_key = 'old_val'
 
         return BusFilter(bus_filter[parse_key]['exchange'],
-                         bus_filter[parse_key]['key'])
+                         bus_filter[parse_key]['key'], bus_filter[parse_key]['id'])
 
     def parse_subscription(self, subscription):
         """
@@ -121,4 +121,4 @@ class Realtime(object):
             parse_key = 'old_val'
 
         return Subscription(subscription[parse_key]['email'],
-                            subscription[parse_key]['exchange_key'])
+                            subscription[parse_key]['filter_id'])

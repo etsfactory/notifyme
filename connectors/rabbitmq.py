@@ -15,16 +15,13 @@ class RabbitMqHandler(threading.Thread):
         self.queue = queue
         self.bus_filter = bus_filter
         self.notification_module = notification_module
-        self.connect()
-        super().__init__()
+        self._is_interrupted = False
+        super(RabbitMqHandler, self).__init__()
     
     def stop(self):
-        self.channel.stop_consuming()
-        if self.channel.is_open:
-                self.channel.stop_consuming()
-                self.connection.close()
+        self._is_interrupted = True,
             
-    def connect(self):
+    def run(self):
         """
         Connect wit a rabbitMQ server
         """
@@ -46,23 +43,22 @@ class RabbitMqHandler(threading.Thread):
 
             st.logger.info('Waiting for bus messagges....')
             
-            self.channel.basic_consume(self.on_message,
-                                    queue=queue_name)
+            """
+            NOTE: Instead of using basic consume, I use consume because basic cosume
+            blocks the thread. With consume I can decide when the thread stops
+            """
+            for message in self.channel.consume(queue_name, inactivity_timeout=1):
+                if self._is_interrupted:
+                    break
+                if not message:
+                    continue
+                method, properties, body = message
+                self.on_message(method, properties, body)
 
         except Exception as e:
             st.logger.error(e)
             
-    def run(self):
-        """
-        Start listening for a queue
-        """
-        st.logger.info('Starting listening for messagges....')
-        try:
-            self.channel.start_consuming()
-        except Exception as e:
-            st.logger.error(e)
-
-    def on_message(self, ch, method, properties, message):
+    def on_message(self, method, properties, message):
         """"
         When a message is received
         """

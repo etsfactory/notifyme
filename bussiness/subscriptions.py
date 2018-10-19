@@ -11,9 +11,9 @@ from bussiness.bus_filters import BusFiltersHandler
 
 class Subscription(object):
 
-    def __init__(self, email, exchange_key):
+    def __init__(self, email, filter_id):
         self.email = email
-        self.exchange_key = exchange_key
+        self.filter_id = filter_id
 
 class SubscriptionHandler(object):
     """
@@ -26,11 +26,11 @@ class SubscriptionHandler(object):
         self.users = UsersHandler()
         self.filters = BusFiltersHandler()
 
-    def get(self):
+    def get(self, sub_id):
         """
-        Get all the users from the database
+        Get all the subscriptions from the database. If id is provided search for a single subscription
         """
-        return self.to_object(self.db_handler.get_data())
+        return self.to_object(self.db_handler.get_data(sub_id))
 
     def get_with_relationships(self):
         """
@@ -46,12 +46,12 @@ class SubscriptionHandler(object):
         """
         return self.db_handler.get_data_streaming()
 
-    def get_users_by_filter(self, filter):
+    def get_users_by_filter(self, bus_filter):
         """
         Get user associates with filter
         """
         users = []
-        subscriptions = self.get_by_filter(filter)
+        subscriptions = self.get_by_filter(bus_filter)
         for subscription in subscriptions:
             email = subscription['email']
             user = (self.users.get_by_email(email))
@@ -65,8 +65,7 @@ class SubscriptionHandler(object):
         filters = []
         subscriptions = self.get_by_user(user)
         for subscription in subscriptions:
-            exchange_key = subscription['exchange_key']
-            bus_filter = (self.filters.get_by_exchange_key(exchange_key))
+            bus_filter = self.filters.get(subscription['filter_id'])
             filters.append(bus_filter)
         return filters
 
@@ -76,12 +75,11 @@ class SubscriptionHandler(object):
         """
         return self.db_handler.filter_data({'id': subsc_id})
      
-    def get_by_filter(self, filter):
+    def get_by_filter(self, bus_filter):
         """
         Get subscription by his id
         """
-        exchange_key = [filter.exchange, filter.key]
-        return self.db_handler.filter_data({'exchange_key': exchange_key})
+        return self.db_handler.filter_data({'filter_id': bus_filter.id})
      
     def get_by_user(self, user):
         """
@@ -110,7 +108,7 @@ class SubscriptionHandler(object):
         else:
             subscriptions = self.db_handler.get_data()
             for sub in subscriptions:
-                if sub['email'] == subscription.email and sub['exchange_key'] == subscription.exchange_key:
+                if sub['email'] == subscription.email and sub['filter_id'] == subscription.filter_id:
                     self.db_handler.delete_data(sub['id'])
 
 
@@ -120,5 +118,5 @@ class SubscriptionHandler(object):
         """
         subscriptions = []
         for subs in data:
-            subscriptions.append(Subscription(subs['email'], subs['exchange_key']))
+            subscriptions.append(Subscription(subs['email'], subs['filter_id']))
         return subscriptions
