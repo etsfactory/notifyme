@@ -11,8 +11,8 @@ from bussiness.bus_filters import BusFiltersHandler
 
 class Subscription(object):
 
-    def __init__(self, email, filter_id):
-        self.email = email
+    def __init__(self, user_id, filter_id):
+        self.user_id = user_id
         self.filter_id = filter_id
 
 class SubscriptionHandler(object):
@@ -36,7 +36,7 @@ class SubscriptionHandler(object):
         """
         Get subscriptions joining users and bus_filtes tables
         """
-        return self.db_handler.join_tables("subscriptions", "users", "bus_filters", "email", "exchange")
+        return self.db_handler.join_tables("subscriptions", "users", "bus_filters", "user_id", "filter_id")
 
     def get_realtime(self):
         """
@@ -53,8 +53,7 @@ class SubscriptionHandler(object):
         users = []
         subscriptions = self.get_by_filter(bus_filter)
         for subscription in subscriptions:
-            email = subscription['email']
-            user = (self.users.get_by_email(email))
+            user = (self.users.get(subscription.user_id))
             users.append(user)
         return users
     
@@ -79,13 +78,13 @@ class SubscriptionHandler(object):
         """
         Get subscription by his id
         """
-        return self.db_handler.filter_data({'filter_id': bus_filter.id})
+        return self.to_object(self.db_handler.filter_data({'filter_id': bus_filter.id}))
      
     def get_by_user(self, user):
         """
         Get subscription by his id
         """
-        return self.db_handler.filter_data({'email': user.email})
+        return self.to_object(self.db_handler.filter_data({'user_id': user.id}))
 
     def insert(self, subscription):
         """
@@ -108,7 +107,7 @@ class SubscriptionHandler(object):
         else:
             subscriptions = self.db_handler.get_data()
             for sub in subscriptions:
-                if sub['email'] == subscription.email and sub['filter_id'] == subscription.filter_id:
+                if sub['user_id'] == subscription.user_id and sub['filter_id'] == subscription.filter_id:
                     self.db_handler.delete_data(sub['id'])
 
 
@@ -118,5 +117,5 @@ class SubscriptionHandler(object):
         """
         subscriptions = []
         for subs in data:
-            subscriptions.append(Subscription(subs['email'], subs['filter_id']))
+            subscriptions.append(Subscription(subs['user_id'], subs['filter_id']))
         return subscriptions

@@ -43,10 +43,10 @@ def main():
     Realtime()
 
     time.sleep(5)
-    subscriptions.insert(Subscription("dlopez@ets.es", filters.get()[0].id))
+    subscriptions.insert(Subscription(users.get()[0].id, filters.get()[0].id))
 
     time.sleep(5)
-    subscriptions.delete(Subscription("dlopez@ets.es", filters.get()[0].id))
+    subscriptions.delete(Subscription(users.get()[0].id, filters.get()[0].id))
 
     # Captures not controlled exceptions
     sys.excepthook = errors.log_unhandled_exception

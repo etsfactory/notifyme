@@ -120,5 +120,5 @@ class Realtime(object):
         else:
             parse_key = 'old_val'
 
-        return Subscription(subscription[parse_key]['email'],
+        return Subscription(subscription[parse_key]['user_id'],
                             subscription[parse_key]['filter_id'])
