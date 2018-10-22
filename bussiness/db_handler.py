@@ -32,11 +32,18 @@ class DBHandler(object):
         else:
             self.db.create_table(self.table_name, primary_key)
 
-    def get_data(self):
+    def get_data(self, key=None):
         """
         Get data from the database
         """
-        return self.db.get_data(self.table_name)
+        data = self.db.get_data(self.table_name, key)
+        if (not key):
+            data_list = []
+            for entry in data:
+                data_list.append(entry)
+            return data_list
+        else:
+            return data
 
     def get_data_streaming(self):
         """
@@ -59,6 +66,9 @@ class DBHandler(object):
         entries = self.db.filter_data(self.table_name, {key: key_value})
         for document in entries:
            self.db.edit_data(self.table_name, document[key], json_parser.to_json(data))
+    
+    def delete_data(self, key_value):
+        self.db.delete_data(self.table_name, key_value)
 
     def filter_data(self, filter):
         """

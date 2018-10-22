@@ -12,10 +12,11 @@ class BusFilter(object):
     Bus filter. To filter from the bus with exchange and key
     """
 
-    def __init__(self, exchange, key):
+    def __init__(self, exchange, key, id=None):
         self.exchange = exchange
         self.key = key
-        self.exchange_key = [exchange, key]
+        if id:
+            self.id = id
     
 class BusFiltersHandler(object):
     """
@@ -23,13 +24,13 @@ class BusFiltersHandler(object):
     """
     def __init__(self):
         self.db_handler = DBHandler("bus_filters")
-        self.db_handler.create_table('exchange_key')
+        self.db_handler.create_table()
 
-    def get(self):
+    def get(self, key=None):
         """
         Get all the bus_filters from the database
         """
-        return self.db_handler.get_data()
+        return self.to_object(self.db_handler.get_data(key))
 
     def get_realtime(self):
         """
@@ -49,13 +50,29 @@ class BusFiltersHandler(object):
         """
         Modify bus_filter by his email
         """
-        self.db_handler.edit_data(bus_filter, 'id', bus_filter.id)
+        self.db_handler.edit_data(bus_filter, bus_filter.id, 'id')
 
-    def get_by_exchange_key(self, exchange_key):
-        return self.to_object(self.db_handler.filter_data({'exchange_key': exchange_key}))[0]
-    
+    def delete(self, bus_filter):
+        """
+        Delete bus_filter by his id 
+        """
+        self.db_handler.delete_data(bus_filter.id)
+
     def to_object(self, data):
+        """
+        Parse db filter object to Filter instance. If the data provided is an array, 
+        returns an array of Filter instances
+        """
         filters = []
-        for bus_filter in data:
-            filters.append(BusFilter(bus_filter['exchange'], bus_filter['key']))
-        return filters
+        if isinstance(data, dict):
+            return BusFilter(data['exchange'], data['key'], data['id'])
+        else: 
+            for bus_filter in data:
+                exchange = bus_filter['exchange']
+                key = bus_filter['key']
+                bus_id =  bus_filter['id']
+                filters.append(BusFilter(exchange, key, bus_id))
+            return filters
+
+            
+        

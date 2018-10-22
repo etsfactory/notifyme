@@ -35,25 +35,19 @@ def main():
     users.insert(User("Diego", "dlopez@ets.es"))
     users.edit(User("Diego Lopez", "dlopez@ets.es"))
     
-    filters.insert(BusFilter("logs2", "important"))
+    filters.insert(BusFilter("logs", "important"))
+    filters.insert(BusFilter("logs", "info"))
     
-    # for filter in filters.get_bus_filters():
-    #    print filter
-   
-    subscriptions.insert(Subscription("dlopez@ets.es", ['logs', 'important']))
-    subscriptions.insert(Subscription("dlopez@ets.es", ['logs2', 'important']))
-    subscriptions.insert(Subscription("bcontreras@ets.es", ['logs3', 'important']))
-
     st.logger.info('Starting service')
 
     Realtime()
 
     time.sleep(5)
-    filters.insert(BusFilter("logs", "important"))
-    
+    subscriptions.insert(Subscription(users.get()[0].id, filters.get()[0].id))
+
     time.sleep(5)
-    filters.insert(BusFilter("logs", "info"))
-    
+    subscriptions.delete(Subscription(users.get()[0].id, filters.get()[0].id))
+
     # Captures not controlled exceptions
     sys.excepthook = errors.log_unhandled_exception
 

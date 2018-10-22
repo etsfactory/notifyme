@@ -9,9 +9,11 @@ from bussiness.db_handler import DBHandler
 
 class User(object):
 
-    def __init__(self, name, email):
+    def __init__(self, name, email, id=None):
         self.name = name
         self.email = email
+        if id:
+            self.id = id
 
 class UsersHandler(object):
     """
@@ -19,13 +21,13 @@ class UsersHandler(object):
     """
     def __init__(self):
         self.db_handler = DBHandler("users")
-        self.db_handler.create_table('email')
+        self.db_handler.create_table()
 
-    def get(self):
+    def get(self, user_id=None):
         """
         Get all the users from the database
         """
-        return self.db_handler.get_data()
+        return self.to_object(self.db_handler.get_data(user_id))
 
     def get_realtime(self):
         """
@@ -47,6 +49,9 @@ class UsersHandler(object):
         """
         self.db_handler.edit_data(user, user.email, 'email')
     
+    def delete(self, user):
+        self.db_handler.delete_data(user.email)
+    
     def get_by_email(self, email):
         """
         Get user by his email
@@ -54,8 +59,14 @@ class UsersHandler(object):
         return self.to_object(self.db_handler.filter_data({'email': email}))[0]
      
     def to_object(self, data):
+        """
+        Parse db user object to User instance
+        """
         users = []
-        for user in data:
-            users.append(User(user['name'], user['email']))
-        return users
-        
+        if isinstance(data, dict):
+            return User(data['name'], data['email'], data['id'])
+        else:
+            for user in data:
+                users.append(User(user['name'], user['email'], user['id']))
+            return users
+            

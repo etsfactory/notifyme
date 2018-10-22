@@ -51,12 +51,14 @@ class RethinkHandler(object):
         if table_name in r.db(db_name).table_list().run(con):
             return r.table(table_name).insert(data).run(con)
 
-    def get_data(self, table_name):
+    def get_data(self, table_name, key):
         """"
         Returns data from table
         """
         con = self.con
         try:
+            if key:
+                return r.table(table_name).get(key).run(con)
             return r.table(table_name).run(con)
         except:
             print('Error reading database')
@@ -73,13 +75,25 @@ class RethinkHandler(object):
 
     def filter_data(self, table_name, filter_data):
         """
-        Returns filtered documents from database
+        Returns filtered documents from database.
+        :filter_data: Object with a key and his value
         """
         con = self.con
         try:
             return r.table(table_name).filter(filter_data).run(con)
         except:
             print('Error filtering data')
+    
+    def delete_data(self, table_name, data_to_delete):
+        """
+        Delete documents from database
+        :filter_data: Object with a key and his value
+        """
+        con = self.con
+        try:
+            return r.table(table_name).get(data_to_delete).delete().run(con)
+        except:
+            print('Error deleting data')
 
     def join_tables(self, table1, table2, table3, key1, key2):
         con = self.con
