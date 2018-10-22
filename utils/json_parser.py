@@ -2,9 +2,12 @@ import ujson
 import ast
 
 def to_json_list(data):
-    entry = ujson.dumps([data.__dict__])
-    return ast.literal_eval(entry)
-
+    if isinstance(data, list):
+        entry = ujson.dumps([ob.__dict__ for ob in data])
+        return ast.literal_eval(entry)
+    else: 
+        return to_json(data)
+        
 def to_json(data):
     entry = ujson.dumps(data.__dict__)
     return ast.literal_eval(entry)

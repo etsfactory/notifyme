@@ -6,15 +6,21 @@ import settings as st
 
 from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
+from marshmallow import Schema, fields, pprint
+
+class UserSchema(Schema):
+    id = fields.Str()
+    name = fields.Str()
+    email = fields.Email()
+    created_at = fields.DateTime()
 
 class User(object):
-
     def __init__(self, name, email, id=None):
         self.name = name
         self.email = email
         if id:
             self.id = id
-
+    
 class UsersHandler(object):
     """
     Users handlers class to get, edit, and streaming users from the database
@@ -69,4 +75,3 @@ class UsersHandler(object):
             for user in data:
                 users.append(User(user['name'], user['email'], user['id']))
             return users
-            

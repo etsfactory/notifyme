@@ -24,6 +24,7 @@ from bussiness.subscriptions import SubscriptionHandler
 from bussiness.subscriptions import Subscription
 
 from bussiness.realtime import Realtime
+from api.api import ApiHandler
         
 def main():
     # smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
@@ -42,11 +43,14 @@ def main():
 
     Realtime()
 
-    time.sleep(5)
-    subscriptions.insert(Subscription(users.get()[0].id, filters.get()[0].id))
+    # time.sleep(5)
+    # subscriptions.insert(Subscription(users.get()[0].id, filters.get()[0].id))
 
-    time.sleep(5)
-    subscriptions.delete(Subscription(users.get()[0].id, filters.get()[0].id))
+    # time.sleep(5)
+    # subscriptions.delete(Subscription(users.get()[0].id, filters.get()[0].id))
+
+    api = ApiHandler()
+    api.start()
 
     # Captures not controlled exceptions
     sys.excepthook = errors.log_unhandled_exception
