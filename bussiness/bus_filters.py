@@ -7,6 +7,14 @@ import settings as st
 from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
 
+from marshmallow import Schema, fields, pprint
+
+class BusFilterSchema(Schema):
+    id = fields.Str()
+    exchange = fields.Str()
+    key = fields.Str()
+    created_at = fields.DateTime()
+
 class BusFilter(object):
     """
     Bus filter. To filter from the bus with exchange and key
