@@ -13,7 +13,6 @@ class BusFilterSchema(Schema):
     id = fields.Str()
     exchange = fields.Str()
     key = fields.Str()
-    created_at = fields.DateTime()
 
 class BusFilter(object):
     """

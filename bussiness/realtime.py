@@ -7,7 +7,7 @@ from threading import Thread
 import settings as st
 from bussiness.bus_filters import BusFilter
 from bussiness.bus_filters import BusFiltersHandler
-from bussiness.subscriptions import SubscriptionHandler
+from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.subscriptions import Subscription
 from bussiness.bus_connection import BusConnectionHandler
 from connectors.smtp import SMTPHandler
@@ -19,7 +19,7 @@ class Realtime(object):
     def __init__(self):
         self.threads = []
         filters = BusFiltersHandler()
-        subscriptions = SubscriptionHandler()
+        subscriptions = SubscriptionsHandler()
         Thread(target=self.realtime_filters, args=(filters, subscriptions)).start()
 
     def realtime_filters(self, filters, subscriptions):
@@ -122,3 +122,4 @@ class Realtime(object):
 
         return Subscription(subscription[parse_key]['user_id'],
                             subscription[parse_key]['filter_id'])
+

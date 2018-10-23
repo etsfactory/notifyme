@@ -15,7 +15,7 @@ class Subscription(object):
         self.user_id = user_id
         self.filter_id = filter_id
 
-class SubscriptionHandler(object):
+class SubscriptionsHandler(object):
     """
     Subscription type handlers class to get, edit, and streaming subscriptions from the database
     """
@@ -64,7 +64,7 @@ class SubscriptionHandler(object):
         filters = []
         subscriptions = self.get_by_user(user)
         for subscription in subscriptions:
-            bus_filter = self.filters.get(subscription['filter_id'])
+            bus_filter = self.filters.get(subscription.filter_id)
             filters.append(bus_filter)
         return filters
 

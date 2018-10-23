@@ -12,7 +12,6 @@ class UserSchema(Schema):
     id = fields.Str()
     name = fields.Str()
     email = fields.Email()
-    created_at = fields.DateTime()
 
 class User(object):
     def __init__(self, name, email, id=None):
