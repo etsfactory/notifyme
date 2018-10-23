@@ -50,7 +50,7 @@ class BusFilterView(Resource):
         response = json_parser.to_json_list(bus_filter)
         return response
 
-class BudFilterUsersView(Resource):
+class BusFilterUsersView(Resource):
     def get(self, bus_filter_id):
         bus_filter = filters.get()[int(bus_filter_id)]
         subs = subscriptions.get_users_by_filter(bus_filter)

@@ -37,7 +37,7 @@ def main():
     
     filters.insert(BusFilter("logs", "important"))
     filters.insert(BusFilter("logs", "info"))
-    subscriptions.insert(Subscription(users.get()[0].id, filters.get()[0].id))
+    # subscriptions.insert(Subscription(users.get()[0].id, filters.get()[0].id))
     
     st.logger.info('Starting service')
 

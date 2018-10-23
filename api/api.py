@@ -3,7 +3,8 @@ import json
 from flask import Flask
 from flask_restful import Api
 from api.api_users import UsersView, UserView, UserFiltersView
-from api.api_bus_filters import BusFiltersView, BusFilterView, BudFilterUsersView
+from api.api_bus_filters import BusFiltersView, BusFilterView, BusFilterUsersView
+from api.api_subscriptions import SubscriptionsView
 
 import threading
 
@@ -22,6 +23,8 @@ class ApiHandler(threading.Thread):
 
         api.add_resource(BusFiltersView, '/bus_filters')
         api.add_resource(BusFilterView, '/bus_filter/<string:bus_filter_id>')
-        api.add_resource(BudFilterUsersView, '/bus_filter/<string:bus_filter_id>/users')
+        api.add_resource(BusFilterUsersView, '/bus_filter/<string:bus_filter_id>/users')
+
+        api.add_resource(SubscriptionsView, '/subscriptions')
 
         app.run()

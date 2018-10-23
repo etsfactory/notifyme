@@ -55,7 +55,7 @@ class UsersHandler(object):
         self.db_handler.edit_data(user, user.id, 'id')
     
     def delete(self, user):
-        self.db_handler.delete_data(user.email)
+        self.db_handler.delete_data(user.id)
     
     def get_by_email(self, email):
         """

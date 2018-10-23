@@ -9,11 +9,20 @@ from bussiness.db_handler import DBHandler
 from bussiness.users import UsersHandler
 from bussiness.bus_filters import BusFiltersHandler
 
+from marshmallow import Schema, fields, pprint
+
+class SubscriptionSchema(Schema):
+    id = fields.Str()
+    user_id = fields.Str()
+    filter_id = fields.Str()
+
 class Subscription(object):
 
-    def __init__(self, user_id, filter_id):
+    def __init__(self, user_id, filter_id, id=None):
         self.user_id = user_id
         self.filter_id = filter_id
+        if id:
+            self.id = id
 
 class SubscriptionsHandler(object):
     """
@@ -26,7 +35,7 @@ class SubscriptionsHandler(object):
         self.users = UsersHandler()
         self.filters = BusFiltersHandler()
 
-    def get(self, sub_id):
+    def get(self, sub_id=None):
         """
         Get all the subscriptions from the database. If id is provided search for a single subscription
         """
