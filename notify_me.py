@@ -34,7 +34,6 @@ def main():
     
     users.insert(User("Bruno", "bcontreras@ets.es"))
     users.insert(User("Diego", "dlopez@ets.es"))
-    users.edit(User("Diego Lopez", "dlopez@ets.es"))
     
     filters.insert(BusFilter("logs", "important"))
     filters.insert(BusFilter("logs", "info"))

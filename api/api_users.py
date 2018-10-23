@@ -25,8 +25,10 @@ class UserView(Resource):
         if errors:
             return errors, 422
  
-        pprint(result)
-        return {'hello': 'world'}
+        user = User(result['name'], result['email'], result['id'])
+        print(str(user.__dict__))
+        users.edit(user)
+        return {'edited': True}
 
 class UsersView(Resource):
     def get(self):
