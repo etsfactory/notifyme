@@ -111,20 +111,16 @@ class SubscriptionsHandler(object):
         """
         Delete subscription. If no id is pased it will search it 
         """
-        if hasattr(subscription, 'id'):
-            self.db_handler.delete_data(subscription.id)
-        else:
-            subscriptions = self.db_handler.get_data()
-            for sub in subscriptions:
-                if sub['user_id'] == subscription.user_id and sub['filter_id'] == subscription.filter_id:
-                    self.db_handler.delete_data(sub['id'])
-
-
+        self.db_handler.delete_data(subscription.id)
+        
     def to_object(self, data):
         """
         Parse db subscription object to Subscription instance
         """
-        subscriptions = []
-        for subs in data:
-            subscriptions.append(Subscription(subs['user_id'], subs['filter_id']))
-        return subscriptions
+        subs = []
+        if isinstance(data, dict):
+            return Subscription(data['user_id'], data['filter_id'], data['id'])
+        else:
+            for sub in data:
+                subs.append(Subscription(sub['user_id'], sub['filter_id'], sub['id']))
+            return subs

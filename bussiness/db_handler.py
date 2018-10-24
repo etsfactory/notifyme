@@ -8,7 +8,7 @@ import utils.json_parser as json_parser
 from connectors.rethink import RethinkHandler
 from connectors.rethink_realtime import BDRealtime
 
-created = False
+created = True
 
 class DBHandler(object):
     """

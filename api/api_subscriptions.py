@@ -21,21 +21,35 @@ subscription_schema = SubscriptionSchema()
 class SubscriptionsView(Resource):
 
     def get(self):
+        """
+        Get subscriptions from the db
+        """
         response = json_parser.to_json_list(subscriptions.get())
         return response
 
     def post(self):
+        """
+        Create subscription
+        """
         json_data = request.get_json(force=True)
         if not json_data:
                return {'message': 'No input data provided'}, 400
         result, errors = subscription_schema.load(json_data)
         if errors:
             return errors, 422
- 
+
         subscription = Subscription(result['user_id'], result['filter_id'])
         subscriptions.insert(subscription)
         response = json_parser.to_json_list(subscription)
-        return response, 201 
+        return response, 201
 
+class SubscriptionView(Resource):
 
-
+     def delete(self, subscription_id):
+        """
+        Delete subscription by his id
+        """
+        subscription = subscriptions.get(subscription_id)
+        subscriptions.delete(subscription)
+        response = json_parser.to_json_list(subscription)
+        return response

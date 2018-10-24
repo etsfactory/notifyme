@@ -26,8 +26,8 @@ from bussiness.subscriptions import Subscription
 from bussiness.realtime import Realtime
 from api.api import ApiHandler
         
-def main():
-    # smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+def initiliceTestData():
+
     users = UsersHandler()
     filters = BusFiltersHandler()
     subscriptions = SubscriptionsHandler()
@@ -37,16 +37,15 @@ def main():
     
     filters.insert(BusFilter("logs", "important"))
     filters.insert(BusFilter("logs", "info"))
-    # subscriptions.insert(Subscription(users.get()[0].id, filters.get()[0].id))
+
+def main():
+    # smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
     
     st.logger.info('Starting service')
 
+    # initiliceTestData()
+
     Realtime()
-
-    # time.sleep(5)
-
-    # time.sleep(5)
-    # subscriptions.delete(Subscription(users.get()[0].id, filters.get()[0].id))
 
     api = ApiHandler()
     api.start()

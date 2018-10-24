@@ -53,17 +53,24 @@ class BusFiltersHandler(object):
         """
         return self.db_handler.insert_data(bus_filter)
 
-    def edit(self, bus_filter):
+    def edit(self, bus_filter, bus_filter_id):
         """
         Modify bus_filter by his email
         """
-        self.db_handler.edit_data(bus_filter, bus_filter.id, 'id')
+        self.db_handler.edit_data(bus_filter, bus_filter_id, 'id')
 
     def delete(self, bus_filter):
         """
         Delete bus_filter by his id 
         """
         self.db_handler.delete_data(bus_filter.id)
+    
+    def search(self, bus_filter):
+        bus_filters = self.db_handler.filter_data({'exchange': bus_filter.exchange, 'key': bus_filter.key})
+        if len(bus_filters) > 0:
+            return bus_filters[0]['id'], False
+        else:
+            return None, True
 
     def to_object(self, data):
         """

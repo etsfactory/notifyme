@@ -29,8 +29,13 @@ class Realtime(object):
         If a filter is removed, the bus connection stops listening and the thread is stopped
         If a filter is updated, the thread stops and creates and new thread
         """
-        cursor = subscriptions.get_realtime()
         smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+        subs = subscriptions.get()
+        for sub in subs:
+            st.logger.info(sub)
+            self.on_subscription_added(filters, subscriptions, sub, smtp)
+
+        cursor = subscriptions.get_realtime()
 
         for subscription in cursor:
             st.logger.info(subscription)

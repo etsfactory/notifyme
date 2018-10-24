@@ -46,13 +46,13 @@ class UsersHandler(object):
         """
         Insert user or users to the database
         """
-        self.db_handler.insert_data(user)
+        return self.db_handler.insert_data(user)
 
-    def edit(self, user):
+    def edit(self, user, user_id):
         """
         Modify user by his id
         """
-        self.db_handler.edit_data(user, user.id, 'id')
+        self.db_handler.edit_data(user, user_id, 'id')
     
     def delete(self, user):
         self.db_handler.delete_data(user.id)
@@ -62,6 +62,13 @@ class UsersHandler(object):
         Get user by his email
         """
         return self.to_object(self.db_handler.filter_data({'email': email}))[0]
+
+    def search(self, user):
+        users = self.db_handler.filter_data({'email': user.email, 'name': user.name})
+        if len(users) > 0:
+            return users[0]['id'], False
+        else:
+            return None, True
      
     def to_object(self, data):
         """
@@ -74,3 +81,4 @@ class UsersHandler(object):
             for user in data:
                 users.append(User(user['name'], user['email'], user['id']))
             return users
+    
