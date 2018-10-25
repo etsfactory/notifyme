@@ -74,6 +74,8 @@ class UsersHandler(object):
         """
         Parse db user object to User instance
         """
+        if (not data):
+            return None
         users = []
         if isinstance(data, dict):
             return User(data['name'], data['email'], data['id'])

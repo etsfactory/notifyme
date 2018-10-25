@@ -38,10 +38,16 @@ class SubscriptionsView(Resource):
         if errors:
             return errors, 422
 
-        subscription = Subscription(result['user_id'], result['filter_id'])
-        subscriptions.insert(subscription)
-        response = json_parser.to_json_list(subscription)
-        return response, 201
+        bus_filter_exits = filters.get(result['filter_id'])
+        user_exits = users.get(result['user_id'])
+
+        if (bus_filter_exits and user_exits):
+            subscription = Subscription(result['user_id'], result['filter_id'])
+            subscriptions.insert(subscription)
+            response = json_parser.to_json_list(subscription)
+            return response, 201        
+        else:
+            return {'message': 'Bus filter id or user filter id does not exits'}, 400
 
 class SubscriptionView(Resource):
 

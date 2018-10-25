@@ -77,6 +77,8 @@ class BusFiltersHandler(object):
         Parse db filter object to Filter instance. If the data provided is an array, 
         returns an array of Filter instances
         """
+        if (not data):
+            return None
         filters = []
         if isinstance(data, dict):
             return BusFilter(data['exchange'], data['key'], data['id'])
