@@ -7,7 +7,7 @@ from threading import Thread
 import settings as st
 from bussiness.bus_filters import BusFilter
 from bussiness.bus_filters import BusFiltersHandler
-from bussiness.subscriptions import SubscriptionHandler
+from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.subscriptions import Subscription
 from bussiness.bus_connection import BusConnectionHandler
 from connectors.smtp import SMTPHandler
@@ -19,7 +19,7 @@ class Realtime(object):
     def __init__(self):
         self.threads = []
         filters = BusFiltersHandler()
-        subscriptions = SubscriptionHandler()
+        subscriptions = SubscriptionsHandler()
         Thread(target=self.realtime_filters, args=(filters, subscriptions)).start()
 
     def realtime_filters(self, filters, subscriptions):
@@ -29,8 +29,13 @@ class Realtime(object):
         If a filter is removed, the bus connection stops listening and the thread is stopped
         If a filter is updated, the thread stops and creates and new thread
         """
-        cursor = subscriptions.get_realtime()
         smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+        subs = subscriptions.get()
+        for sub in subs:
+            st.logger.info(sub)
+            self.on_subscription_added(filters, subscriptions, sub, smtp)
+
+        cursor = subscriptions.get_realtime()
 
         for subscription in cursor:
             st.logger.info(subscription)
@@ -122,3 +127,4 @@ class Realtime(object):
 
         return Subscription(subscription[parse_key]['user_id'],
                             subscription[parse_key]['filter_id'])
+

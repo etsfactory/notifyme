@@ -4,5 +4,6 @@
     "python.unitTest.pyTestArgs": [],
     "python.unitTest.unittestEnabled": false,
     "python.unitTest.nosetestsEnabled": false,
-    "python.unitTest.pyTestEnabled": true
+    "python.unitTest.pyTestEnabled": true,
+    "python.pythonPath": "/usr/bin/python3"
 }

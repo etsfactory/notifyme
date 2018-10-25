@@ -8,7 +8,7 @@ import utils.json_parser as json_parser
 from connectors.rethink import RethinkHandler
 from connectors.rethink_realtime import BDRealtime
 
-created = False
+created = True
 
 class DBHandler(object):
     """
@@ -65,7 +65,7 @@ class DBHandler(object):
         """
         entries = self.db.filter_data(self.table_name, {key: key_value})
         for document in entries:
-           self.db.edit_data(self.table_name, document[key], json_parser.to_json(data))
+            self.db.edit_data(self.table_name, document[key], json_parser.to_json(data))
     
     def delete_data(self, key_value):
         self.db.delete_data(self.table_name, key_value)

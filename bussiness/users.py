@@ -6,15 +6,20 @@ import settings as st
 
 from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
+from marshmallow import Schema, fields, pprint
+
+class UserSchema(Schema):
+    id = fields.Str()
+    name = fields.Str()
+    email = fields.Email()
 
 class User(object):
-
     def __init__(self, name, email, id=None):
         self.name = name
         self.email = email
         if id:
             self.id = id
-
+    
 class UsersHandler(object):
     """
     Users handlers class to get, edit, and streaming users from the database
@@ -41,27 +46,36 @@ class UsersHandler(object):
         """
         Insert user or users to the database
         """
-        self.db_handler.insert_data(user)
+        return self.db_handler.insert_data(user)
 
-    def edit(self, user):
+    def edit(self, user, user_id):
         """
-        Modify user by his email
+        Modify user by his id
         """
-        self.db_handler.edit_data(user, user.email, 'email')
+        self.db_handler.edit_data(user, user_id, 'id')
     
     def delete(self, user):
-        self.db_handler.delete_data(user.email)
+        self.db_handler.delete_data(user.id)
     
     def get_by_email(self, email):
         """
         Get user by his email
         """
         return self.to_object(self.db_handler.filter_data({'email': email}))[0]
+
+    def search(self, user):
+        users = self.db_handler.filter_data({'email': user.email, 'name': user.name})
+        if len(users) > 0:
+            return users[0]['id'], False
+        else:
+            return None, True
      
     def to_object(self, data):
         """
         Parse db user object to User instance
         """
+        if (not data):
+            return None
         users = []
         if isinstance(data, dict):
             return User(data['name'], data['email'], data['id'])
@@ -69,4 +83,4 @@ class UsersHandler(object):
             for user in data:
                 users.append(User(user['name'], user['email'], user['id']))
             return users
-            
+    

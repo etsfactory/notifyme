@@ -9,13 +9,22 @@ from bussiness.db_handler import DBHandler
 from bussiness.users import UsersHandler
 from bussiness.bus_filters import BusFiltersHandler
 
+from marshmallow import Schema, fields, pprint
+
+class SubscriptionSchema(Schema):
+    id = fields.Str()
+    user_id = fields.Str()
+    filter_id = fields.Str()
+
 class Subscription(object):
 
-    def __init__(self, user_id, filter_id):
+    def __init__(self, user_id, filter_id, id=None):
         self.user_id = user_id
         self.filter_id = filter_id
+        if id:
+            self.id = id
 
-class SubscriptionHandler(object):
+class SubscriptionsHandler(object):
     """
     Subscription type handlers class to get, edit, and streaming subscriptions from the database
     """
@@ -26,7 +35,7 @@ class SubscriptionHandler(object):
         self.users = UsersHandler()
         self.filters = BusFiltersHandler()
 
-    def get(self, sub_id):
+    def get(self, sub_id=None):
         """
         Get all the subscriptions from the database. If id is provided search for a single subscription
         """
@@ -64,7 +73,7 @@ class SubscriptionHandler(object):
         filters = []
         subscriptions = self.get_by_user(user)
         for subscription in subscriptions:
-            bus_filter = self.filters.get(subscription['filter_id'])
+            bus_filter = self.filters.get(subscription.filter_id)
             filters.append(bus_filter)
         return filters
 
@@ -102,20 +111,16 @@ class SubscriptionHandler(object):
         """
         Delete subscription. If no id is pased it will search it 
         """
-        if hasattr(subscription, 'id'):
-            self.db_handler.delete_data(subscription.id)
-        else:
-            subscriptions = self.db_handler.get_data()
-            for sub in subscriptions:
-                if sub['user_id'] == subscription.user_id and sub['filter_id'] == subscription.filter_id:
-                    self.db_handler.delete_data(sub['id'])
-
-
+        self.db_handler.delete_data(subscription.id)
+        
     def to_object(self, data):
         """
         Parse db subscription object to Subscription instance
         """
-        subscriptions = []
-        for subs in data:
-            subscriptions.append(Subscription(subs['user_id'], subs['filter_id']))
-        return subscriptions
+        subs = []
+        if isinstance(data, dict):
+            return Subscription(data['user_id'], data['filter_id'], data['id'])
+        else:
+            for sub in data:
+                subs.append(Subscription(sub['user_id'], sub['filter_id'], sub['id']))
+            return subs
