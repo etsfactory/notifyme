@@ -5,6 +5,7 @@ from flask_restful import Api
 from api.api_users import UsersView, UserView, UserFiltersView
 from api.api_bus_filters import BusFiltersView, BusFilterView, BusFilterUsersView
 from api.api_subscriptions import SubscriptionsView, SubscriptionView
+from api.api_templates import TemplatesView, TemplateView
 
 import threading
 
@@ -30,5 +31,8 @@ class ApiHandler(threading.Thread):
 
         api.add_resource(SubscriptionsView, '/subscriptions')
         api.add_resource(SubscriptionView, '/subscriptions/<string:subscription_id>')
+
+        api.add_resource(TemplatesView, '/templates')
+        api.add_resource(TemplateView, '/templates/<string:template_id>')
 
         app.run()

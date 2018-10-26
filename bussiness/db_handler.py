@@ -8,7 +8,7 @@ import utils.json_parser as json_parser
 from connectors.rethink import RethinkHandler
 from connectors.rethink_realtime import BDRealtime
 
-created = True
+recreate_database = True
 
 class DBHandler(object):
     """
@@ -24,11 +24,11 @@ class DBHandler(object):
         """
         Creates the table in database and regenerates if it already exists
         """
-        global created
-        if (not created):
+        global recreate_database
+        if (recreate_database):
             self.db.reset_database()
             st.logger.info('Reseting the database...')
-            created = True
+            recreate_database = False
         else:
             self.db.create_table(self.table_name, primary_key)
 

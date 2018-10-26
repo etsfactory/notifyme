@@ -116,6 +116,7 @@ class UserFiltersView(Resource):
             bus_filter_id = filters.insert(bus_filter)['generated_keys'][0]
 
         subscription = Subscription(user_id, bus_filter_id)
+        print(str(subscription.__dict__))
         subscriptions.insert(subscription)
 
         response = json_parser.to_json_list(subscription)

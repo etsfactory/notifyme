@@ -8,10 +8,11 @@ class BusConnectionHandler(object):
     """
     Bus connection class
     """
-    def __init__(self, bus_filter, users, notification_module):
-        self.bus_filter = bus_filter
+    def __init__(self, exchange, keys, users, notification_module):
+        self.exchange = exchange
+        self.keys = keys
         self.users = users
-        self.bus_thread = RabbitMqHandler(st.RABBITMQ_SERVER, 'notifyme', bus_filter, users, notification_module)
+        self.bus_thread = RabbitMqHandler(st.RABBITMQ_SERVER, 'notifyme', exchange, keys, users, notification_module)
 
     def start(self):
         """
@@ -26,8 +27,14 @@ class BusConnectionHandler(object):
         self.bus_thread.stop()
         self.bus_thread.join()
 
-    def get_filter(self):
+    def get_keys(self):
         """
-        Return the bus filter that it's listening the thread
+        Return the keys that it's listening the thread
         """
-        return self.bus_filter
+        return self.keys
+
+    def get_exchange(self):
+        """
+        Return the exchange that it's listening the thread
+        """
+        return self.exchange

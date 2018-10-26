@@ -23,6 +23,8 @@ from bussiness.bus_filters import BusFilter
 from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.subscriptions import Subscription
 
+from bussiness.templates import Template
+
 from bussiness.realtime import Realtime
 from api.api import ApiHandler
         
@@ -43,7 +45,7 @@ def main():
     
     st.logger.info('Starting service')
 
-    # initiliceTestData()
+    initiliceTestData()
 
     Realtime()
 

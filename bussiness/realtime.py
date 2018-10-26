@@ -18,28 +18,30 @@ class Realtime(object):
     """
     def __init__(self):
         self.threads = []
-        filters = BusFiltersHandler()
-        subscriptions = SubscriptionsHandler()
-        Thread(target=self.realtime_filters, args=(filters, subscriptions)).start()
+        self.filters = BusFiltersHandler()
+        self.subscriptions = SubscriptionsHandler()
+        self.smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+        Thread(target=self.realtime_filters).start()
 
-    def realtime_filters(self, filters, subscriptions):
+    def realtime_filters(self):
         """
         Realtime filters. Creates a thread per new change
         to listen for a exchange and key in the bus.
         If a filter is removed, the bus connection stops listening and the thread is stopped
         If a filter is updated, the thread stops and creates and new thread
         """
-        smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
-        subs = subscriptions.get()
+        subs = self.subscriptions.get()
         for sub in subs:
             st.logger.info(sub)
-            self.on_subscription_added(filters, subscriptions, sub, smtp)
+            self.on_subscription_added(sub)
 
-        cursor = subscriptions.get_realtime()
+        cursor = self.subscriptions.get_realtime()
 
         for subscription in cursor:
             st.logger.info(subscription)
+            
             parsed_subscription = self.parse_subscription(subscription)
+
             if subscription['old_val']:
                 """
                 When a subscription is deleted
@@ -49,33 +51,48 @@ class Realtime(object):
                 """
                 When a subscription is added or edited
                 """
-                self.on_subscription_added(filters, subscriptions, parsed_subscription, smtp)
+                self.on_subscription_added(parsed_subscription)
 
-    def on_subscription_deleted(self, subscription_deleted):
+    def on_subscription_deleted(self, parsed_subscription):
         """
         Subscriptions deleted. Searchs and delete a connection thread
         """
         st.logger.info('-----------------------')
         st.logger.info('Deleting subscription change...')
-        thread = self.search_by_filter_id(subscription_deleted.filter_id)
-        self.delete_connection(thread)
+        bus_filter = self.filters.get(parsed_subscription.filter_id)
+        thread = self.search_thread(bus_filter.exchange)
+        if thread: 
+            self.delete_connection(thread)
 
-    def on_subscription_added(self, filters, subscriptions, subscription_added, notification_module):
+    def on_subscription_added(self, parsed_subscription):
         """
         Subscriptions added. Creates a new connection thread
         """
         st.logger.info('-----------------------')
         st.logger.info('New subscription change...')
-        bus_filter = filters.get(subscription_added.filter_id)
-        users = subscriptions.get_users_by_filter(bus_filter)
-        st.logger.info('Notification to:  ' + str(users))
-        self.create_connection(bus_filter, users, notification_module)
+        
+        self.on_subscription_deleted(parsed_subscription)   
+        users_list = []
+        keys = []
+        exchange = self.filters.get(parsed_subscription.filter_id).exchange
+        bus_filters = self.filters.get_by_exchange(exchange)
+        for bus_filter in bus_filters:
+            sub = self.subscriptions.get_by_filter(bus_filter)
+            users = self.subscriptions.get_users_by_filter(bus_filter)
+            if users:
+                users_list.append(users)
+            keys.append(bus_filter.key)
+        st.logger.info('Notification to:  ' + str(users_list))
+        st.logger.info('Notification to:  ' + str(keys))
+        st.logger.info('Notification to:  ' + str(exchange))
 
-    def create_connection(self, bus_filter, users, notification_module):
+        self.create_connection(exchange, keys, users_list, self.smtp)
+
+    def create_connection(self, exchange, keys, users, notification_module):
         """
         Creates a thread with a new rabbitmq connection
         """
-        bus_connection = BusConnectionHandler(bus_filter, users, notification_module)
+        bus_connection = BusConnectionHandler(exchange, keys, users, notification_module)
         self.threads.append(bus_connection)
         bus_connection.start()
 
@@ -87,13 +104,13 @@ class Realtime(object):
         thread.stop()
         self.threads.remove(thread)
 
-    def search_by_filter_id(self, filter_id):
+    def search_thread(self, exchange):
         """
         Searchs for a thread listening to a filter
         """
         for thread in self.threads:
-            if thread.get_filter().id == filter_id:
-                return thread
+            if thread.exchange == exchange:
+                    return thread
 
     def search_by_user(self, user):
         """

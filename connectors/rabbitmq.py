@@ -10,10 +10,11 @@ class RabbitMqHandler(threading.Thread):
     """
     Class to manage connection with a rabbitMQ server
     """
-    def __init__(self, server, queue, bus_filter, users, notification_module ):
+    def __init__(self, server, queue, exchange, keys, users, notification_module ):
         self.server = server
         self.queue = queue
-        self.bus_filter = bus_filter
+        self.exchange = exchange
+        self.keys = keys
         self.notification_module = notification_module
         self._is_interrupted = False
         super(RabbitMqHandler, self).__init__()
@@ -28,7 +29,7 @@ class RabbitMqHandler(threading.Thread):
         try:
             self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.server))
             self.channel = self.connection.channel()
-            self.channel.exchange_declare(exchange=self.bus_filter.exchange,
+            self.channel.exchange_declare(exchange=self.exchange,
                          exchange_type='direct')
             """
             NOTE: No queue name to let rabbit choouse a random name for us. 
@@ -37,9 +38,10 @@ class RabbitMqHandler(threading.Thread):
             result = self.channel.queue_declare(exclusive=True)
             queue_name = result.method.queue
 
-            self.channel.queue_bind(exchange=self.bus_filter.exchange,
-                                    queue=queue_name,
-                                    routing_key=self.bus_filter.key)
+            for key in self.keys:
+                self.channel.queue_bind(exchange=self.exchange,
+                                        queue=queue_name,
+                                        routing_key=key)
 
             st.logger.info('Waiting for bus messagges....')
             

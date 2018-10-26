@@ -11,49 +11,56 @@ from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.subscriptions import SubscriptionSchema
 from bussiness.subscriptions import Subscription
 
+from bussiness.templates import TemplatesHandler
+from bussiness.templates import TemplateSchema
+from bussiness.templates import Template
+
 import utils.json_parser as json_parser
 
 users = UsersHandler()
 filters = BusFiltersHandler()
 subscriptions = SubscriptionsHandler()
-subscription_schema = SubscriptionSchema()
+templates = TemplatesHandler()
+templates_schema = TemplateSchema()
 
-class SubscriptionsView(Resource):
+class TemplatesView(Resource):
 
     def get(self):
         """
-        Get subscriptions from the db
+        Get templates from the db
         """
-        response = json_parser.to_json_list(subscriptions.get())
+        response = json_parser.to_json_list(templates.get())
         return response
 
     def post(self):
         """
-        Create subscription
+        Create template
         """
         json_data = request.get_json(force=True)
         if not json_data:
                return {'message': 'No input data provided'}, 400
-        result, errors = subscription_schema.load(json_data)
+        result, errors = templates_schema.load(json_data)
         if errors:
             return errors, 422
 
-        bus_filter_exits = filters.get(result['filter_id'])
-        user_exits = users.get(result['user_id'])
+        template = Template(result['name'], result['text'])
+        templates.insert(template)
+        response = json_parser.to_json_list(template)
+        return response, 201
 
-        if (bus_filter_exits and user_exits):
-            subscription = Subscription(result['user_id'], result['filter_id'], result['template_id'])
-            subscriptions.insert(subscription)
-            response = json_parser.to_json_list(subscription)
-            return response, 201        
-        else:
-            return {'message': 'Bus filter id or user filter id does not exits'}, 400
+class TemplateView(Resource):
 
-class SubscriptionView(Resource):
+     def get(self, template_id):
+        """
+        Get specific template
+        """
+        template = templates.get(template_id)
+        response = json_parser.to_json_list(template)
+        return response
 
      def delete(self, subscription_id):
         """
-        Delete subscription by his id
+        Delete template by his id
         """
         subscription = subscriptions.get(subscription_id)
         subscriptions.delete(subscription)

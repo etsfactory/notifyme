@@ -64,6 +64,9 @@ class BusFiltersHandler(object):
         Delete bus_filter by his id 
         """
         self.db_handler.delete_data(bus_filter.id)
+
+    def get_by_exchange(self, exchange):
+        return self.to_object(self.db_handler.filter_data({'exchange': exchange}))
     
     def search(self, bus_filter):
         bus_filters = self.db_handler.filter_data({'exchange': bus_filter.exchange, 'key': bus_filter.key})

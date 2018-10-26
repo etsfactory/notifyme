@@ -8,6 +8,7 @@ from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
 from bussiness.users import UsersHandler
 from bussiness.bus_filters import BusFiltersHandler
+from bussiness.templates import TemplatesHandler
 
 from marshmallow import Schema, fields, pprint
 
@@ -15,12 +16,14 @@ class SubscriptionSchema(Schema):
     id = fields.Str()
     user_id = fields.Str()
     filter_id = fields.Str()
+    template_id: fields.Str()
 
 class Subscription(object):
 
-    def __init__(self, user_id, filter_id, id=None):
+    def __init__(self, user_id, filter_id, template_id=None, id=None):
         self.user_id = user_id
         self.filter_id = filter_id
+        self.template_id = template_id
         if id:
             self.id = id
 
@@ -34,6 +37,7 @@ class SubscriptionsHandler(object):
         self.db_handler.create_table('id')
         self.users = UsersHandler()
         self.filters = BusFiltersHandler()
+        self.templates = TemplatesHandler()
 
     def get(self, sub_id=None):
         """
@@ -99,7 +103,11 @@ class SubscriptionsHandler(object):
         """
         Insert subscriptions to the database
         """
-        self.db_handler.insert_data(subscription)
+        if (not subscription.template_id):
+            if (not self.templates.default_template_id):
+                self.templates.create_default()
+            subscription.template_id = self.templates.default_template_id
+        return self.db_handler.insert_data(subscription)
 
     def edit(self, subscription):
         """
@@ -117,10 +125,11 @@ class SubscriptionsHandler(object):
         """
         Parse db subscription object to Subscription instance
         """
+        print(data)
         subs = []
         if isinstance(data, dict):
-            return Subscription(data['user_id'], data['filter_id'], data['id'])
+            return Subscription(data['user_id'], data['filter_id'], data['template_id'], data['id'])
         else:
             for sub in data:
-                subs.append(Subscription(sub['user_id'], sub['filter_id'], sub['id']))
+                subs.append(Subscription(sub['user_id'], sub['filter_id'], sub['template_id'], sub['id']))
             return subs
