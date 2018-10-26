@@ -10,13 +10,14 @@ class RabbitMqHandler(threading.Thread):
     """
     Class to manage connection with a rabbitMQ server
     """
-    def __init__(self, server, queue, exchange, keys, users, notification_module ):
+    def __init__(self, server, queue, exchange, keys, users, notification_module, on_message_function ):
         self.server = server
         self.queue = queue
         self.exchange = exchange
         self.keys = keys
         self.notification_module = notification_module
         self._is_interrupted = False
+        self.on_message_function = on_message_function
         super(RabbitMqHandler, self).__init__()
     
     def stop(self):
@@ -55,7 +56,7 @@ class RabbitMqHandler(threading.Thread):
                 if not message:
                     continue
                 method, properties, body = message
-                self.on_message(method, properties, body)
+                self.on_message_function(method, properties, body)
 
         except Exception as e:
             st.logger.error(e)

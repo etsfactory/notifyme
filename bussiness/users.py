@@ -19,6 +19,9 @@ class User(object):
         self.email = email
         if id:
             self.id = id
+
+    def __eq__(self, other): 
+        return self.__dict__ == other.__dict__
     
 class UsersHandler(object):
     """
@@ -27,6 +30,7 @@ class UsersHandler(object):
     def __init__(self):
         self.db_handler = DBHandler("users")
         self.db_handler.create_table()
+
 
     def get(self, user_id=None):
         """

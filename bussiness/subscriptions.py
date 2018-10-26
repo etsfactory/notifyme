@@ -92,7 +92,7 @@ class SubscriptionsHandler(object):
         Get subscription by his id
         """
         return self.to_object(self.db_handler.filter_data({'filter_id': bus_filter.id}))
-     
+    
     def get_by_user(self, user):
         """
         Get subscription by his id
@@ -125,7 +125,6 @@ class SubscriptionsHandler(object):
         """
         Parse db subscription object to Subscription instance
         """
-        print(data)
         subs = []
         if isinstance(data, dict):
             return Subscription(data['user_id'], data['filter_id'], data['template_id'], data['id'])

@@ -9,6 +9,9 @@ from bussiness.bus_filters import BusFilter
 from bussiness.bus_filters import BusFiltersHandler
 from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.subscriptions import Subscription
+from bussiness.templates import Template
+from bussiness.templates import TemplatesHandler
+
 from bussiness.bus_connection import BusConnectionHandler
 from connectors.smtp import SMTPHandler
 
@@ -20,6 +23,7 @@ class Realtime(object):
         self.threads = []
         self.filters = BusFiltersHandler()
         self.subscriptions = SubscriptionsHandler()
+        self.templates = TemplatesHandler()
         self.smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
         Thread(target=self.realtime_filters).start()
 
@@ -42,7 +46,7 @@ class Realtime(object):
             
             parsed_subscription = self.parse_subscription(subscription)
 
-            if subscription['old_val']:
+            if not subscription['new_val']:
                 """
                 When a subscription is deleted
                 """
@@ -60,7 +64,7 @@ class Realtime(object):
         st.logger.info('-----------------------')
         st.logger.info('Deleting subscription change...')
         bus_filter = self.filters.get(parsed_subscription.filter_id)
-        thread = self.search_thread(bus_filter.exchange)
+        thread = self.search_thread(bus_filter.exchange, bus_filter.key)
         if thread: 
             self.delete_connection(thread)
 
@@ -71,28 +75,39 @@ class Realtime(object):
         st.logger.info('-----------------------')
         st.logger.info('New subscription change...')
         
-        self.on_subscription_deleted(parsed_subscription)   
         users_list = []
         keys = []
+        templates = []
         exchange = self.filters.get(parsed_subscription.filter_id).exchange
-        bus_filters = self.filters.get_by_exchange(exchange)
+        bus_filters = []
+        for sub in self.subscriptions.get_with_relationships():
+            template = self.templates.get(sub['template_id'])
+            if template not in templates:
+                templates.append(template)
+            if sub['exchange'] == exchange:
+                bus_filters.append(self.filters.get(sub['filter_id']))
+
         for bus_filter in bus_filters:
-            sub = self.subscriptions.get_by_filter(bus_filter)
             users = self.subscriptions.get_users_by_filter(bus_filter)
             if users:
-                users_list.append(users)
+                for user in users:
+                    if user not in users_list:
+                        users_list.append(user)
+
             keys.append(bus_filter.key)
+            
         st.logger.info('Notification to:  ' + str(users_list))
-        st.logger.info('Notification to:  ' + str(keys))
-        st.logger.info('Notification to:  ' + str(exchange))
+        st.logger.info('Watching for keys:  ' + str(keys))
+        st.logger.info('Exchange:  ' + str(exchange))
 
-        self.create_connection(exchange, keys, users_list, self.smtp)
+        self.on_subscription_deleted(parsed_subscription)   
+        self.create_connection(exchange, keys, users_list, templates, self.smtp)
 
-    def create_connection(self, exchange, keys, users, notification_module):
+    def create_connection(self, exchange, keys, users, templates, notification_module):
         """
         Creates a thread with a new rabbitmq connection
         """
-        bus_connection = BusConnectionHandler(exchange, keys, users, notification_module)
+        bus_connection = BusConnectionHandler(exchange, keys, users, templates, notification_module)
         self.threads.append(bus_connection)
         bus_connection.start()
 
@@ -104,12 +119,12 @@ class Realtime(object):
         thread.stop()
         self.threads.remove(thread)
 
-    def search_thread(self, exchange):
+    def search_thread(self, exchange, key):
         """
         Searchs for a thread listening to a filter
         """
         for thread in self.threads:
-            if thread.exchange == exchange:
+            if thread.exchange == exchange and key in thread.keys:
                     return thread
 
     def search_by_user(self, user):

@@ -21,8 +21,14 @@ class Template(object):
         if id:
             self.id = id
     
-    def parse(self):
-        return re.findall(r'\[\[(.+?)\]\]', self.text)
+    def parse(self, data):
+        if isinstance(data, dict):
+            text = self.text
+            for key in data:
+                regex = '\[\[' + key + '\]\]'
+                text = re.sub(regex, data[key], text)
+            return text
+
     
 class TemplatesHandler(object):
     """
@@ -70,7 +76,7 @@ class TemplatesHandler(object):
             return None, True
     
     def create_default(self):
-        default_template = Template('Default', 'Default template')
+        default_template = Template('Default', st.DEFAULT_TEMPLATE_TEXT)
         self.default_template_id = self.insert(default_template)['generated_keys'][0]
      
     def to_object(self, data):
