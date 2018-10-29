@@ -8,20 +8,29 @@ from connectors.rabbitmq import RabbitMqHandler
 from bussiness.templates import Template
 from bussiness.templates import TemplatesHandler
 
+from bussiness.users import UsersHandler
+from bussiness.users import User
+from bussiness.bus_filters import BusFilter
+from bussiness.bus_filters import BusFiltersHandler
+from bussiness.subscriptions import SubscriptionsHandler
+from bussiness.subscriptions import Subscription
+from bussiness.templates import Template
+from bussiness.templates import TemplatesHandler
+
 import utils.json_parser as json_parser
 
 class BusConnectionHandler(object):
     """
     Bus connection class
     """
-    def __init__(self, exchange, bus_filters, users, templates, notification_module):
-        self.exchange = exchange
-        self.bus_filters = bus_filters
-        self.keys = []
-        self.users = users
-        self.templates = templates
-        self.initialize_keys()
-        self.bus_thread = RabbitMqHandler(st.RABBITMQ_SERVER, 'notifyme', exchange, self.keys, users, notification_module, self.on_message)
+    def __init__(self, subscriptions):
+        self.subscriptions = subscriptions
+        self.users = []
+        self.filters_handler = BusFiltersHandler()
+        self.subscriptions_handler = SubscriptionsHandler()
+        self.users_handler = UsersHandler()
+        self.templates_handler = TemplatesHandler()
+        self.initialize()
 
     def start(self):
         """
@@ -36,27 +45,39 @@ class BusConnectionHandler(object):
         self.bus_thread.stop()
         self.bus_thread.join()
 
-    def initialize_keys(self):
-        for bus_filter in self.bus_filters:
-            print(str(bus_filter.__dict__))
-            self.keys.append(bus_filter.key)
+    def initialize(self):
+        """
+        Create keys to listen
+        """
+        keys = []
+        for sub in self.subscriptions:
+            bus_filter = self.filters_handler.get(sub['filter_id'])
+            exchange = bus_filter.exchange
+            keys.append(bus_filter.key)
+        self.bus_thread = RabbitMqHandler(st.RABBITMQ_SERVER, 'notifyme', exchange, keys, self.on_message)
 
-    def get_exchange(self):
+    def is_listening_subscription(self, subscription):
         """
-        Return the exchange that it's listening the thread
+        Check if the thread is listening to a subscription bus_filter
         """
-        return self.exchange
-    
-    def is_watching_exchange(self, exchange):
-        return exchange == self.exchange
-    
+        for sub in self.subscriptions:
+            exchange1 = self.filters_handler.get(sub['filter_id']).exchange
+            exchange2 = self.filters_handler.get(subscription.filter_id).exchange
+            if exchange1 == exchange2:
+                return True
+        return False
+
     def on_message(self, method, properties, message):
         """"
         When a message is received
         """
         response = json_parser.from_json(message)
-        for user in self.users:
-            template = self.templates[self.users.index(user)]
+        bus_filter = self.filters_handler.get_by_exchange_key(method.exchange, method.routing_key)
+        
+        for sub in self.subscriptions_handler.get_by_filter(bus_filter):
+            user = self.users_handler.get(sub.user_id)
+            template = self.templates_handler.get(sub.template_id)
+
             st.logger.info(' [x] Received from  %r:  |  %r' % 
             (method.exchange, template.parse(response)))
             st.logger.info('Notification to: %r' % (user.email))

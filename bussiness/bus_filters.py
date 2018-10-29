@@ -65,10 +65,16 @@ class BusFiltersHandler(object):
         """
         self.db_handler.delete_data(bus_filter.id)
 
-    def get_by_exchange(self, exchange):
-        return self.to_object(self.db_handler.filter_data({'exchange': exchange}))
+    def get_by_exchange_key(self, exchange, key):
+        """
+        Passing an exchange and key searchs in the db for a bus filter 
+        """
+        return self.to_object(self.db_handler.filter_data({'exchange': exchange, 'key': key})[0])
     
     def search(self, bus_filter):
+        """
+        Searchs for a bus filter in a db and returns the id
+        """
         bus_filters = self.db_handler.filter_data({'exchange': bus_filter.exchange, 'key': bus_filter.key})
         if len(bus_filters) > 0:
             return bus_filters[0]['id'], False
