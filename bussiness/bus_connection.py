@@ -10,17 +10,18 @@ from bussiness.templates import TemplatesHandler
 
 import utils.json_parser as json_parser
 
-
 class BusConnectionHandler(object):
     """
     Bus connection class
     """
-    def __init__(self, exchange, keys, users, templates, notification_module):
+    def __init__(self, exchange, bus_filters, users, templates, notification_module):
         self.exchange = exchange
-        self.keys = keys
+        self.bus_filters = bus_filters
+        self.keys = []
         self.users = users
         self.templates = templates
-        self.bus_thread = RabbitMqHandler(st.RABBITMQ_SERVER, 'notifyme', exchange, keys, users, notification_module, self.on_message)
+        self.initialize_keys()
+        self.bus_thread = RabbitMqHandler(st.RABBITMQ_SERVER, 'notifyme', exchange, self.keys, users, notification_module, self.on_message)
 
     def start(self):
         """
@@ -35,11 +36,10 @@ class BusConnectionHandler(object):
         self.bus_thread.stop()
         self.bus_thread.join()
 
-    def get_keys(self):
-        """
-        Return the keys that it's listening the thread
-        """
-        return self.keys
+    def initialize_keys(self):
+        for bus_filter in self.bus_filters:
+            print(str(bus_filter.__dict__))
+            self.keys.append(bus_filter.key)
 
     def get_exchange(self):
         """
@@ -47,23 +47,18 @@ class BusConnectionHandler(object):
         """
         return self.exchange
     
-    def is_watching_key(self, key):
-        return key in self.keys
+    def is_watching_exchange(self, exchange):
+        return exchange == self.exchange
     
-    def add_key(self, key):
-        return self.keys.append(key)
-
-    def remove_key(self, key):
-        self.keys.remove(key)
-
     def on_message(self, method, properties, message):
         """"
         When a message is received
         """
         response = json_parser.from_json(message)
-        for template in self.templates:
+        for user in self.users:
+            template = self.templates[self.users.index(user)]
             st.logger.info(' [x] Received from  %r:  |  %r' % 
-            (method.routing_key, template.parse(response)))
-        
+            (method.exchange, template.parse(response)))
+            st.logger.info('Notification to: %r' % (user.email))
         
         # self.notification_module.send('dlopez@ets.es', 'Prueba', message)

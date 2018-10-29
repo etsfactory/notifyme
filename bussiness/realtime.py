@@ -94,14 +94,12 @@ class Realtime(object):
                     if user not in users_list:
                         users_list.append(user)
 
-            keys.append(bus_filter.key)
-            
         st.logger.info('Notification to:  ' + str(users_list))
         st.logger.info('Watching for keys:  ' + str(keys))
         st.logger.info('Exchange:  ' + str(exchange))
 
         self.on_subscription_deleted(parsed_subscription)   
-        self.create_connection(exchange, keys, users_list, templates, self.smtp)
+        self.create_connection(exchange, bus_filters, users_list, templates, self.smtp)
 
     def create_connection(self, exchange, keys, users, templates, notification_module):
         """
