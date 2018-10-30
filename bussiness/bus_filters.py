@@ -6,6 +6,7 @@ import settings as st
 
 from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
+import utils.json_parser as json_parser
 
 from marshmallow import Schema, fields, pprint
 
@@ -13,17 +14,22 @@ class BusFilterSchema(Schema):
     id = fields.Str()
     exchange = fields.Str()
     key = fields.Str()
+    
 
 class BusFilter(object):
     """
     Bus filter. To filter from the bus with exchange and key
     """
-
-    def __init__(self, exchange, key, id=None):
+    def __init__(self, exchange, key, template_id=None, id=None):
         self.exchange = exchange
         self.key = key
+        if template_id:
+            self.template_id = template_id
         if id:
             self.id = id
+    
+    def set_template(self, template_id):
+        self.template_id = template_id
     
 class BusFiltersHandler(object):
     """
@@ -90,14 +96,17 @@ class BusFiltersHandler(object):
             return None
         filters = []
         if isinstance(data, dict):
-            return BusFilter(data['exchange'], data['key'], data['id'])
+           return self.create_from_dictionary(data)
         else: 
             for bus_filter in data:
-                exchange = bus_filter['exchange']
-                key = bus_filter['key']
-                bus_id =  bus_filter['id']
-                filters.append(BusFilter(exchange, key, bus_id))
+               filters.append(self.create_from_dictionary(bus_filter))
             return filters
 
+    def create_from_dictionary(self, dictionary):
+        exchange = json_parser.dict_keys(dictionary, 'exchange')
+        key = json_parser.dict_keys(dictionary, 'key')
+        template = json_parser.dict_keys(dictionary, 'template_id')
+        bus_id =  json_parser.dict_keys(dictionary, 'id')
+        return BusFilter(exchange, key, template, bus_id)
             
         

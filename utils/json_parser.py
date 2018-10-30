@@ -14,3 +14,9 @@ def to_json(data):
 
 def from_json(data):
     return ujson.loads(data)
+
+def dict_keys(dictionary, key):
+    if key in dictionary:
+        return dictionary[key]
+    else:
+        return None
