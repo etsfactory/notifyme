@@ -31,7 +31,6 @@ class UsersHandler(object):
         self.db_handler = DBHandler("users")
         self.db_handler.create_table()
 
-
     def get(self, user_id=None):
         """
         Get all the users from the database

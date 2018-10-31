@@ -89,8 +89,8 @@ class BusFiltersHandler(object):
 
     def to_object(self, data):
         """
-        Parse db filter object to Filter instance. If the data provided is an array, 
-        returns an array of Filter instances
+        Parse db filter object to bus filter instance. If the data provided is an array, 
+        returns an array of bus filter instances
         """
         if (not data):
             return None
@@ -103,10 +103,12 @@ class BusFiltersHandler(object):
             return filters
 
     def create_from_dictionary(self, dictionary):
+        """
+        Creates bus filter instance from dictionary
+        """
         exchange = json_parser.dict_keys(dictionary, 'exchange')
         key = json_parser.dict_keys(dictionary, 'key')
         template = json_parser.dict_keys(dictionary, 'template_id')
         bus_id =  json_parser.dict_keys(dictionary, 'id')
         return BusFilter(exchange, key, template, bus_id)
             
-        

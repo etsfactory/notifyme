@@ -47,18 +47,34 @@ class TemplatesView(Resource):
         templates.insert(template)
         response = json_parser.to_json_list(template)
         return response, 201
-
+    
 class TemplateView(Resource):
 
-     def get(self, template_id):
+    def get(self, template_id):
         """
         Get specific template
         """
         template = templates.get(template_id)
         response = json_parser.to_json_list(template)
         return response
+ 
+    def put(self, template_id):
+        """
+        Update template passing his id
+        """
+        json_data = request.get_json(force=True)
+        if not json_data:
+               return {'message': 'No input data provided'}, 400
+        result, errors = templates_schema.load(json_data)
+        if errors:
+            return errors, 422
 
-     def delete(self, subscription_id):
+        template = Template(result['name'], result['text'])
+        templates.edit(template, template_id)
+        response = json_parser.to_json_list(template)
+        return response
+
+    def delete(self, subscription_id):
         """
         Delete template by his id
         """

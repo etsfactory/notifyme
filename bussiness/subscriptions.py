@@ -115,11 +115,11 @@ class SubscriptionsHandler(object):
 
         return self.db_handler.insert_data(subscription)
 
-    def edit(self, subscription):
+    def edit(self, subscription, subscription_id):
         """
         Modify subscriptions
         """
-        self.db_handler.edit_data(subscription, subscription.id)
+        self.db_handler.edit_data(subscription, subscription_id, 'id')
 
     def delete(self, subscription):
         """

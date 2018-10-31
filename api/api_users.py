@@ -71,7 +71,7 @@ class UserView(Resource):
         if errors:
             return errors, 422
 
-        user = User(result['name'], result['email'], result['id'])
+        user = User(result['name'], result['email'])
         users.edit(user, user_id)
         response = json_parser.to_json_list(user)
         return response

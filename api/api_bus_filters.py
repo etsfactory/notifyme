@@ -71,7 +71,7 @@ class BusFilterView(Resource):
         if errors:
             return errors, 422
 
-        bus_filter = BusFilter(result['exchange'], result['key'], result['id'])
+        bus_filter = BusFilter(result['exchange'], result['key'])
         filters.edit(bus_filter, bus_filter_id)
         response = json_parser.to_json_list(bus_filter)
         return response
@@ -154,3 +154,4 @@ class BusFilterUsersView(Resource):
 
         response = json_parser.to_json_list(subscription)
         return response
+    
