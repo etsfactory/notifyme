@@ -25,6 +25,8 @@ with open(config_file) as json_data:
     except IOError:
         print('JSON loading problem')
 
+
+DEFAULT_TEMPLATE_TEXT = config['default_template_text']
 LOG_ROOT_PATH = config['loggin']
 RABBITMQ = config['rabbitmq']
 RABBITMQ_SERVER = RABBITMQ['server']

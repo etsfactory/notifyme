@@ -14,5 +14,6 @@
       "name": "Diego",
       "email": "d.lopez@ets.es"
     }
-  ]
+  ],
+  "default_template_text": "Texto por defecto de los templates: [[foo]]"
 }

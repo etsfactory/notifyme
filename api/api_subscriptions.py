@@ -42,7 +42,7 @@ class SubscriptionsView(Resource):
         user_exits = users.get(result['user_id'])
 
         if (bus_filter_exits and user_exits):
-            subscription = Subscription(result['user_id'], result['filter_id'])
+            subscription = Subscription(result['user_id'], result['filter_id'], result['template_id'])
             subscriptions.insert(subscription)
             response = json_parser.to_json_list(subscription)
             return response, 201        
@@ -51,11 +51,31 @@ class SubscriptionsView(Resource):
 
 class SubscriptionView(Resource):
 
-     def delete(self, subscription_id):
+    def delete(self, subscription_id):
         """
         Delete subscription by his id
         """
         subscription = subscriptions.get(subscription_id)
         subscriptions.delete(subscription)
         response = json_parser.to_json_list(subscription)
+        return response
+    
+    def put(self, subscription_id):
+        """
+        Update template passing his id
+        """
+        json_data = request.get_json(force=True)
+        if not json_data:
+               return {'message': 'No input data provided'}, 400
+        result, errors = subscription_schema.load(json_data)
+        if errors:
+            return errors, 422
+
+        subscription = Subscription(result['user_id'], result['filter_id'], result['template_id'])
+        subscriptions.edit(subscription, subscription_id)
+        response = json_parser.to_json_list(subscription)
+        return response
+    
+    def get(self, subscription_id):
+        response = json_parser.to_json_list(subscriptions.get(subscription_id))
         return response

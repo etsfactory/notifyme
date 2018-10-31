@@ -13,6 +13,10 @@ from bussiness.users import UserSchema
 from bussiness.subscriptions import Subscription
 from bussiness.subscriptions import SubscriptionsHandler
 
+from bussiness.templates import Template
+from bussiness.templates import TemplatesHandler
+from bussiness.templates import TemplateSchema
+
 import utils.json_parser as json_parser
 
 filters = BusFiltersHandler()
@@ -20,6 +24,8 @@ subscriptions = SubscriptionsHandler()
 bus_filter_schema = BusFilterSchema()
 user_schema = UserSchema()
 users = UsersHandler()
+templates = TemplatesHandler()
+template_schema = TemplateSchema()
 
 class BusFiltersView(Resource):
     def get(self):
@@ -65,7 +71,7 @@ class BusFilterView(Resource):
         if errors:
             return errors, 422
 
-        bus_filter = BusFilter(result['exchange'], result['key'], result['id'])
+        bus_filter = BusFilter(result['exchange'], result['key'])
         filters.edit(bus_filter, bus_filter_id)
         response = json_parser.to_json_list(bus_filter)
         return response
@@ -78,6 +84,42 @@ class BusFilterView(Resource):
         filters.delete(bus_filter)
         response = json_parser.to_json_list(bus_filter)
         return response
+
+class BusFilterTemplateView(Resource):
+    def get(self, bus_filter_id):
+        """
+        Get template from bus filter
+        """
+        bus_filter = filters.get(bus_filter_id)
+        template = templates.get(bus_filter.template_id)
+        if template:
+            response = json_parser.to_json_list(template)
+            return response
+        else:
+            return {'message': 'Bus filter does not have template'}, 404
+    
+    def post (self, bus_filter_id):
+        """
+        Creates template for the bus_filter
+        """
+        json_data = request.get_json(force=True)
+        if not json_data:
+               return {'message': 'No input data provided'}, 400
+        result, errors = template_schema.load(json_data)
+        if errors:
+            return errors, 422
+        
+        bus_filter = filters.get(bus_filter_id)
+
+        template = Template(result['name'], result['text'])
+        template_id = templates.insert(template)['generated_keys'][0]
+
+        bus_filter.set_template(template_id)
+        filters.edit(bus_filter, bus_filter_id)
+
+        response = json_parser.to_json_list(template)
+        return response
+
 
 class BusFilterUsersView(Resource):
 
@@ -107,7 +149,9 @@ class BusFilterUsersView(Resource):
             user_id = users.insert(user)['generated_keys'][0]
 
         subscription = Subscription(user_id, bus_filter_id)
+        # print(str(subscription.__dict__))
         subscriptions.insert(subscription)
 
         response = json_parser.to_json_list(subscription)
         return response
+    

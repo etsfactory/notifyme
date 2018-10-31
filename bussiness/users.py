@@ -19,6 +19,9 @@ class User(object):
         self.email = email
         if id:
             self.id = id
+
+    def __eq__(self, other): 
+        return self.__dict__ == other.__dict__
     
 class UsersHandler(object):
     """
