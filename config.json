@@ -1,6 +1,8 @@
 {
   "rabbitmq": {
-    "server": "localhost"
+    "server": "localhost",
+    "user": "",
+    "password": ""
   },
   "smtp": {
     "server": "smtp.gmail.com",
@@ -15,5 +17,9 @@
       "email": "d.lopez@ets.es"
     }
   ],
-  "default_template_text": "Texto por defecto de los templates: [[foo]]"
+  "default_template": {
+    "name": "Template por defecto",
+    "text": "Este es el texto de los templates [[foo]]",
+    "subject": "Nueva notificación del bus"
+  }
 }

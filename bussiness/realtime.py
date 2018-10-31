@@ -64,7 +64,6 @@ class Realtime(object):
         st.logger.info('-----------------------')
         st.logger.info('Deleting subscription change...')
         thread = self.search_thread(parsed_subscription)
-        print(thread)
         if thread: 
             self.delete_connection(thread)
 

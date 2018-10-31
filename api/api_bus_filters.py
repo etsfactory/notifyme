@@ -149,6 +149,7 @@ class BusFilterUsersView(Resource):
             user_id = users.insert(user)['generated_keys'][0]
 
         subscription = Subscription(user_id, bus_filter_id)
+        print(str(subscription.__dict__))
         # print(str(subscription.__dict__))
         subscriptions.insert(subscription)
 

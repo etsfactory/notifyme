@@ -105,12 +105,12 @@ class SubscriptionsHandler(object):
         """
         bus_filter = self.filters.get(subscription.filter_id)
         
-        if subscription.template_id:
-             subscription.template_id = subscription.template_id
-        elif hasattr(bus_filter, 'template_id'):
+        if not hasattr(subscription, 'template_id') and hasattr(bus_filter, 'template_id'):
             subscription.template_id = bus_filter.template_id
         elif (not self.templates.default_template_id):
             self.templates.create_default()
+            subscription.template_id = self.templates.default_template_id
+        else:
             subscription.template_id = self.templates.default_template_id
 
         return self.db_handler.insert_data(subscription)

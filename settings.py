@@ -26,10 +26,11 @@ with open(config_file) as json_data:
         print('JSON loading problem')
 
 
-DEFAULT_TEMPLATE_TEXT = config['default_template_text']
 LOG_ROOT_PATH = config['loggin']
 RABBITMQ = config['rabbitmq']
 RABBITMQ_SERVER = RABBITMQ['server']
+RABBITMQ_USER = RABBITMQ['user']
+RABBITMQ_PASSWORD = RABBITMQ['password']
 
 SMTP = config['smtp']
 SMTP_EMAIL = SMTP['email']
@@ -43,6 +44,11 @@ DB_PORT = os.getenv('DB_HOST', 28015)
 DB_NAME = 'notify_me'
 
 USERS = config['users']
+
+DEFAULT_TEMPLATE = config['default_template']
+DEFAULT_TEMPLATE_NAME = DEFAULT_TEMPLATE['name']
+DEFAULT_TEMPLATE_TEXT = DEFAULT_TEMPLATE['text']
+DEFAULT_TEMPLATE_SUBJECT = DEFAULT_TEMPLATE['subject']
 
 LOGGING = {
     'version': 1,

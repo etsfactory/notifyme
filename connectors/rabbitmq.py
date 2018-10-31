@@ -3,20 +3,35 @@ RabbitMQ handler
 """
 import pika
 import threading
+import traceback
+import time
+
 import settings as st
+
+from pika.exceptions import ConnectionClosed
+
+class ConnectionErrorException(Exception):
+    pass
 
 
 class RabbitMqHandler(threading.Thread):
     """
     Class to manage connection with a rabbitMQ server
     """
-    def __init__(self, server, queue, exchange, keys, on_message_function ):
+    def __init__(self, on_message_function, server, user, password, queue, exchange, keys, error_queue, exchange_type='direct', retries_to_error=3, retry_wait_time=1, heartbeat=None ):
+        self.on_message_function = on_message_function
         self.server = server
+        self.user = user
+        self.password = password
         self.queue = queue
         self.exchange = exchange
         self.keys = keys
+        self.error_queue = error_queue
+        self.exchange_type = exchange_type
+        self.retries_to_error = retries_to_error
+        self.retry_wait_time = retry_wait_time
+        self.heartbeat  = heartbeat
         self._is_interrupted = False
-        self.on_message_function = on_message_function
         super(RabbitMqHandler, self).__init__()
     
     def stop(self):
@@ -26,11 +41,19 @@ class RabbitMqHandler(threading.Thread):
         """
         Connect wit a rabbitMQ server
         """
+        retries = 0
         try:
-            self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.server))
+            if self.user and self.password:
+                credentials = pika.PlainCredentials(self.user, self.password)
+                self.connection = pika.BlockingConnection(
+                    pika.ConnectionParameters(self.server, credentials=credentials))
+            else:
+                self.connection = pika.BlockingConnection(
+                    pika.ConnectionParameters(self.server))
+
             self.channel = self.connection.channel()
             self.channel.exchange_declare(exchange=self.exchange,
-                         exchange_type='direct')
+                         exchange_type=self.exchange_type)
             """
             NOTE: No queue name to let rabbit choouse a random name for us. 
             Is exclusive because it will be deleted when the connection closes
@@ -44,7 +67,7 @@ class RabbitMqHandler(threading.Thread):
                                         routing_key=key)
 
             st.logger.info('Waiting for bus messagges....')
-            
+            retries = 0
             """
             NOTE: Instead of using basic consume, I use consume because basic cosume
             blocks the thread. With consume I can decide when the thread stops
@@ -55,14 +78,30 @@ class RabbitMqHandler(threading.Thread):
                 if not message:
                     continue
                 method, properties, body = message
+                
+                self.channel.basic_ack(delivery_tag=method.delivery_tag)
                 self.on_message_function(method, properties, body)
 
+        except (ConnectionClosed, ConnectionErrorException) as e:
+                """
+                Only publishes the first error to the error queue
+                """
+                if retries == self.retries_to_error:
+                    exception = {
+                        'error': e,
+                        'trace': traceback.format_exc()
+                    }
+                    self.error_queue.put(exception)
+                try:
+                    self.channel.close()
+                except Exception:
+                    pass
         except Exception as e:
-            st.logger.error(e)
-            
-    def on_message(self, method, properties, message):
-        """"
-        When a message is received
-        """
-        st.logger.info(' [x] Received from  %r:  |  %r' % (method.routing_key, message))
-        # self.notification_module.send('dlopez@ets.es', 'Prueba', message)
+            exception = {
+                'error': e,
+                'trace': traceback.format_exc()
+            }
+            self.error_queue.put(exception)
+        finally:
+            retries += 1
+            time.sleep(self.retry_wait_time)

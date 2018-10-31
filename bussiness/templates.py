@@ -13,22 +13,15 @@ class TemplateSchema(Schema):
     id = fields.Str()
     name = fields.Str()
     text = fields.Str()
+    subject = fields.Str()
 
 class Template(object):
-    def __init__(self, name, text, id=None):
+    def __init__(self, name, text, subject=None, id=None):
         self.name = name
         self.text = text
+        self.subject = subject
         if id:
             self.id = id
-    
-    def parse(self, data):
-        if isinstance(data, dict):
-            text = self.text
-            for key in data:
-                regex = '\[\[' + key + '\]\]'
-                text = re.sub(regex, data[key], text)
-            return text
-
     
 class TemplatesHandler(object):
     """
@@ -76,8 +69,16 @@ class TemplatesHandler(object):
             return None, True
     
     def create_default(self):
-        default_template = Template('Default', st.DEFAULT_TEMPLATE_TEXT)
+        default_template = Template(st.DEFAULT_TEMPLATE_NAME, st.DEFAULT_TEMPLATE_TEXT, st.DEFAULT_TEMPLATE_SUBJECT)
         self.default_template_id = self.insert(default_template)['generated_keys'][0]
+    
+    def parse(self, field, data):
+        if isinstance(data, dict):
+            text = field
+            for key in data:
+                regex = '\[\[' + key + '\]\]'
+                text = re.sub(regex, data[key], text)
+            return text
      
     def to_object(self, data):
         """
@@ -87,9 +88,9 @@ class TemplatesHandler(object):
             return None
         templates = []
         if isinstance(data, dict):
-            return Template(data['name'], data['text'], data['id'])
+            return Template(data['name'], data['text'], data['subject'], data['id'])
         else:
             for template in data:
-                templates.append(Template(template['name'], template['text'], template['id']))
+                templates.append(Template(template['name'], template['text'], template['subject'], template['id']))
             return templates
     

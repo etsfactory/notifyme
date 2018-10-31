@@ -54,7 +54,7 @@ class BusConnectionHandler(object):
             bus_filter = self.filters_handler.get(sub['filter_id'])
             exchange = bus_filter.exchange
             keys.append(bus_filter.key)
-        self.bus_thread = RabbitMqHandler(st.RABBITMQ_SERVER, 'notifyme', exchange, keys, self.on_message)
+        self.bus_thread = RabbitMqHandler(self.on_message, st.RABBITMQ_SERVER, st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 'notifyme', exchange, keys, 'error')
 
     def is_listening_subscription(self, subscription):
         """
@@ -79,7 +79,7 @@ class BusConnectionHandler(object):
             template = self.templates_handler.get(sub.template_id)
 
             st.logger.info(' [x] Received from  %r:  |  %r' % 
-            (method.exchange, template.parse(response)))
+            (method.exchange, self.templates_handler.parse(template.text, response)))
             st.logger.info('Notification to: %r' % (user.email))
         
         # self.notification_module.send('dlopez@ets.es', 'Prueba', message)

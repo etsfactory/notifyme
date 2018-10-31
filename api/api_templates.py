@@ -43,7 +43,7 @@ class TemplatesView(Resource):
         if errors:
             return errors, 422
 
-        template = Template(result['name'], result['text'])
+        template = Template(result['name'], result['text'], result['subject'])
         templates.insert(template)
         response = json_parser.to_json_list(template)
         return response, 201
