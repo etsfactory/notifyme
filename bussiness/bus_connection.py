@@ -7,6 +7,7 @@ import settings as st
 from connectors.rabbitmq import RabbitMqHandler
 from bussiness.templates import Template
 from bussiness.templates import TemplatesHandler
+from connectors.smtp import SMTPHandler
 
 from bussiness.users import UsersHandler
 from bussiness.users import User
@@ -19,6 +20,7 @@ from bussiness.templates import TemplatesHandler
 
 import utils.json_parser as json_parser
 
+
 class BusConnectionHandler(object):
     """
     Bus connection class
@@ -30,6 +32,7 @@ class BusConnectionHandler(object):
         self.subscriptions_handler = SubscriptionsHandler()
         self.users_handler = UsersHandler()
         self.templates_handler = TemplatesHandler()
+        self.smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
         self.initialize()
 
     def start(self):
@@ -81,5 +84,4 @@ class BusConnectionHandler(object):
             st.logger.info(' [x] Received from  %r:  |  %r' % 
             (method.exchange, self.templates_handler.parse(template.text, response)))
             st.logger.info('Notification to: %r' % (user.email))
-        
-        # self.notification_module.send('dlopez@ets.es', 'Prueba', message)
+            self.smtp.send(user.email, self.templates_handler.parse(template.subject, response), self.templates_handler.parse(template.text, response))

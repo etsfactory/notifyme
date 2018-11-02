@@ -32,7 +32,7 @@ class SMTPHandler(object):
         except SMTPAuthenticationError:
             print('Error login with username: ', username, 'and password: ', password)
 
-    def send_email(self, send_to, subject, body):
+    def send(self, send_to, subject, body):
         """
         Send temail trough SMTP from account to a list of emails with a message
         :send_to: List of emails to send email
@@ -40,7 +40,7 @@ class SMTPHandler(object):
         :body: The body of the email
         """
         try:
-            message = 'Subject: {}\n\n{}'.format(subject, body)
+            message = 'Subject: {}\n\n{}'.format(str(subject), body)
             self.server.sendmail(self.username, send_to, message)
             print ('Email sent to ', send_to)
         except SMTPSendEmailError:

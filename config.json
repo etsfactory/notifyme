@@ -19,7 +19,7 @@
   ],
   "default_template": {
     "name": "Template por defecto",
-    "text": "Este es el texto de los templates [[foo]]",
-    "subject": "Nueva notificación del bus"
+    "text": "Se ha creado una nueva reco con id: [[id]]",
+    "subject": "Notify.me: nuevo mensaje del bus"
   }
 }

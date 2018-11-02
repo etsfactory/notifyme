@@ -24,7 +24,6 @@ class Realtime(object):
         self.filters = BusFiltersHandler()
         self.subscriptions = SubscriptionsHandler()
         self.templates = TemplatesHandler()
-        self.smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
         Thread(target=self.realtime_filters).start()
 
     def realtime_filters(self):

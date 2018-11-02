@@ -1,6 +1,6 @@
 
 """
-Users handler
+Templates handler
 """
 import re
 import settings as st
@@ -25,7 +25,7 @@ class Template(object):
     
 class TemplatesHandler(object):
     """
-    Users handlers class to get, edit, and streaming users from the database
+    Templates handlers class to get, edit, and streaming users from the database
     """
     def __init__(self):
         self.db_handler = DBHandler("templates")
@@ -34,27 +34,27 @@ class TemplatesHandler(object):
 
     def get(self, template_id=None):
         """
-        Get all the users from the database
+        Get all templates from the database
         """
         return self.to_object(self.db_handler.get_data(template_id))
 
     def get_realtime(self):
         """
-        Get all users from the database in realtime.
-        If user is added or modified in the db it returns the change.
-        This method blocks the curren thread so use this method in a separated thread
+        Get all templates from the database in realtime.
+        If template is added or modified in the db it returns the change.
+        This method blocks the current thread so use this method in a separated thread
         """
         return self.db_handler.get_data_streaming()
 
     def insert(self, template):
         """
-        Insert user or users to the database
+        Insert templates to the database
         """
         return self.db_handler.insert_data(template)
 
     def edit(self, template, template_id):
         """
-        Modify user by his id
+        Modify template by his id
         """
         self.db_handler.edit_data(template, template_id, 'id')
     
@@ -78,11 +78,13 @@ class TemplatesHandler(object):
             for key in data:
                 regex = '\[\[' + key + '\]\]'
                 text = re.sub(regex, data[key], text)
-            return text
+            return str(text)
+        else:
+            return str(field)
      
     def to_object(self, data):
         """
-        Parse db user object to User instance
+        Parse db template object to Template instance
         """
         if (not data):
             return None
