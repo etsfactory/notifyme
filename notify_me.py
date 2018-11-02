@@ -38,7 +38,7 @@ def initiliceTestData():
     users.insert(User("Diego", "dlopez@ets.es"))
     
     filters.insert(BusFilter("logs", "important"))
-    filters.insert(BusFilter("logs", "info"))
+    filters.insert(BusFilter("notifications", "important"))
 
 def main():
     # smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)

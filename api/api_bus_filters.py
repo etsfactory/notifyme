@@ -40,16 +40,29 @@ class BusFiltersView(Resource):
         Create bus filter and stores in the db
         """
         json_data = request.get_json(force=True)
-        if not json_data:
-               return {'message': 'No input data provided'}, 400
-        result, errors = bus_filter_schema.load(json_data)
-        if errors:
-            return errors, 422
+        bus_filters = []
 
+        if isinstance(json_data, list):
+            for bus_filter in json_data:
+                error = self.insert_bus_filter(bus_filter)
+                bus_filters.append(bus_filter)
+        else: 
+            error = self.insert_bus_filter(bus_filter)
+            bus_filters.append(bus_filter)
+
+        if error:
+            return error
+
+        return bus_filters, 201
+    
+    def insert_bus_filter(self, data):
+
+        result, errors = bus_filter_schema.load(data)
+        if errors:
+            return errors
+            
         bus_filter = BusFilter(result['exchange'], result['key'])
         filters.insert(bus_filter)
-        response = json_parser.to_json_list(bus_filter)
-        return response, 201
 
 class BusFilterView(Resource):
 
@@ -118,8 +131,8 @@ class BusFilterTemplateView(Resource):
         filters.edit(bus_filter, bus_filter_id)
 
         response = json_parser.to_json_list(template)
-        return response
-
+        return response    
+   
 
 class BusFilterUsersView(Resource):
 

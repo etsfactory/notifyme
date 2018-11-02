@@ -18,14 +18,13 @@ class RabbitMqHandler(threading.Thread):
     """
     Class to manage connection with a rabbitMQ server
     """
-    def __init__(self, on_message_function, server, user, password, queue, exchange, keys, error_queue, exchange_type='direct', retries_to_error=3, retry_wait_time=1, heartbeat=None ):
+    def __init__(self, on_message_function, server, user, password, queue, subscriptions, error_queue, exchange_type='direct', retries_to_error=3, retry_wait_time=1, heartbeat=None ):
         self.on_message_function = on_message_function
         self.server = server
         self.user = user
         self.password = password
         self.queue = queue
-        self.exchange = exchange
-        self.keys = keys
+        self.subscriptions = subscriptions
         self.error_queue = error_queue
         self.exchange_type = exchange_type
         self.retries_to_error = retries_to_error
@@ -52,8 +51,11 @@ class RabbitMqHandler(threading.Thread):
                     pika.ConnectionParameters(self.server))
 
             self.channel = self.connection.channel()
-            self.channel.exchange_declare(exchange=self.exchange,
-                         exchange_type=self.exchange_type)
+         
+            for sub in self.subscriptions:
+                self.channel.exchange_declare(exchange=sub['exchange'],
+                            exchange_type=self.exchange_type)
+
             """
             NOTE: No queue name to let rabbit choouse a random name for us. 
             Is exclusive because it will be deleted when the connection closes
@@ -61,10 +63,12 @@ class RabbitMqHandler(threading.Thread):
             result = self.channel.queue_declare(exclusive=True)
             queue_name = result.method.queue
 
-            for key in self.keys:
-                self.channel.queue_bind(exchange=self.exchange,
+            for sub in self.subscriptions:
+                self.channel.queue_bind(exchange=sub['exchange'],
                                         queue=queue_name,
-                                        routing_key=key)
+                                        routing_key=sub['key'])
+               
+               
 
             st.logger.info('Waiting for bus messagges....')
             retries = 0

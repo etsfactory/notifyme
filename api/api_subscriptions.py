@@ -32,22 +32,38 @@ class SubscriptionsView(Resource):
         Create subscription
         """
         json_data = request.get_json(force=True)
+        subscriptions = []
         if not json_data:
                return {'message': 'No input data provided'}, 400
-        result, errors = subscription_schema.load(json_data)
-        if errors:
-            return errors, 422
+        
+        if isinstance(json_data, list):
+            for subscription in json_data:
+                error = self.insert_subscription(subscription)
+                subscriptions.append(subscription)
+        else: 
+            error = self.insert_subscription(subscription)
+            subscriptions.append(subscription)
+            if error:
+                return error
 
+        return subscriptions, 201        
+        
+    def insert_subscription(self, data):
+
+        result, errors = subscription_schema.load(data)
+        if errors:
+            return errors
+        
         bus_filter_exits = filters.get(result['filter_id'])
         user_exits = users.get(result['user_id'])
+        print(result)
 
         if (bus_filter_exits and user_exits):
-            subscription = Subscription(result['user_id'], result['filter_id'], result['template_id'])
+            print("Exits")
+            subscription = Subscription(result['user_id'], result['filter_id'])
             subscriptions.insert(subscription)
-            response = json_parser.to_json_list(subscription)
-            return response, 201        
         else:
-            return {'message': 'Bus filter id or user filter id does not exits'}, 400
+            return {'message': 'Bus filter id or user filter id does not exits'}
 
 class SubscriptionView(Resource):
 

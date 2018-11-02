@@ -20,7 +20,6 @@ class Realtime(object):
     Realtime class
     """
     def __init__(self):
-        self.threads = []
         self.filters = BusFiltersHandler()
         self.subscriptions = SubscriptionsHandler()
         self.templates = TemplatesHandler()
@@ -62,9 +61,8 @@ class Realtime(object):
         """
         st.logger.info('-----------------------')
         st.logger.info('Deleting subscription change...')
-        thread = self.search_thread(parsed_subscription)
-        if thread: 
-            self.delete_connection(thread)
+        if hasattr(self,'bus_tread'):
+            self.bus_thread.stop()
 
     def on_subscription_added(self, parsed_subscription):
         """
@@ -74,10 +72,11 @@ class Realtime(object):
         st.logger.info('New subscription change...')
         
         subscriptions = []
-        exchange = self.filters.get(parsed_subscription.filter_id).exchange
+        bus_filter = self.filters.get(parsed_subscription.filter_id)
         for sub in self.subscriptions.get_with_relationships():
-            if sub['exchange'] == exchange:
-                subscriptions.append(sub)     
+            print(sub)
+            if sub['filter_id'] == bus_filter.id:
+                subscriptions.append(sub)
 
         self.on_subscription_deleted(parsed_subscription)   
         self.create_connection(subscriptions)
@@ -86,9 +85,8 @@ class Realtime(object):
         """
         Creates a thread with a new rabbitmq connection
         """
-        bus_connection = BusConnectionHandler(subscriptions)
-        self.threads.append(bus_connection)
-        bus_connection.start()
+        self.bus_thread = BusConnectionHandler(subscriptions)
+        self.bus_thread.start()
 
     def delete_connection(self, thread):
         """
@@ -96,24 +94,7 @@ class Realtime(object):
         """
         st.logger.info('Stopping thread')
         thread.stop()
-        self.threads.remove(thread)
-
-    def search_thread(self, subscription):
-        """
-        Searchs for a thread listening to a filter
-        """
-        for thread in self.threads:
-            if thread.is_listening_subscription(subscription):
-                return thread
-
-    def search_by_user(self, user):
-        """
-        Searchs for a thread listening to a list of users
-        """
-        for thread in self.threads:
-            for user_thread in thread.get_users():
-                if user_thread.email == user.email:
-                    return thread
+       # self.threads.remove(thread)
 
     def parse_filter(self, bus_filter):
         """
