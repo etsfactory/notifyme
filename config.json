@@ -17,6 +17,7 @@
       "email": "d.lopez@ets.es"
     }
   ],
+  "refresh_database": false,
   "default_template": {
     "name": "Template por defecto",
     "text": "Se ha creado una nueva reco con id: [[id]]",

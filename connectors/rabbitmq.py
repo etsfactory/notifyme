@@ -18,13 +18,13 @@ class RabbitMqHandler(threading.Thread):
     """
     Class to manage connection with a rabbitMQ server
     """
-    def __init__(self, on_message_function, server, user, password, queue, subscriptions, error_queue, exchange_type='direct', retries_to_error=3, retry_wait_time=1, heartbeat=None ):
+    def __init__(self, on_message_function, server, user, password, queue, exchange_keys, error_queue, exchange_type='direct', retries_to_error=3, retry_wait_time=1, heartbeat=None ):
         self.on_message_function = on_message_function
         self.server = server
         self.user = user
         self.password = password
         self.queue = queue
-        self.subscriptions = subscriptions
+        self.exchange_keys = exchange_keys
         self.error_queue = error_queue
         self.exchange_type = exchange_type
         self.retries_to_error = retries_to_error
@@ -35,6 +35,9 @@ class RabbitMqHandler(threading.Thread):
     
     def stop(self):
         self._is_interrupted = True,
+    
+    def set_exchange_keys(self, exchange_keys):
+        self.exchange_keys = exchange_keys
             
     def run(self):
         """
@@ -52,7 +55,7 @@ class RabbitMqHandler(threading.Thread):
 
             self.channel = self.connection.channel()
          
-            for sub in self.subscriptions:
+            for sub in self.exchange_keys:
                 self.channel.exchange_declare(exchange=sub['exchange'],
                             exchange_type=self.exchange_type)
 
@@ -63,13 +66,11 @@ class RabbitMqHandler(threading.Thread):
             result = self.channel.queue_declare(exclusive=True)
             queue_name = result.method.queue
 
-            for sub in self.subscriptions:
+            for sub in self.exchange_keys:
                 self.channel.queue_bind(exchange=sub['exchange'],
                                         queue=queue_name,
                                         routing_key=sub['key'])
                
-               
-
             st.logger.info('Waiting for bus messagges....')
             retries = 0
             """

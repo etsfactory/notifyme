@@ -44,6 +44,7 @@ DB_PORT = os.getenv('DB_HOST', 28015)
 DB_NAME = 'notify_me'
 
 USERS = config['users']
+REFRESH_DATABASE = config['refresh_database']
 
 DEFAULT_TEMPLATE = config['default_template']
 DEFAULT_TEMPLATE_NAME = DEFAULT_TEMPLATE['name']

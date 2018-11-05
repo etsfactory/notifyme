@@ -40,13 +40,14 @@ class SubscriptionsView(Resource):
             for subscription in json_data:
                 error = self.insert_subscription(subscription)
                 subscriptions.append(subscription)
+                return subscriptions, 201        
         else: 
-            error = self.insert_subscription(subscription)
-            subscriptions.append(subscription)
-            if error:
-                return error
+            error = self.insert_subscription(json_data)
+            return json_data, 201
 
-        return subscriptions, 201        
+        if error:
+            return error
+
         
     def insert_subscription(self, data):
 

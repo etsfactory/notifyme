@@ -44,14 +44,16 @@ class UsersView(Resource):
             for user in json_data:
                 error = self.insert_user(user)
                 users.append(user)
+            return users, 201
+
         else: 
-            error = self.insert_user(user)
-            users.append(user)
+            error = self.insert_user(json_data)
+            return json_data, 201
 
         if error:
             return error
-            
-        return users, 201
+
+       
     
     def insert_user(self, data):
 

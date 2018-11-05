@@ -28,7 +28,7 @@ class ApiHandler(threading.Thread):
         api.add_resource(BusFiltersView, '/bus_filters')
         api.add_resource(BusFilterView, '/bus_filters/<string:bus_filter_id>')
         api.add_resource(BusFilterUsersView, '/bus_filters/<string:bus_filter_id>/users')
-        api.add_resource(BusFilterTemplateView, '/bus_filters/<string:bus_filter_id>/template')
+        api.add_resource(BusFilterTemplateView, '/bus_filters/<string:bus_filter_id>/templates')
 
         api.add_resource(SubscriptionsView, '/subscriptions')
         api.add_resource(SubscriptionView, '/subscriptions/<string:subscription_id>')

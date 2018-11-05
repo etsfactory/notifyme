@@ -45,7 +45,8 @@ def main():
     
     st.logger.info('Starting service')
 
-    initiliceTestData()
+    if (st.REFRESH_DATABASE): 
+        initiliceTestData()
 
     Realtime()
 

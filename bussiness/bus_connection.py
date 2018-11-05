@@ -34,8 +34,8 @@ class BusConnectionHandler(object):
         self.templates_handler = TemplatesHandler()
         self.smtp = SMTPHandler(
             st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
-        self.initialize()
-
+        self.bus_thread = RabbitMqHandler(self.on_message, st.RABBITMQ_SERVER,
+                                          st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 'notifyme', self.subscriptions, 'error')
     def start(self):
         """
         Starts the thread
@@ -49,13 +49,6 @@ class BusConnectionHandler(object):
         self.bus_thread.stop()
         self.bus_thread.join()
 
-    def initialize(self):
-        """
-        Create keys to listen
-        """
-        self.bus_thread = RabbitMqHandler(self.on_message, st.RABBITMQ_SERVER,
-                                          st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 'notifyme', self.subscriptions, 'error')
-
     def is_listening_subscription(self, subscription):
         """
         Check if the thread is listening to a subscription bus_filter
@@ -67,6 +60,10 @@ class BusConnectionHandler(object):
             if exchange1 == exchange2:
                 return True
         return False
+    
+    def set_subscriptions(self, subscriptions):
+        self.bus_thread.set_exchange_keys(subscriptions)
+
 
     def on_message(self, method, properties, message):
         """"
