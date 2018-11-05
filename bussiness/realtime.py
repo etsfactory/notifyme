@@ -72,7 +72,7 @@ class Realtime(object):
         """
         Creates a thread with a new rabbitmq connection
         """
-        if hasattr(self,'bus_tread'):
+        if not hasattr(self,'bus_tread'):
             self.bus_thread = BusConnectionHandler(subscriptions)
         else:
             self.bus_thread.set_subscriptions(subscriptions)
@@ -89,5 +89,6 @@ class Realtime(object):
         """
         Returns a Subscription object from a realtime rethink object
         """
-        return self.subscriptions.to_object(subscription_cursor['new_val'])
+        if subscription_cursor['new_val']:
+            return self.subscriptions.to_object(subscription_cursor['new_val'])
 
