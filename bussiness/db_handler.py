@@ -63,10 +63,10 @@ class DBHandler(object):
         """
         Modifies data 
         """
-        entries = self.db.filter_data(self.table_name, {key: key_value})
+        entries = self.filter_data({key: key_value})
         for document in entries:
             self.db.edit_data(self.table_name, document[key], json_parser.to_json(data))
-    
+
     def delete_data(self, key_value):
         self.db.delete_data(self.table_name, key_value)
 
@@ -79,7 +79,8 @@ class DBHandler(object):
         for entry in data:
             data_list.append(entry)
         return data_list
-   
+        
+    
     def join_tables(self, table1, table2, table3, key1, key2):
         """
         Joins two tables

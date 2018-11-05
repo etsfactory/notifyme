@@ -40,14 +40,14 @@ class SubscriptionsView(Resource):
             for subscription in json_data:
                 error = self.insert_subscription(subscription)
                 subscriptions.append(subscription)
-                return subscriptions, 201        
         else: 
             error = self.insert_subscription(json_data)
-            return json_data, 201
+            subscriptions.append(json_data)
 
         if error:
-            return error
+            return error, 500
 
+        return subscriptions, 201
         
     def insert_subscription(self, data):
 
@@ -60,7 +60,6 @@ class SubscriptionsView(Resource):
         print(result)
 
         if (bus_filter_exits and user_exits):
-            print("Exits")
             subscription = Subscription(result['user_id'], result['filter_id'])
             subscriptions.insert(subscription)
         else:

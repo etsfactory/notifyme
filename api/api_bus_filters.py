@@ -46,14 +46,14 @@ class BusFiltersView(Resource):
             for bus_filter in json_data:
                 error = self.insert_bus_filter(bus_filter)
                 bus_filters.append(bus_filter)
-                return bus_filters, 201
         else: 
             error = self.insert_bus_filter(json_data)
-            return json_data, 201
+            bus_filters.append(json_data)
 
         if error:
-            return error
-
+            return error, 500
+        
+        return bus_filters, 201
     
     def insert_bus_filter(self, data):
 

@@ -91,8 +91,10 @@ class TemplatesHandler(object):
         templates = []
         if isinstance(data, dict):
             return Template(data['name'], data['text'], data['subject'], data['id'])
-        else:
+        if data:
             for template in data:
                 templates.append(Template(template['name'], template['text'], template['subject'], template['id']))
             return templates
+        else:
+            return None
     

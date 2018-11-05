@@ -134,7 +134,9 @@ class SubscriptionsHandler(object):
         subs = []
         if isinstance(data, dict):
             return Subscription(data['user_id'], data['filter_id'], data['template_id'], data['id'])
-        else:
+        if data:
             for sub in data:
                 subs.append(Subscription(sub['user_id'], sub['filter_id'], sub['template_id'], sub['id']))
             return subs
+        else: 
+            return None

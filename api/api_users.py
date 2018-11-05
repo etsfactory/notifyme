@@ -41,20 +41,20 @@ class UsersView(Resource):
         if not json_data:
                return {'message': 'No input data provided'}, 400
         if isinstance(json_data, list):
+            
             for user in json_data:
                 error = self.insert_user(user)
                 users.append(user)
-            return users, 201
 
         else: 
             error = self.insert_user(json_data)
-            return json_data, 201
+            users.append(json_data)
 
         if error:
-            return error
+            return error, 500
+        
+        return users, 201
 
-       
-    
     def insert_user(self, data):
 
         result, errors = user_schema.load(data)

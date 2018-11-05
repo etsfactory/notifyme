@@ -5,8 +5,10 @@ def to_json_list(data):
     if isinstance(data, list):
         entry = ujson.dumps([ob.__dict__ for ob in data])
         return ast.literal_eval(entry)
-    else: 
+    if data: 
         return to_json(data)
+    else:
+        return []
         
 def to_json(data):
     entry = ujson.dumps(data.__dict__)

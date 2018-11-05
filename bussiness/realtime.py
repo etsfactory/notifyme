@@ -33,8 +33,9 @@ class Realtime(object):
         If a filter is updated, the thread stops and creates and new thread
         """
         subs = self.subscriptions.get()
-        for sub in subs:
-            self.on_subscription_added(sub)
+        if subs:
+            for sub in subs:
+                self.on_subscription_added(sub)
 
         cursor = self.subscriptions.get_realtime()
 

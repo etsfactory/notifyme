@@ -10,8 +10,8 @@ from marshmallow import Schema, fields, pprint
 
 class UserSchema(Schema):
     id = fields.Str()
-    name = fields.Str()
-    email = fields.Email()
+    name = fields.Str(required=True)
+    email = fields.Email(required=True)
 
 class User(object):
     def __init__(self, name, email, id=None):
@@ -82,8 +82,9 @@ class UsersHandler(object):
         users = []
         if isinstance(data, dict):
             return User(data['name'], data['email'], data['id'])
-        else:
+        if data:
             for user in data:
                 users.append(User(user['name'], user['email'], user['id']))
             return users
+        return None
     

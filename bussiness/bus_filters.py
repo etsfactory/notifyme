@@ -97,10 +97,12 @@ class BusFiltersHandler(object):
         filters = []
         if isinstance(data, dict):
            return self.create_from_dictionary(data)
-        else: 
+        if data: 
             for bus_filter in data:
                filters.append(self.create_from_dictionary(bus_filter))
             return filters
+        else:
+            return None
 
     def create_from_dictionary(self, dictionary):
         """
