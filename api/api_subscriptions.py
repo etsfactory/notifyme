@@ -38,32 +38,28 @@ class SubscriptionsView(Resource):
         
         if isinstance(json_data, list):
             for subscription in json_data:
-                error = self.insert_subscription(subscription)
+                response, http_code = self.insert_subscription(subscription)
                 subscriptions.append(subscription)
         else: 
-            error = self.insert_subscription(json_data)
+            response, http_code = self.insert_subscription(json_data)
             subscriptions.append(json_data)
 
-        if error:
-            return error, 500
-
-        return subscriptions, 201
+        return response, http_code
         
     def insert_subscription(self, data):
 
         result, errors = subscription_schema.load(data)
         if errors:
-            return errors
+            return errors, 422
         
         bus_filter_exits = filters.get(result['filter_id'])
         user_exits = users.get(result['user_id'])
-        print(result)
 
         if (bus_filter_exits and user_exits):
             subscription = Subscription(result['user_id'], result['filter_id'])
             subscriptions.insert(subscription)
         else:
-            return {'message': 'Bus filter id or user filter id does not exits'}
+            return {'message': 'Bus filter id or user filter id does not exits'}, 422
 
 class SubscriptionView(Resource):
 

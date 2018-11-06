@@ -43,26 +43,24 @@ class UsersView(Resource):
         if isinstance(json_data, list):
             
             for user in json_data:
-                error = self.insert_user(user)
+                response, http_code = self.insert_user(user)
                 users.append(user)
 
         else: 
-            error = self.insert_user(json_data)
+            response, http_code = self.insert_user(json_data)
             users.append(json_data)
-
-        if error:
-            return error, 500
         
-        return users, 201
+        return response, http_code
 
     def insert_user(self, data):
 
         result, errors = user_schema.load(data)
         if errors:
-            return errors
+            return errors, 422
             
         user = User(result['name'], result['email'])
         users.insert(user)
+        return data, 201
 
 
 class UserView(Resource):

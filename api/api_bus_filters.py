@@ -44,25 +44,22 @@ class BusFiltersView(Resource):
 
         if isinstance(json_data, list):
             for bus_filter in json_data:
-                error = self.insert_bus_filter(bus_filter)
+                response, http_code = self.insert_bus_filter(bus_filter)
                 bus_filters.append(bus_filter)
         else: 
-            error = self.insert_bus_filter(json_data)
+            response, http_code = self.insert_bus_filter(json_data)
             bus_filters.append(json_data)
-
-        if error:
-            return error, 500
         
-        return bus_filters, 201
+        return response, http_code
     
     def insert_bus_filter(self, data):
-
         result, errors = bus_filter_schema.load(data)
         if errors:
-            return errors
+            return errors, 422
             
         bus_filter = BusFilter(result['exchange'], result['key'])
         filters.insert(bus_filter)
+        return data, 201
 
 class BusFilterView(Resource):
 

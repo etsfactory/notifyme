@@ -9,10 +9,12 @@ from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
 from marshmallow import Schema, fields, pprint
 
+import utils.json_parser as json_parser
+
 class TemplateSchema(Schema):
     id = fields.Str()
-    name = fields.Str()
-    text = fields.Str()
+    name = fields.Str(required=True)
+    text = fields.Str(required=True)
     subject = fields.Str()
 
 class Template(object):
@@ -50,7 +52,11 @@ class TemplatesHandler(object):
         """
         Insert templates to the database
         """
-        return self.db_handler.insert_data(template)
+        result, errors = TemplateSchema().load(json_parser.to_json_list(template))
+        if errors:
+            st.logger.error('Template creation error: %s', errors)
+        else:
+            return self.db_handler.insert_data(result)
 
     def edit(self, template, template_id):
         """

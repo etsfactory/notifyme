@@ -57,7 +57,7 @@ class DBHandler(object):
         """
         Inserts data into the database
         """
-        return self.db.insert_data(self.table_name, json_parser.to_json_list(data))
+        return self.db.insert_data(self.table_name, data)
 
     def edit_data(self, data, key_value, key='id'):
         """

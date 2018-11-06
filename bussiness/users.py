@@ -7,11 +7,13 @@ import settings as st
 from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
 from marshmallow import Schema, fields, pprint
+import utils.json_parser as json_parser
+
 
 class UserSchema(Schema):
     id = fields.Str()
-    name = fields.Str(required=True)
-    email = fields.Email(required=True)
+    name = fields.Str()
+    email = fields.Email()
 
 class User(object):
     def __init__(self, name, email, id=None):
@@ -49,7 +51,11 @@ class UsersHandler(object):
         """
         Insert user or users to the database
         """
-        return self.db_handler.insert_data(user)
+        result, errors = UserSchema().load(json_parser.to_json_list(user))
+        if errors:
+            st.logger.error('User creation error: %s', errors)
+        else:
+            return self.db_handler.insert_data(result)
 
     def edit(self, user, user_id):
         """

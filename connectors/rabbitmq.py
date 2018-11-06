@@ -9,10 +9,7 @@ import time
 import settings as st
 
 from pika.exceptions import ConnectionClosed
-
-class ConnectionErrorException(Exception):
-    pass
-
+from exceptions.bus_exceptions import ConnectionErrorException
 
 class RabbitMqHandler(threading.Thread):
     """

@@ -12,9 +12,8 @@ from marshmallow import Schema, fields, pprint
 
 class BusFilterSchema(Schema):
     id = fields.Str()
-    exchange = fields.Str()
+    exchange = fields.Str(required=True)
     key = fields.Str()
-    
 
 class BusFilter(object):
     """
@@ -57,7 +56,11 @@ class BusFiltersHandler(object):
         """
         Insert bus_filter to the database
         """
-        return self.db_handler.insert_data(bus_filter)
+        result, errors = BusFilterSchema().load(json_parser.to_json_list(bus_filter))
+        if errors:
+            st.logger.error('Bus filter creation error: %s', errors)
+        else:
+            return self.db_handler.insert_data(result)
 
     def edit(self, bus_filter, bus_filter_id):
         """

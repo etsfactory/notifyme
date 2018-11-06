@@ -14,9 +14,9 @@ from marshmallow import Schema, fields, pprint
 
 class SubscriptionSchema(Schema):
     id = fields.Str()
-    user_id = fields.Str()
-    filter_id = fields.Str()
-    template_id: fields.Str()
+    user_id = fields.Str(required=True)
+    filter_id = fields.Str(required=True)
+    template_id = fields.Str()
 
 class Subscription(object):
 
