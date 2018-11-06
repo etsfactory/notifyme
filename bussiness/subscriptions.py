@@ -4,13 +4,13 @@ Users handler
 """
 import settings as st
 
-from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
 from bussiness.users import UsersHandler
 from bussiness.bus_filters import BusFiltersHandler
 from bussiness.templates import TemplatesHandler
 
-from marshmallow import Schema, fields, pprint
+from marshmallow import Schema, fields
+
 
 class SubscriptionSchema(Schema):
     id = fields.Str()
@@ -18,14 +18,6 @@ class SubscriptionSchema(Schema):
     filter_id = fields.Str(required=True)
     template_id = fields.Str()
 
-class Subscription(object):
-
-    def __init__(self, user_id, filter_id, template_id=None, id=None):
-        self.user_id = user_id
-        self.filter_id = filter_id
-        self.template_id = template_id
-        if id:
-            self.id = id
 
 class SubscriptionsHandler(object):
     """
@@ -43,7 +35,7 @@ class SubscriptionsHandler(object):
         """
         Get all the subscriptions from the database. If id is provided search for a single subscription
         """
-        return self.to_object(self.db_handler.get_data(sub_id))
+        return self.db_handler.get_data(sub_id)
 
     def get_with_relationships(self):
         """
@@ -66,10 +58,10 @@ class SubscriptionsHandler(object):
         users = []
         subscriptions = self.get_by_filter(bus_filter)
         for subscription in subscriptions:
-            user = (self.users.get(subscription.user_id))
+            user = (self.users.get(subscription['user_id']))
             users.append(user)
         return users
-    
+
     def get_filters_by_user(self, user):
         """
         Get filters associates with user
@@ -77,7 +69,7 @@ class SubscriptionsHandler(object):
         filters = []
         subscriptions = self.get_by_user(user)
         for subscription in subscriptions:
-            bus_filter = self.filters.get(subscription.filter_id)
+            bus_filter = self.filters.get(subscription['filter_id'])
             filters.append(bus_filter)
         return filters
 
@@ -86,32 +78,32 @@ class SubscriptionsHandler(object):
         Get subscription by his id
         """
         return self.db_handler.filter_data({'id': subsc_id})
-     
+
     def get_by_filter(self, bus_filter):
         """
         Get subscription by his id
         """
-        return self.to_object(self.db_handler.filter_data({'filter_id': bus_filter.id}))
-    
+        return self.db_handler.filter_data({'filter_id': bus_filter['id']})
+
     def get_by_user(self, user):
         """
         Get subscription by his id
         """
-        return self.to_object(self.db_handler.filter_data({'user_id': user.id}))
+        return self.db_handler.filter_data({'user_id': user['id']})
 
     def insert(self, subscription):
         """
         Insert subscriptions to the database
         """
-        bus_filter = self.filters.get(subscription.filter_id)
-        
+        bus_filter = self.filters.get(subscription['filter_id'])
+
         if not hasattr(subscription, 'template_id') and hasattr(bus_filter, 'template_id'):
-            subscription.template_id = bus_filter.template_id
+            subscription['template_id'] = bus_filter['template_id']
         elif (not self.templates.default_template_id):
             self.templates.create_default()
-            subscription.template_id = self.templates.default_template_id
+            subscription['template_id'] = self.templates.default_template_id
         else:
-            subscription.template_id = self.templates.default_template_id
+            subscription['template_id'] = self.templates.default_template_id
 
         return self.db_handler.insert_data(subscription)
 
@@ -121,22 +113,20 @@ class SubscriptionsHandler(object):
         """
         self.db_handler.edit_data(subscription, subscription_id, 'id')
 
-    def delete(self, subscription):
+    def delete_user(self, user_id):
+        subscriptions = self.get()
+        for sub in subscriptions:
+            if sub['user_id'] == user_id:
+                self.delete(sub['id'])
+
+    def delete_bus_filter(self, bus_filter_id):
+        subscriptions = self.get()
+        for sub in subscriptions:
+            if sub['filter_id'] == bus_filter_id:
+                self.delete(sub['id'])
+
+    def delete(self, subscription_id):
         """
         Delete subscription. If no id is pased it will search it 
         """
-        self.db_handler.delete_data(subscription.id)
-        
-    def to_object(self, data):
-        """
-        Parse db subscription object to Subscription instance
-        """
-        subs = []
-        if isinstance(data, dict):
-            return Subscription(data['user_id'], data['filter_id'], data['template_id'], data['id'])
-        if data:
-            for sub in data:
-                subs.append(Subscription(sub['user_id'], sub['filter_id'], sub['template_id'], sub['id']))
-            return subs
-        else: 
-            return None
+        self.db_handler.delete_data(subscription_id)

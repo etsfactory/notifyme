@@ -5,20 +5,19 @@ import time
 from threading import Thread
 
 import settings as st
-from bussiness.bus_filters import BusFilter
 from bussiness.bus_filters import BusFiltersHandler
 from bussiness.subscriptions import SubscriptionsHandler
-from bussiness.subscriptions import Subscription
-from bussiness.templates import Template
 from bussiness.templates import TemplatesHandler
 
 from bussiness.bus_connection import BusConnectionHandler
 from connectors.smtp import SMTPHandler
 
+
 class Realtime(object):
     """
     Realtime class
     """
+
     def __init__(self):
         self.filters = BusFiltersHandler()
         self.subscriptions = SubscriptionsHandler()
@@ -40,7 +39,6 @@ class Realtime(object):
         cursor = self.subscriptions.get_realtime()
 
         for subscription in cursor:
-            parsed_subscription = self.parse_subscription(subscription)
 
             if not subscription['new_val']:
                 """
@@ -51,29 +49,29 @@ class Realtime(object):
                 """
                 When a subscription is added or edited
                 """
-                self.on_subscription_added(parsed_subscription)
+                self.on_subscription_added(subscription['new_val'])
 
-    def on_subscription_added(self, parsed_subscription):
+    def on_subscription_added(self, subscription):
         """
         Subscriptions added. Creates a new connection thread
         """
         st.logger.info('-----------------------')
         st.logger.info('New subscription change...')
-        
+
         subscriptions = []
-        bus_filter = self.filters.get(parsed_subscription.filter_id)
+        bus_filter = self.filters.get(subscription['filter_id'])
         for sub in self.subscriptions.get_with_relationships():
-            if sub['filter_id'] == bus_filter.id:
+            if sub['filter_id'] == bus_filter['id']:
                 subscriptions.append(sub)
 
-        self.thread_stop()   
+        self.thread_stop()
         self.create_connection(subscriptions)
 
     def create_connection(self, subscriptions):
         """
         Creates a thread with a new rabbitmq connection
         """
-        if not hasattr(self,'bus_tread'):
+        if not hasattr(self, 'bus_tread'):
             self.bus_thread = BusConnectionHandler(subscriptions)
         else:
             self.bus_thread.set_subscriptions(subscriptions)
@@ -83,13 +81,5 @@ class Realtime(object):
         """
         Search for a thread with the bus_filter to pause and delete it
         """
-        if hasattr(self,'bus_tread'):
+        if hasattr(self, 'bus_tread'):
             self.bus_thread.stop()
-
-    def parse_subscription(self, subscription_cursor):
-        """
-        Returns a Subscription object from a realtime rethink object
-        """
-        if subscription_cursor['new_val']:
-            return self.subscriptions.to_object(subscription_cursor['new_val'])
-

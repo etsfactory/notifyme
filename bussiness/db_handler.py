@@ -10,6 +10,7 @@ from connectors.rethink_realtime import BDRealtime
 
 recreate_database = st.REFRESH_DATABASE
 
+
 class DBHandler(object):
     """
     Users handlers class to get, edit, and streaming users from the database
@@ -57,7 +58,7 @@ class DBHandler(object):
         """
         Inserts data into the database
         """
-        return self.db.insert_data(self.table_name, data)
+        return self.db.insert_data(self.table_name, json_parser.to_json_list(data))
 
     def edit_data(self, data, key_value, key='id'):
         """
@@ -65,7 +66,8 @@ class DBHandler(object):
         """
         entries = self.filter_data({key: key_value})
         for document in entries:
-            self.db.edit_data(self.table_name, document[key], json_parser.to_json(data))
+            self.db.edit_data(
+                self.table_name, document[key], json_parser.to_json(data))
 
     def delete_data(self, key_value):
         self.db.delete_data(self.table_name, key_value)
@@ -74,13 +76,12 @@ class DBHandler(object):
         """
         Filters data from the database
         """
-        data = self.db.filter_data(self.table_name, filter)      
+        data = self.db.filter_data(self.table_name, filter)
         data_list = []
         for entry in data:
             data_list.append(entry)
         return data_list
-        
-    
+
     def join_tables(self, table1, table2, table3, key1, key2):
         """
         Joins two tables
@@ -93,4 +94,4 @@ class DBHandler(object):
         return self.db.join_tables(table1, table2, table3, key1, key2)
 
     def table_join_streaming(self, table1, table2, table3, key1, key2):
-         return self.db_realtime.table_join_streaming(table1, table2, table3, key1, key2)
+        return self.db_realtime.table_join_streaming(table1, table2, table3, key1, key2)

@@ -1,17 +1,10 @@
 from flask import Flask, Response
-from flask_restful import Resource, Api, request
+from flask_restful import Resource, request
 from marshmallow import pprint
 
-from bussiness.users import UsersHandler
-from bussiness.users import User
-from bussiness.users import UserSchema
-
+from bussiness.users import UsersHandler, UserSchema
 from bussiness.subscriptions import SubscriptionsHandler
-from bussiness.subscriptions import Subscription
-
-from bussiness.bus_filters import BusFilterSchema
-from bussiness.bus_filters import BusFilter
-from bussiness.bus_filters import BusFiltersHandler
+from bussiness.bus_filters import BusFiltersHandler, BusFilterSchema
 
 import utils.json_parser as json_parser
 
@@ -21,10 +14,12 @@ filters = BusFiltersHandler()
 user_schema = UserSchema()
 bus_filter_schema = BusFilterSchema()
 
+
 class UsersView(Resource):
     """
-    Handles users list endpoints
+    Handles users list endpoints /users/
     """
+
     def get(self):
         """
         Get users from the db
@@ -39,17 +34,17 @@ class UsersView(Resource):
         json_data = request.get_json(force=True)
         users = []
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+            return {'message': 'No input data provided'}, 400
         if isinstance(json_data, list):
-            
+
             for user in json_data:
                 response, http_code = self.insert_user(user)
                 users.append(user)
 
-        else: 
+        else:
             response, http_code = self.insert_user(json_data)
             users.append(json_data)
-        
+
         return response, http_code
 
     def insert_user(self, data):
@@ -57,16 +52,16 @@ class UsersView(Resource):
         result, errors = user_schema.load(data)
         if errors:
             return errors, 422
-            
-        user = User(result['name'], result['email'])
-        users.insert(user)
+
+        users.insert(result)
         return data, 201
 
 
 class UserView(Resource):
     """
-    Handles user endpoints
+    Specific user endpoints /users/id
     """
+
     def get(self, user_id):
         """
         Get specific user from the db
@@ -80,29 +75,28 @@ class UserView(Resource):
         """
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+            return {'message': 'No input data provided'}, 400
         result, errors = user_schema.load(json_data)
         if errors:
             return errors, 422
 
-        user = User(result['name'], result['email'])
-        users.edit(user, user_id)
-        response = json_parser.to_json_list(user)
-        return response
+        users.edit(result, user_id)
+        return result
 
     def delete(self, user_id):
         """
         Delete user from the db passing an user id
         """
-        user = users.get(user_id)
-        users.delete(user)
-        response = json_parser.to_json_list(user)
+        users.delete(user_id)
+        response = {'deleted': True}
         return response
+
 
 class UserFiltersView(Resource):
     """
-    Handles user bus filter endpoints
+    Specific user bus filters /users/id/bus_filters
     """
+
     def get(self, user_id):
         """
         Get user bus filters
@@ -118,21 +112,17 @@ class UserFiltersView(Resource):
         """
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+            return {'message': 'No input data provided'}, 400
         result, errors = bus_filter_schema.load(json_data)
         if errors:
             return errors, 422
 
-        bus_filter = BusFilter(result['exchange'], result['key'])
-        bus_filter_id, not_exits = filters.search(bus_filter)
+        bus_filter_id, not_exits = filters.search(result)
 
         if not_exits:
-            bus_filter_id = filters.insert(bus_filter)['generated_keys'][0]
+            bus_filter_id = filters.insert(result)['generated_keys'][0]
 
-        subscription = Subscription(user_id, bus_filter_id)
+        subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
         subscriptions.insert(subscription)
 
-        response = json_parser.to_json_list(subscription)
-        return response
-
-   
+        return result
