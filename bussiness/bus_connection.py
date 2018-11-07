@@ -30,7 +30,8 @@ class BusConnectionHandler(object):
         self.smtp = SMTPHandler(
             st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
         self.bus_thread = RabbitMqHandler(self.on_message, st.RABBITMQ_SERVER,
-                                          st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 'notifyme', self.subscriptions, 'error')
+                            st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 
+                            st.RABBITMQ_QUEUE, self.subscriptions, st.RABBIRMQ_EXCHANGE_ERROR)
 
     def start(self):
         """

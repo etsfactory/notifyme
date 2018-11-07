@@ -2,7 +2,9 @@
   "rabbitmq": {
     "server": "localhost",
     "user": "",
-    "password": ""
+    "password": "",
+    "queue_name": "notifyme",
+    "error_exchange": "notifyme.error"
   },
   "smtp": {
     "server": "smtp.gmail.com",

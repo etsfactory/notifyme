@@ -31,6 +31,8 @@ RABBITMQ = config['rabbitmq']
 RABBITMQ_SERVER = RABBITMQ['server']
 RABBITMQ_USER = RABBITMQ['user']
 RABBITMQ_PASSWORD = RABBITMQ['password']
+RABBITMQ_QUEUE = RABBITMQ['queue_name']
+RABBIRMQ_EXCHANGE_ERROR = RABBITMQ['error_exchange']
 
 SMTP = config['smtp']
 SMTP_EMAIL = SMTP['email']
