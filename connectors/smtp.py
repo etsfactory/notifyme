@@ -2,6 +2,7 @@
 SMTP Handler
 """
 import smtplib
+import email.message
 
 class SMTPAuthenticationError(Exception):
     """
@@ -40,8 +41,12 @@ class SMTPHandler(object):
         :body: The body of the email
         """
         try:
-            message = 'Subject: {}\n\n{}'.format(str(subject), body)
-            self.server.sendmail(self.username, send_to, message)
-            print ('Email sent to ', send_to)
+            msg = email.message.Message()
+            msg['Subject'] = subject
+            msg['From'] = self.username
+            msg['To'] = send_to
+            msg.add_header('Content-Type','text/html')
+            msg.set_payload(body)
+            self.server.sendmail(msg['From'], [msg['To']], msg.as_string())
         except SMTPSendEmailError:
-            print('Error sending email')
+            print('Error sending message')

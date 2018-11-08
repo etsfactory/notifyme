@@ -41,16 +41,16 @@ class BusFiltersView(Resource):
                 if http_code == 422:
                     return response, 422
 
-            return bus_filters, 201
+            return bus_filters, http_code
         else:
-            response, http_code = self.insert_bus_filter(json_data)
-            return response, http_code
+            return self.insert_bus_filter(json_data)
 
     def insert_bus_filter(self, data):
         """
         Validate bus filter and insert it into the database
         """
         result, errors = bus_filter_schema.load(data)
+        
         if errors:
             return errors, 422
 
@@ -68,30 +68,46 @@ class BusFilterView(Resource):
         Get specific bus filter by his id
         """
         response = filters.get(bus_filter_id)
-        return response
+        
+        if response:
+            return response
+        else:
+            return {'message': 'Bus filter not found'}, 404
 
     def put(self, bus_filter_id):
         """
         Update bus filter passing his id
         """
         json_data = request.get_json(force=True)
+        
         if not json_data:
             return {'message': 'No input data provided'}, 400
         result, errors = bus_filter_schema.load(json_data)
+        
         if errors:
             return errors, 422
 
-        filters.edit(result, bus_filter_id)
-        return result
+        bus_filter = filters.get(bus_filter_id)        
+        if bus_filter:
+            filters.edit(result, bus_filter_id)
+            return result
+        else:
+            return {'message': 'Bus filter not found'}, 404
 
     def delete(self, bus_filter_id):
         """
         Delete bus filter by his id
         """
-        filters.delete(bus_filter_id)
-        response = {'deleted': True}
-        return response
-
+        bus_filter = filters.get(bus_filter_id)
+        
+        if bus_filter:
+            filters.delete(bus_filter_id)
+            subscriptions.delete_bus_filter(bus_filter_id)
+            response = {'deleted': True}
+            return response
+        else:
+            return {'message': 'Bus filter not found'}, 404
+    
 
 class BusFilterTemplateView(Resource):
     """
@@ -102,32 +118,41 @@ class BusFilterTemplateView(Resource):
         Get template from bus filter
         """
         bus_filter = filters.get(bus_filter_id)
-        template = templates.get(bus_filter['template_id'])
-        if template:
-            return template
+        
+        if bus_filter:
+            if hasattr(bus_filter, 'template_id'):
+                template = templates.get(bus_filter['template_id'])
+                if template:
+                    return template
+            else:
+                return []
         else:
-            return {'message': 'Bus filter does not have template'}, 404
+            return {'message': 'Bus filter not found'}, 404
 
     def post(self, bus_filter_id):
         """
         Creates template for the bus_filter
         """
         json_data = request.get_json(force=True)
+       
         if not json_data:
             return {'message': 'No input data provided'}, 400
         result, errors = template_schema.load(json_data)
+        
         if errors:
             return errors, 422
 
-        bus_filter = filters.get(bus_filter_id)
+        bus_filter = filters.get(bus_filter_id)        
+        if bus_filter:
+            template = {'name': result['name'], 'text': result['text']}
+            template_id = templates.insert(template)['generated_keys'][0]
 
-        template = {'name': result['name'], 'text': result['text']}
-        template_id = templates.insert(template)['generated_keys'][0]
+            bus_filter['template_id'] = template_id
+            filters.edit(bus_filter, bus_filter_id)
 
-        bus_filter['template_id'] = template_id
-        filters.edit(bus_filter, bus_filter_id)
-
-        return template
+            return template
+        else:
+            return {'message': 'Bus filter not found'}, 404
 
 
 class BusFilterUsersView(Resource):
@@ -139,25 +164,35 @@ class BusFilterUsersView(Resource):
         Get users from bus filter id
         """
         bus_filter = filters.get(bus_filter_id)
-        subs = subscriptions.get_users_by_filter(bus_filter)
-        return subs
+        
+        if bus_filter:
+            subs = subscriptions.get_users_by_filter(bus_filter)
+            return subs
+        else:
+            return {'message': 'Bus filter not found'}, 404
 
     def post(self, bus_filter_id):
         """
         Add user to filter
         """
         json_data = request.get_json(force=True)
+        
         if not json_data:
             return {'message': 'No input data provided'}, 400
         result, errors = user_schema.load(json_data)
+        
         if errors:
             return errors, 422
+        
+        bus_filter = filters.get(bus_filter_id)        
+        if bus_filter:
+            user_id, not_exits = users.search(result)
+            if not_exits:
+                user_id = users.insert(result)['generated_keys'][0]
 
-        user_id, not_exits = users.search(result)
-        if not_exits:
-            user_id = users.insert(result)['generated_keys'][0]
+            subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
+            subscriptions.insert(subscription)
 
-        subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
-        subscriptions.insert(subscription)
-
-        return subscription
+            return subscription
+        else:
+            return {'message': 'User not found'}, 404

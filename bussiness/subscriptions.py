@@ -99,7 +99,7 @@ class SubscriptionsHandler(object):
 
         if not hasattr(subscription, 'template_id') and hasattr(bus_filter, 'template_id'):
             subscription['template_id'] = bus_filter['template_id']
-        elif (not self.templates.default_template_id):
+        elif (not self.templates.get_by_name('default')):
             self.templates.create_default()
             subscription['template_id'] = self.templates.default_template_id
         else:
@@ -127,6 +127,6 @@ class SubscriptionsHandler(object):
 
     def delete(self, subscription_id):
         """
-        Delete subscription. If no id is pased it will search it 
+        Delete subscription.
         """
         self.db_handler.delete_data(subscription_id)

@@ -3,22 +3,21 @@ import ast
 
 def to_json_list(data):
     if isinstance(data, list):
-        if (not isinstance(data[0], dict)):
-            entry = ujson.dumps([ob.__dict__ for ob in data])
-            return ast.literal_eval(entry)
+        if data:
+            if (not isinstance(data[0], dict)):
+                entry = ujson.dumps([ob.__dict__ for ob in data])
+                return ast.literal_eval(entry)
+            else:
+                return data
         else:
-            return data
+            return []
     if data: 
         return to_json(data)
     else:
         return []
         
 def to_json(data):
-    if not isinstance(data, dict):
-        entry = ujson.dumps(data.__dict__)
-        return ast.literal_eval(entry)
-    else: 
-        return data
+    return ujson.dumps(data)
 
 def from_json(data):
     return ujson.loads(data)

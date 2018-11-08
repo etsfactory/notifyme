@@ -55,9 +55,6 @@ class Realtime(object):
         """
         Subscriptions added. Creates a new connection thread
         """
-        st.logger.info('-----------------------')
-        st.logger.info('New subscription change...')
-
         subscriptions = []
         bus_filter = self.filters.get(subscription['filter_id'])
         for sub in self.subscriptions.get_with_relationships():

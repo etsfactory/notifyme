@@ -66,8 +66,13 @@ class UserView(Resource):
         """
         Get specific user from the db
         """
-        response = json_parser.to_json_list(users.get(user_id))
-        return response
+    
+        response = users.get(user_id)
+        
+        if response:
+            return response
+        else:
+            return {'message': 'User not found'}, 404
 
     def put(self, user_id):
         """
@@ -80,17 +85,25 @@ class UserView(Resource):
         if errors:
             return errors, 422
 
-        users.edit(result, user_id)
-        return result
+        user = users.get(user_id)
+        if user:
+            users.edit(result, user_id)
+            return result
+        else:
+            return {'message': 'User not found'}, 404
 
     def delete(self, user_id):
         """
         Delete user from the db passing an user id
         """
-        users.delete(user_id)
-        response = {'deleted': True}
-        return response
-
+        user = users.get(user_id)
+        if user:
+            users.delete(user_id)
+            subscriptions.delete_user(user_id)
+            response = {'deleted': True}
+            return response
+        else:
+            return {'message': 'User not found'}, 404
 
 class UserFiltersView(Resource):
     """
@@ -102,9 +115,12 @@ class UserFiltersView(Resource):
         Get user bus filters
         """
         user = users.get(user_id)
-        bus_filters = subscriptions.get_filters_by_user(user)
-        response = json_parser.to_json_list(bus_filters)
-        return response
+        if user:
+            bus_filters = subscriptions.get_filters_by_user(user)
+            response = json_parser.to_json_list(bus_filters)
+            return response
+        else:
+            return {'message': 'User not found'}, 404
 
     def post(self, user_id):
         """
@@ -117,12 +133,16 @@ class UserFiltersView(Resource):
         if errors:
             return errors, 422
 
-        bus_filter_id, not_exits = filters.search(result)
+        user = users.get(user_id)
+        if user:
+            bus_filter_id, not_exits = filters.search(result)
 
-        if not_exits:
-            bus_filter_id = filters.insert(result)['generated_keys'][0]
+            if not_exits:
+                bus_filter_id = filters.insert(result)['generated_keys'][0]
 
-        subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
-        subscriptions.insert(subscription)
+            subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
+            subscriptions.insert(subscription)
 
-        return result
+            return result
+        else:
+            return {'message': 'User not found'}, 404

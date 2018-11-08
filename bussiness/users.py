@@ -22,7 +22,6 @@ class UsersHandler(object):
     def __init__(self):
         self.db_handler = DBHandler("users")
         self.db_handler.create_table()
-       # self.subscriptions = SubscriptionsHandler()
 
     def get(self, user_id=None):
         """
@@ -56,7 +55,6 @@ class UsersHandler(object):
 
     def delete(self, user_id):
         self.db_handler.delete_data(user_id)
-        # self.subscriptions.delete_user(user_id)
 
     def get_by_email(self, email):
         """

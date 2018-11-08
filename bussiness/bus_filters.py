@@ -5,7 +5,6 @@ Users handler
 import settings as st
 
 from bussiness.db_handler import DBHandler
-# from bussiness.subscriptions import SubscriptionsHandler
 
 from marshmallow import Schema, fields
 
@@ -24,7 +23,6 @@ class BusFiltersHandler(object):
     def __init__(self):
         self.db_handler = DBHandler("bus_filters")
         self.db_handler.create_table()
-        # self.subscriptions = SubscriptionsHandler()
 
     def get(self, key=None):
         """
@@ -61,8 +59,7 @@ class BusFiltersHandler(object):
         Delete bus_filter by his id 
         """
         self.db_handler.delete_data(bus_filter_id)
-        # self.subscriptions.delete_bus_filter(bus_filter_id)
-
+       
     def get_by_exchange_key(self, exchange, key):
         """
         Passing an exchange and key searchs in the db for a bus filter 

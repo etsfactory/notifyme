@@ -12,7 +12,7 @@ import errors
 import settings as st
 
 from threading import Thread
-from connectors.rabbitmq import RabbitMqHandler
+from connectors.rabbitmq import RabbitMqConsumer
 from connectors.smtp import SMTPHandler
 
 from bussiness.users import UsersHandler
@@ -21,6 +21,8 @@ from bussiness.subscriptions import SubscriptionsHandler
 
 from bussiness.realtime import Realtime
 from api.api import ApiHandler
+
+from exceptions.db_exceptions import WriteError, ReadError
 
 
 def initiliceTestData():
@@ -42,6 +44,7 @@ def main():
     if (st.REFRESH_DATABASE):
         initiliceTestData()
 
+    # raise WriteError()
     Realtime()
 
     api = ApiHandler()

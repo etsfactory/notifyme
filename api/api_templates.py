@@ -52,9 +52,12 @@ class TemplateView(Resource):
         """
         Get specific template
         """
-        template = templates.get(template_id)
-        response = json_parser.to_json_list(template)
-        return response
+        response = templates.get(template_id)
+        
+        if response:
+            return response
+        else:
+            return {'message': 'Template not found'}, 404
 
     def put(self, template_id):
         """
@@ -67,13 +70,21 @@ class TemplateView(Resource):
         if errors:
             return errors, 422
 
-        templates.edit(result, template_id)
-        return result
+        template = templates.get(template_id)
+        if template:
+            templates.edit(result, template_id)
+            return result
+        else:
+            return {'message': 'Template not found'}, 404
 
-    def delete(self, subscription_id):
+    def delete(self, template_id):
         """
         Delete template by his id
         """
-        subscriptions.delete(subscription_id)
-        response = {'deleted': True}
-        return response
+        template = templates.get(template_id)
+        if template:
+            templates.delete(template_id)
+            response = {'deleted': True}
+            return response
+        else:
+            return {'message': 'Template not found'}, 404

@@ -1,21 +1,24 @@
 import settings as st
+import traceback
+import errors as e
 
 class DBException(Exception):
-    def __init__(self, msg, original_exception):
-        st.logger.error('Error in the database')
-        super(DBException, self).__init__(msg + (": %s" % original_exception))
-        self.original_exception = original_exception
+    def __init__(self, name, msg):
+        super(DBException, self).__init__(msg)
+        e.process_exception('a', name, msg)
     
 class WriteError(DBException):
     """Basic exception for errors raised by inserting into the database"""
     def __init__(self, msg=None):
+        self.name = 'DB Write error'
         if msg is None:
             msg = "An error occured inserting into database"
-        super(WriteError, self).__init__(msg)
+        super(WriteError, self).__init__(self.name, msg)
 
 class ReadError(DBException):
     """Basic exception for errors raised by reading from the database"""
     def __init__(self, msg=None):
+        self.name = 'DB read error'
         if msg is None:
             msg = "An error occured reading from the database"
-        super(ReadError, self).__init__(msg)
+        super(ReadError, self).__init__(self.name, msg)

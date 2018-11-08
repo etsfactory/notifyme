@@ -4,7 +4,7 @@ import json
 from configparser import ConfigParser
 
 
-APP_NAME = "notify.me"
+APP_NAME = "notifyme"
 
 # Config file paths
 CONFIGURATION_FILE = 'config.json'

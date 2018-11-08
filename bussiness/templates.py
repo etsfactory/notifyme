@@ -22,7 +22,6 @@ class TemplatesHandler(object):
     """
     Templates handlers class to get, edit, and streaming users from the database
     """
-
     def __init__(self):
         self.db_handler = DBHandler("templates")
         self.db_handler.create_table()
@@ -46,7 +45,7 @@ class TemplatesHandler(object):
         """
         Insert templates to the database
         """
-        result, errors = TemplateSchema().load(json_parser.to_json_list(template))
+        result, errors = TemplateSchema().load(template)
         if errors:
             st.logger.error('Template creation error: %s', errors)
         else:
@@ -61,6 +60,9 @@ class TemplatesHandler(object):
     def delete(self, template_id):
         self.db_handler.delete_data(template_id)
 
+    def get_by_name(self, name):
+        return self.db_handler.filter_data({'name': name})[0]
+
     def search(self, template):
         templates = self.db_handler.filter_data(
             {'name': template.name, 'text': template.text})
@@ -70,7 +72,7 @@ class TemplatesHandler(object):
             return None, True
 
     def create_default(self):
-        default_template = {'name': st.DEFAULT_TEMPLATE_NAME,
+        default_template = {'name': 'default',
                             'text': st.DEFAULT_TEMPLATE_TEXT, 'subject': st.DEFAULT_TEMPLATE_SUBJECT}
         self.default_template_id = self.insert(default_template)[
             'generated_keys'][0]

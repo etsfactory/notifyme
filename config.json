@@ -12,17 +12,10 @@
     "email": "#YOUR_EMAIL#",
     "password": "#YOUR_PASSWORD#"
   },
-  "loggin": "./",
-  "users": [
-    {
-      "name": "Diego",
-      "email": "d.lopez@ets.es"
-    }
-  ],
+  "loggin": "./logs",
   "refresh_database": false,
   "default_template": {
-    "name": "Template por defecto",
-    "text": "Se ha creado una nueva reco con id: [[id]]",
+    "text": "Se ha creado una nueva reco con id",
     "subject": "Notify.me: nuevo mensaje del bus"
   }
 }
