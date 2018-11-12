@@ -1,6 +1,6 @@
 {
-  "rabbitmq": {
-    "server": "localhost",
+  "bus": {
+    "host": "localhost",
     "user": "",
     "password": "",
     "queue_name": "notifyme",
@@ -12,8 +12,12 @@
     "email": "#YOUR_EMAIL#",
     "password": "#YOUR_PASSWORD#"
   },
-  "loggin": "./logs",
-  "refresh_database": false,
+  "loggin": {
+    "root_path": "./logs"
+  },
+  "db": {
+    "refresh_database": true
+  },
   "default_template": {
     "text": "Se ha creado una nueva reco con id",
     "subject": "Notify.me: nuevo mensaje del bus"

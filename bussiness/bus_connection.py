@@ -76,4 +76,4 @@ class BusConnectionHandler(object):
             st.logger.info(' [x] Received from  %r:  |  %r' %
                            (method.exchange, self.templates_handler.parse(template['text'], response)))
             st.logger.info('Notification to: %r' % (user['email']))
-            self.smtp.send(user['email'], self.templates_handler.parse(template['subject'], response), self.templates_handler.parse(template['text'], response))
+            # self.smtp.send(user['email'], self.templates_handler.parse(template['subject'], response), self.templates_handler.parse(template['text'], response))

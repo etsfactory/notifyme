@@ -61,7 +61,9 @@ class TemplatesHandler(object):
         self.db_handler.delete_data(template_id)
 
     def get_by_name(self, name):
-        return self.db_handler.filter_data({'name': name})[0]
+        template = self.db_handler.filter_data({'name': name})
+        if len(template) > 0:
+            return template[0]
 
     def search(self, template):
         templates = self.db_handler.filter_data(
@@ -81,8 +83,13 @@ class TemplatesHandler(object):
         if isinstance(data, dict):
             text = field
             for key in data:
-                regex = '\[\[' + key + '\]\]'
-                text = re.sub(regex, data[key], text)
+                parse_regex = '\[\[' + key + '\]\]'
+                text = re.sub(parse_regex, data[key], text)
+                
+                # If var has not been parsed, delete it
+
+                delete_regex = '\[\[+.*?\]\]'
+                text = re.sub(delete_regex, '', text)
             return str(text)
         else:
             return str(field)
