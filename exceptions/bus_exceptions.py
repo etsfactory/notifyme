@@ -9,7 +9,6 @@ class BusException(Exception):
         e.process_exception(self.original_exception, msg)
     
 class ConnectionErrorException(BusException):
-    """Basic exception for errors raised by inserting into the database"""
     def __init__(self, msg=None):
         self.name = 'Connection error'
         if msg is None:

@@ -61,9 +61,7 @@ class TemplatesHandler(object):
         self.db_handler.delete_data(template_id)
 
     def get_by_name(self, name):
-        template = self.db_handler.filter_data({'name': name})
-        if len(template) > 0:
-            return template[0]
+        return self.db_handler.filter_data({'name': name})
 
     def search(self, template):
         templates = self.db_handler.filter_data(
@@ -76,8 +74,14 @@ class TemplatesHandler(object):
     def create_default(self):
         default_template = {'name': 'default',
                             'text': st.DEFAULT_TEMPLATE_TEXT, 'subject': st.DEFAULT_TEMPLATE_SUBJECT}
-        self.default_template_id = self.insert(default_template)[
-            'generated_keys'][0]
+        return self.insert(default_template)['generated_keys'][0]
+    
+    def get_default_template(self):
+        default_template = self.get_by_name('default')
+        if (len(default_template) > 0):
+            return default_template[0]['id']
+        else: 
+            return self.create_default()
 
     def parse(self, field, data):
         if isinstance(data, dict):

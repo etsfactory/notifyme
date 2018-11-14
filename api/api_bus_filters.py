@@ -32,18 +32,20 @@ class BusFiltersView(Resource):
         """
         json_data = request.get_json(force=True)
         bus_filters = []
+        if not json_data:
+            return {'message': 'No input data provided'}, 400
 
         if isinstance(json_data, list):
             for bus_filter in json_data:
                 response, http_code = self.insert_bus_filter(bus_filter)
-                bus_filters.append(bus_filter)
 
-                if http_code == 422:
-                    return response, 422
+                if http_code != 201:
+                    return response, http_code
 
-            return bus_filters, http_code
         else:
-            return self.insert_bus_filter(json_data)
+            response, http_code = self.insert_bus_filter(json_data)
+        
+        return json_data, http_code
 
     def insert_bus_filter(self, data):
         """
@@ -55,7 +57,7 @@ class BusFiltersView(Resource):
             return errors, 422
 
         filters.insert(result)
-        return data, 201
+        return result, 201
 
 
 class BusFilterView(Resource):
@@ -179,20 +181,33 @@ class BusFilterUsersView(Resource):
         
         if not json_data:
             return {'message': 'No input data provided'}, 400
-        result, errors = user_schema.load(json_data)
         
+        if isinstance(json_data, list):
+            for user in json_data:
+                response, http_code = self.check_user_insert_subscription(user, bus_filter_id)
+                if (http_code != 201):
+                    return response, http_code
+        else:
+            response, http_code = self.check_user_insert_subscription(user, bus_filter_id)
+        
+        return json_data, http_code
+        
+    
+    def check_user_insert_subscription(self, user, bus_filter_id):
+
+        result, errors = user_schema.load(user)
         if errors:
             return errors, 422
-        
+
         bus_filter = filters.get(bus_filter_id)        
         if bus_filter:
-            user_id, not_exits = users.search(result)
-            if not_exits:
+            user_id = users.search(result)
+            if not user_id:
                 user_id = users.insert(result)['generated_keys'][0]
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
             subscriptions.insert(subscription)
 
-            return subscription
+            return result, 201
         else:
             return {'message': 'User not found'}, 404

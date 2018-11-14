@@ -4,7 +4,7 @@ from datetime import datetime
 
 import settings as st
 
-from connectors.rabbitmq import RabbitMQPublisher
+# from connectors.rabbitmq import RabbitMQPublisher
 
 
 # String format to log when an unhandled Exception is raised
@@ -15,7 +15,6 @@ ERROR_FORMAT = 'Unhandled {t}: {m}\nTraceback:\n{tb}'
 
 def log_unhandled_exception(exc_type, exc_value, exc_tb):
         process_exception(exc_value, exc_tb=exc_tb)
-
 
 def process_exception(exception, excepcion_type=None, msg=None, exc_tb=None, body=None):
     try:
@@ -50,9 +49,9 @@ def process_exception(exception, excepcion_type=None, msg=None, exc_tb=None, bod
                 "tag": 'Message received involved in the error: ' + str(body),
         })
 
-        with RabbitMQPublisher(st.RABBITMQ_SERVER,
-                            st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, st.RABBIRMQ_EXCHANGE_ERROR) as bus:
-            bus.send_message(msg)
+        # with RabbitMQPublisher(st.RABBITMQ_SERVER,
+        #                  st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, st.RABBIRMQ_EXCHANGE_ERROR) as bus:
+        #    bus.send_message(msg)
     except:
         st.logger.error('Error while processing another error')
 

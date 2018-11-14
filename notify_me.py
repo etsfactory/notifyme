@@ -32,6 +32,7 @@ def initiliceTestData():
     subscriptions = SubscriptionsHandler()
 
     users.insert({"name": "Diego", "email": "dlopez@ets.es"})
+    print(users.get_by_email("d@ets.es"))
 
     filters.insert({"exchange": "notifications", "key": "important"})
 

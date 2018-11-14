@@ -1,6 +1,7 @@
 {
+  "config_ini_file": "./config.json",
   "bus": {
-    "host": "localhost",
+    "host": "eee",
     "user": "",
     "password": "",
     "queue_name": "notifyme",
@@ -19,7 +20,7 @@
     "refresh_database": true
   },
   "default_template": {
-    "text": "Se ha creado una nueva reco con id",
-    "subject": "Notify.me: nuevo mensaje del bus"
+    "text": "Ha llegado un mensaje desde el bus",
+    "subject": "Nueva notificación"
   }
 }

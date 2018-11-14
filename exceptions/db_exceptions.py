@@ -22,3 +22,12 @@ class ReadError(DBException):
         if msg is None:
             msg = "An error occured reading from the database"
         super(ReadError, self).__init__(self.name, msg)
+
+class ConnectionLost(DBException):
+    """ If the connection is lost"""
+    def __init__(self, msg=None):
+        self.name = 'DB connection error'
+        if msg is None:
+            msg = "Database connection error, is the db down?"
+        super(ConnectionLost, self).__init__(self.name, msg)
+

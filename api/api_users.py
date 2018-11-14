@@ -39,13 +39,14 @@ class UsersView(Resource):
 
             for user in json_data:
                 response, http_code = self.insert_user(user)
-                users.append(user)
+                
+                if (http_code != 201):
+                    return response, http_code
 
         else:
             response, http_code = self.insert_user(json_data)
-            users.append(json_data)
 
-        return response, http_code
+        return json_data, http_code
 
     def insert_user(self, data):
 
@@ -54,7 +55,7 @@ class UsersView(Resource):
             return errors, 422
 
         users.insert(result)
-        return data, 201
+        return result, 201
 
 
 class UserView(Resource):
@@ -127,22 +128,35 @@ class UserFiltersView(Resource):
         Add bus filter to an user 
         """
         json_data = request.get_json(force=True)
+        
         if not json_data:
             return {'message': 'No input data provided'}, 400
-        result, errors = bus_filter_schema.load(json_data)
+
+        if isinstance(json_data, list):
+            for bus_filter in json_data:
+                response, http_code = self.check_filter_insert_subscription(bus_filter, user_id)
+                if (http_code != 201):
+                    return response, http_code
+        else:
+            response, http_code = self.check_filter_insert_subscription(json_data, user_id)
+                
+        return json_data, http_code
+    
+    def check_filter_insert_subscription(self, bus_filter, user_id):
+        result, errors = bus_filter_schema.load(bus_filter)
         if errors:
             return errors, 422
 
         user = users.get(user_id)
         if user:
-            bus_filter_id, not_exits = filters.search(result)
+            bus_filter_id = filters.search(result)
 
-            if not_exits:
+            if not bus_filter_id:
                 bus_filter_id = filters.insert(result)['generated_keys'][0]
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
             subscriptions.insert(subscription)
+            return result, 201
 
-            return result
         else:
             return {'message': 'User not found'}, 404

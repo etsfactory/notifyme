@@ -2,6 +2,7 @@
 Bus connection handler
 """
 import json
+import queue
 import settings as st
 
 from connectors.rabbitmq import RabbitMqConsumer
@@ -13,7 +14,6 @@ from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.templates import TemplatesHandler
 
 import utils.json_parser as json_parser
-
 
 class BusConnectionHandler(object):
     """
@@ -29,9 +29,10 @@ class BusConnectionHandler(object):
         self.templates_handler = TemplatesHandler()
         self.smtp = SMTPHandler(
             st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+        error = queue.Queue()
         self.bus_thread = RabbitMqConsumer(self.on_message, st.RABBITMQ_SERVER,
-                            st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 
-                            st.RABBITMQ_QUEUE, self.subscriptions, st.RABBIRMQ_EXCHANGE_ERROR)
+                            st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, self.subscriptions,
+                            st.RABBITMQ_QUEUE,  error, exchange_type='direct')
 
     def start(self):
         """
@@ -58,22 +59,15 @@ class BusConnectionHandler(object):
                 return True
         return False
 
-    def set_subscriptions(self, subscriptions):
-        self.bus_thread.set_exchange_keys(subscriptions)
-
     def on_message(self, method, properties, message):
         """"
         When a message is received
         """
-        response = json_parser.from_json(message)
         bus_filter = self.filters_handler.get_by_exchange_key(
             method.exchange, method.routing_key)
-
         for sub in self.subscriptions_handler.get_by_filter(bus_filter):
             user = self.users_handler.get(sub['user_id'])
             template = self.templates_handler.get(sub['template_id'])
 
-            st.logger.info(' [x] Received from  %r:  |  %r' %
-                           (method.exchange, self.templates_handler.parse(template['text'], response)))
             st.logger.info('Notification to: %r' % (user['email']))
             # self.smtp.send(user['email'], self.templates_handler.parse(template['subject'], response), self.templates_handler.parse(template['text'], response))

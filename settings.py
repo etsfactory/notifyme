@@ -12,31 +12,35 @@ APP_CHARSET = 'UTF-8'
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Path al fichero de configuración global
-CONFIGURATION_FILE = '/ETS/configs/config.ini'
+# Config file paths
+CONFIGURATION_FILE = 'config.json'
+CONFIGURATION_FILE_DEV = 'config_development.json'
 
-# Carga de la configuration externa
-config = ConfigParser()
-configured_files = config.read(CONFIGURATION_FILE)
+try:
+    config_file = CONFIGURATION_FILE
+    if os.path.isfile(CONFIGURATION_FILE_DEV):
+        config_file = CONFIGURATION_FILE_DEV
+except IOError:
+    raise FileNotFoundError('Configuration file not found: {}'.format(config_file))
 
-if not configured_files:
-    # Config file paths
-    CONFIGURATION_FILE = 'config.json'
-    CONFIGURATION_FILE_DEV = 'config_development.json'
-
-    try:
-        config_file = CONFIGURATION_FILE
-        if os.path.isfile(CONFIGURATION_FILE_DEV):
-            config_file = CONFIGURATION_FILE_DEV
+# Loads config from file
+with open(config_file) as json_data:
+    try:    
+        config = json.load(json_data)
     except IOError:
-        raise FileNotFoundError('Configuration file not found: {}'.format(config_file))
+        raise Exception('Error parsing JSON from config file')
 
-    # Loads config from file
-    with open(config_file) as json_data:
-        try:    
-            config = json.load(json_data)
-        except IOError:
-            raise Exception('Error parsing JSON from config file')
+CONFIGURATION_FILE = config['config_ini_file']
+
+if CONFIGURATION_FILE:
+    # Carga de la configuration externa
+    try:
+        config_ini = ConfigParser()
+        configured_files = config_ini.read(CONFIGURATION_FILE)
+        if (configured_files):
+            config = config_ini
+    except:
+        pass
 
 LOG_ROOT_PATH = field_config_file(config, 'loggin', 'root_path')
 RABBITMQ_SERVER = field_config_file(config, 'bus', 'host')
@@ -50,7 +54,7 @@ SMTP_HOST = field_config_file(config, 'smtp', 'server')
 SMTP_PORT = field_config_file(config, 'smtp', 'port')
 SMTP_PASS = field_config_file(config, 'smtp', 'password')
 
-DB_SERVER = os.getenv('DB_SERVER', '172.17.0.2')
+DB_SERVER = os.getenv('DB_SERVER', '172.17.0.3')
 DB_PORT = os.getenv('DB_HOST', 28015)
 
 DB_NAME = 'notify_me'

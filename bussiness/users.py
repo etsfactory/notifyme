@@ -60,12 +60,16 @@ class UsersHandler(object):
         """
         Get user by his email
         """
-        return self.db_handler.filter_data({'email': email})[0]
+        users = self.db_handler.filter_data({'email': email})
+        if len(users) > 0:
+            return users[0]
+        else:
+            return None
 
     def search(self, user):
         users = self.db_handler.filter_data(
             {'email': user['email'], 'name': user['name']})
         if len(users) > 0:
-            return users[0]['id'], False
+            return users[0]['id']
         else:
-            return None, True
+            return None

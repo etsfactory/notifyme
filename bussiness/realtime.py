@@ -12,6 +12,8 @@ from bussiness.templates import TemplatesHandler
 from bussiness.bus_connection import BusConnectionHandler
 from connectors.smtp import SMTPHandler
 
+from exceptions.db_exceptions import ConnectionLost
+
 
 class Realtime(object):
     """
@@ -33,36 +35,46 @@ class Realtime(object):
         """
         subs = self.subscriptions.get()
         if subs:
-            for sub in subs:
-                self.on_subscription_added(sub)
+            self.on_subscription_added(subs)
 
         cursor = self.subscriptions.get_realtime()
 
-        for subscription in cursor:
-
-            if not subscription['new_val']:
-                """
-                When a subscription is deleted
-                """
-                self.thread_stop()
-            if subscription['new_val']:
-                """
-                When a subscription is added or edited
-                """
-                self.on_subscription_added(subscription['new_val'])
+        try:
+            for subscription in cursor:
+                if not subscription['new_val']:
+                    """
+                    When a subscription is deleted
+                    """
+                    self.thread_stop()
+                if subscription['new_val']:
+                    """
+                    When a subscription is added or edited
+                    """
+                    self.on_subscription_added(subscription['new_val'])
+        except ConnectionLost:
+            raise
 
     def on_subscription_added(self, subscription):
         """
         Subscriptions added. Creates a new connection thread
         """
         subscriptions = []
+        if isinstance(subscription, list):
+            for sub in subscription:
+                subscriptions = subscriptions + self.check_subscription(sub)
+        else:
+            subscriptions = subscriptions + self.check_subscription(subscription)
+        
+        self.thread_stop()
+        self.create_connection(subscriptions)
+    
+    def check_subscription(self, subscription):
+        subscriptions = []
         bus_filter = self.filters.get(subscription['filter_id'])
         for sub in self.subscriptions.get_with_relationships():
             if sub['filter_id'] == bus_filter['id']:
                 subscriptions.append(sub)
-
-        self.thread_stop()
-        self.create_connection(subscriptions)
+        return subscriptions
 
     def create_connection(self, subscriptions):
         """
