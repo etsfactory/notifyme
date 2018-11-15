@@ -32,15 +32,12 @@ def initiliceTestData():
     subscriptions = SubscriptionsHandler()
 
     users.insert({"name": "Diego", "email": "dlopez@ets.es"})
-    print(users.get_by_email("d@ets.es"))
-
     filters.insert({"exchange": "notifications", "key": "important"})
 
 
 def main():
-    # smtp = SMTPHandler(st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
 
-    st.logger.info('Starting service')
+    st.logger.info('Starting service...')
 
     if (st.REFRESH_DATABASE):
         initiliceTestData()

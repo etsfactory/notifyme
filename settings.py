@@ -1,10 +1,7 @@
 import os
 import logging.config
 import ast
-import json
-from configparser import ConfigParser
-from utils.config_parser import field_config_file
-from utils.json_parser import from_json
+from utils.config_manager import ConfigManager
 
 APP_NAME = "notifyme"
 APP_CHARSET = 'UTF-8'
@@ -15,54 +12,31 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Config file paths
 CONFIGURATION_FILE = 'config.json'
 CONFIGURATION_FILE_DEV = 'config_development.json'
+CONFIGURATION_FILE = 'config.ini'
 
-try:
-    config_file = CONFIGURATION_FILE
-    if os.path.isfile(CONFIGURATION_FILE_DEV):
-        config_file = CONFIGURATION_FILE_DEV
-except IOError:
-    raise FileNotFoundError('Configuration file not found: {}'.format(config_file))
+config = ConfigManager(CONFIGURATION_FILE, CONFIGURATION_FILE_DEV, CONFIGURATION_FILE)
 
-# Loads config from file
-with open(config_file) as json_data:
-    try:    
-        config = json.load(json_data)
-    except IOError:
-        raise Exception('Error parsing JSON from config file')
+LOG_ROOT_PATH = config.load('LOG_ROOT_PATH', 'loggin', 'root_path')
+RABBITMQ_SERVER = config.load('RABBITMQ_SERVER', 'bus', 'host')
+RABBITMQ_USER = config.load('RABBITMQ_USER', 'bus', 'user')
+RABBITMQ_PASSWORD = config.load('RABBITMQ_PASSWORD', 'bus', 'password')
+RABBITMQ_QUEUE = config.load('RABBITMQ_QUEUE', 'bus', 'queue_name')
+RABBIRMQ_EXCHANGE_ERROR = config.load('RABBIRMQ_EXCHANGE_ERROR', 'bus', 'error_exchange')
 
-CONFIGURATION_FILE = config['config_ini_file']
+SMTP_EMAIL = config.load('SMTP_EMAIL', 'smtp', 'email')
+SMTP_HOST = config.load('SMTP_HOST', 'smtp', 'server')
+SMTP_PORT = config.load('SMTP_PORT', 'smtp', 'port')
+SMTP_PASS = config.load('SMTP_PASS', 'smtp', 'password')
 
-if CONFIGURATION_FILE:
-    # Carga de la configuration externa
-    try:
-        config_ini = ConfigParser()
-        configured_files = config_ini.read(CONFIGURATION_FILE)
-        if (configured_files):
-            config = config_ini
-    except:
-        pass
+DB_SERVER = config.load('DB_SERVER', 'db', 'server')
+DB_PORT = config.load('DB_SERVER', 'db', 'port')
+REFRESH_DATABASE = config.load('DB_REFRESH', 'db', 'refresh_database')
 
-LOG_ROOT_PATH = field_config_file(config, 'loggin', 'root_path')
-RABBITMQ_SERVER = field_config_file(config, 'bus', 'host')
-RABBITMQ_USER = field_config_file(config, 'bus', 'user')
-RABBITMQ_PASSWORD = field_config_file(config, 'bus', 'password')
-RABBITMQ_QUEUE = field_config_file(config, 'bus', 'queue_name')
-RABBIRMQ_EXCHANGE_ERROR = field_config_file(config, 'bus', 'error_exchange')
-
-SMTP_EMAIL = field_config_file(config, 'smtp', 'email')
-SMTP_HOST = field_config_file(config, 'smtp', 'server')
-SMTP_PORT = field_config_file(config, 'smtp', 'port')
-SMTP_PASS = field_config_file(config, 'smtp', 'password')
-
-DB_SERVER = os.getenv('DB_SERVER', '172.17.0.3')
-DB_PORT = os.getenv('DB_HOST', 28015)
+DEFAULT_TEMPLATE_TEXT = config.load('DEFAULT_TEMPLATE_TEXT', 'default_template', 'text')
+print(DEFAULT_TEMPLATE_TEXT)
+DEFAULT_TEMPLATE_SUBJECT = config.load('DEFAULT_TEMPLATE_SUBJECT', 'default_template', 'subject')
 
 DB_NAME = 'notify_me'
-
-REFRESH_DATABASE = field_config_file(config, 'db', 'refresh_database')
-
-DEFAULT_TEMPLATE_TEXT = field_config_file(config, 'default_template', 'text')
-DEFAULT_TEMPLATE_SUBJECT = field_config_file(config, 'default_template', 'text')
 
 LOGGING = {
     'version': 1,

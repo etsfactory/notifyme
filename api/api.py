@@ -2,6 +2,8 @@ import json
 
 from flask import Flask
 from flask_restful import Api
+
+import settings as st
 from api.api_users import UsersView, UserView, UserFiltersView
 from api.api_bus_filters import BusFiltersView, BusFilterView, BusFilterUsersView, BusFilterTemplateView
 from api.api_subscriptions import SubscriptionsView, SubscriptionView
@@ -12,7 +14,7 @@ import threading
 
 class ApiHandler(threading.Thread):
     def __init__(self):
-        print('Staring API...')
+        st.logger.info('Staring API...')
         super(ApiHandler, self).__init__()
 
     def run(self):

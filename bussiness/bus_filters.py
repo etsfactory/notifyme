@@ -4,9 +4,8 @@ Users handler
 """
 import settings as st
 
-from bussiness.db_handler import DBHandler
-
 from marshmallow import Schema, fields
+from bussiness.db_handler import DBHandler
 
 
 class BusFilterSchema(Schema):
@@ -64,7 +63,8 @@ class BusFiltersHandler(object):
         """
         Passing an exchange and key searchs in the db for a bus filter 
         """
-        bus_filters = self.db_handler.filter_data({'exchange': exchange, 'key': key})
+        bus_filters = self.db_handler.filter_data(
+            {'exchange': exchange, 'key': key})
         if len(bus_filters) > 0:
             return bus_filters[0]
         else:
