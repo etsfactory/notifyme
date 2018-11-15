@@ -70,4 +70,4 @@ class BusConnectionHandler(object):
             template = self.templates_handler.get(sub['template_id'])
 
             st.logger.info('Notification to: %r' % (user['email']))
-            # self.smtp.send(user['email'], self.templates_handler.parse(template['subject'], response), self.templates_handler.parse(template['text'], response))
+            self.smtp.send(user['email'], self.templates_handler.parse(template['subject'], message), self.templates_handler.parse(template['text'], message))

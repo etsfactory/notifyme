@@ -18,7 +18,7 @@ class DBHandler(object):
     """
 
     def __init__(self, table_name):
-        self.db = RethinkHandler(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
+        self.db = RethinkHandler(st.DB_SERVER, st.DB_PORT, st.DB_NAME, st.DB_USER, st.DB_PASSWORD)
         self.db_realtime = BDRealtime(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
         self.table_name = table_name
 

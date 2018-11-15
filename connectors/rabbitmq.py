@@ -198,7 +198,6 @@ class RabbitMqConsumer(threading.Thread):
                 except Exception:
                     pass
             except Exception as e:
-                print(e)
                 exception = {
                     'error': e,
                     'trace': traceback.format_exc()

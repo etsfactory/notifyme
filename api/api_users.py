@@ -1,6 +1,5 @@
 from flask import Flask, Response
 from flask_restful import Resource, request
-from marshmallow import pprint
 
 from bussiness.users import UsersHandler, UserSchema
 from bussiness.subscriptions import SubscriptionsHandler

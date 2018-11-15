@@ -19,6 +19,12 @@
   "db": {
     "refresh_database": true
   },
+  "api": {
+    "server": "0.0.0.0",
+    "port": "5000",
+    "user": "admin",
+    "password": ""
+  },
   "default_template": {
     "text": "Ha llegado un mensaje desde el bus",
     "subject": "Nueva notificación"

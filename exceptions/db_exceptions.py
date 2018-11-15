@@ -28,6 +28,6 @@ class ConnectionLost(DBException):
     def __init__(self, msg=None):
         self.name = 'DB connection error'
         if msg is None:
-            msg = "Database connection error, is the db down?"
+            msg = "Database connection error, is the db down? Plesase check user and password too"
         super(ConnectionLost, self).__init__(self.name, msg)
 

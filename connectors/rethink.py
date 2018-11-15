@@ -11,10 +11,13 @@ class RethinkHandler(object):
     Rethink handler to handle connection with database
     """
 
-    def __init__(self, server, port, db_name):
+    def __init__(self, server, port, db_name, user=None, password=None):
         self.db_name = db_name
-        self.con = r.connect(host=server, port=port,
-                                db=db_name).repl()
+        try:
+            self.con = r.connect(host=server, port=port,
+                                db=db_name, user=user, password=password).repl()
+        except:
+            raise ConnectionLost()
 
         self.create_database()
 

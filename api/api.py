@@ -4,6 +4,7 @@ from flask import Flask
 from flask_restful import Api
 
 import settings as st
+
 from api.api_users import UsersView, UserView, UserFiltersView
 from api.api_bus_filters import BusFiltersView, BusFilterView, BusFilterUsersView, BusFilterTemplateView
 from api.api_subscriptions import SubscriptionsView, SubscriptionView
@@ -43,4 +44,4 @@ class ApiHandler(threading.Thread):
         api.add_resource(TemplatesView, '/templates')
         api.add_resource(TemplateView, '/templates/<string:template_id>')
 
-        app.run()
+        app.run(host=st.API_SERVER, port=st.API_PORT)

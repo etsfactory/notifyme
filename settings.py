@@ -30,10 +30,15 @@ SMTP_PASS = config.load('SMTP_PASS', 'smtp', 'password')
 
 DB_SERVER = config.load('DB_SERVER', 'db', 'server')
 DB_PORT = config.load('DB_SERVER', 'db', 'port')
+DB_USER = config.load('DB_USER', 'db', 'user')
+DB_PASSWORD = config.load('DB_PASSWORD', 'db', 'password')
+
 REFRESH_DATABASE = config.load('DB_REFRESH', 'db', 'refresh_database')
 
+API_SERVER = config.load('API_SERVER', 'api', 'server')
+API_PORT = config.load('API_PORT', 'api', 'port')
+
 DEFAULT_TEMPLATE_TEXT = config.load('DEFAULT_TEMPLATE_TEXT', 'default_template', 'text')
-print(DEFAULT_TEMPLATE_TEXT)
 DEFAULT_TEMPLATE_SUBJECT = config.load('DEFAULT_TEMPLATE_SUBJECT', 'default_template', 'subject')
 
 DB_NAME = 'notify_me'

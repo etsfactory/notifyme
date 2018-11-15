@@ -1,0 +1,13 @@
+version: "2"
+services:
+  app:
+    build: ./
+    links:
+      - db
+    ports:
+      - "5000:5000"
+  db:
+    image: rethinkdb:2.3.6
+
+# To run this image:
+# docker-compose up --build

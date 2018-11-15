@@ -3,16 +3,9 @@ SMTP Handler
 """
 import smtplib
 import email.message
+import settings as st
 
-class SMTPAuthenticationError(Exception):
-    """
-    SMTP Auth error
-    """
-
-class SMTPSendEmailError(Exception):
-    """
-    SMTP Error sending email
-    """
+from exceptions.smtp_exceptions import SMTPAuthenticationError, SMTPSendEmailError
 
 class SMTPHandler(object):
     """
@@ -30,15 +23,15 @@ class SMTPHandler(object):
             self.server = smtplib.SMTP_SSL(host, port)
             self.server.ehlo()
             self.server.login(username, password)
-        except SMTPAuthenticationError:
-            print('Error login with username: ', username, 'and password: ', password)
+        except:
+            raise SMTPAuthenticationError()
 
     def send(self, send_to, subject, body):
         """
         Send temail trough SMTP from account to a list of emails with a message
         :send_to: List of emails to send email
         :subject: The subject of the email
-        :body: The body of the email
+        :body: The body of the email. HTML supported
         """
         try:
             msg = email.message.Message()
@@ -48,5 +41,5 @@ class SMTPHandler(object):
             msg.add_header('Content-Type','text/html')
             msg.set_payload(body)
             self.server.sendmail(msg['From'], [msg['To']], msg.as_string())
-        except SMTPSendEmailError:
-            print('Error sending message')
+        except:
+            raise SMTPSendEmailError()
