@@ -25,6 +25,7 @@ class Realtime(object):
         self.subscriptions = SubscriptionsHandler()
         self.templates = TemplatesHandler()
         Thread(target=self.realtime_subscriptions).start()
+        Thread(target=self.realtime_filters).start()
 
     def realtime_subscriptions(self):
         """
@@ -33,9 +34,7 @@ class Realtime(object):
         If a filter is removed, the bus connection stops listening and the thread is stopped
         If a filter is updated, the thread stops and creates and new thread
         """
-        subs = self.subscriptions.get()
-        if subs:
-            self.on_subscription_added(subs)
+        self.connection_start()
 
         cursor = self.subscriptions.get_realtime()
 
@@ -45,27 +44,48 @@ class Realtime(object):
                     """
                     When a subscription is deleted
                     """
-                    self.thread_stop()
+                    self.connection_stop()
                 if subscription['new_val']:
                     """
                     When a subscription is added or edited
                     """
-                    self.on_subscription_added(subscription['new_val'])
+                    self.connection_start()
         except ConnectionLost:
             raise
 
-    def on_subscription_added(self, subscription):
+    def realtime_filters(self):
+        """
+        Realtime filters. Creates a thread per new change
+        to listen for a exchange and key in the bus.
+        If a filter is removed, the bus connection stops listening and the thread is stopped
+        If a filter is updated, the thread stops and creates and new thread
+        """
+        cursor = self.filters.get_realtime()
+        try:
+            for bus_filter in cursor:
+                if not bus_filter['new_val']:
+                    """
+                    When a subscription is deleted
+                    """
+                    self.connection_stop()
+                if bus_filter['new_val']:
+                    """
+                    When a subscription is added or edited
+                    """
+                    self.connection_start()
+        except ConnectionLost:
+            raise
+
+    def connection_start(self):
         """
         Subscriptions added. Creates a new connection thread
         """
         subscriptions = []
-        if isinstance(subscription, list):
-            for sub in subscription:
-                subscriptions = subscriptions + self.check_subscription(sub)
-        else:
-            subscriptions = subscriptions + self.check_subscription(subscription)
+        subscriptions_list = self.subscriptions.get()
+        for sub in subscriptions_list:
+            subscriptions = subscriptions + self.check_subscription(sub)
         
-        self.thread_stop()
+        self.connection_stop()
         self.create_connection(subscriptions)
     
     def check_subscription(self, subscription):
@@ -86,9 +106,9 @@ class Realtime(object):
             self.bus_thread.set_subscriptions(subscriptions)
         self.bus_thread.start()
 
-    def thread_stop(self):
+    def connection_stop(self):
         """
         Search for a thread with the bus_filter to pause and delete it
         """
-        if hasattr(self, 'bus_tread'):
+        if hasattr(self, 'bus_thread'):
             self.bus_thread.stop()

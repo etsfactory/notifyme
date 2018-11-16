@@ -5,7 +5,7 @@ import json
 import queue
 import settings as st
 
-from connectors.rabbitmq import RabbitMqConsumer
+from raccoon import Consumer
 from connectors.smtp import SMTPHandler
 
 from bussiness.users import UsersHandler
@@ -29,15 +29,17 @@ class BusConnectionHandler(object):
         self.templates_handler = TemplatesHandler()
         self.smtp = SMTPHandler(
             st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
-        error = queue.Queue()
-        self.bus_thread = RabbitMqConsumer(self.on_message, st.RABBITMQ_SERVER,
-                            st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, self.subscriptions,
-                            st.RABBITMQ_QUEUE,  error)
-
+       
+        
     def start(self):
         """
         Starts the thread
         """
+        error = queue.Queue()
+        self.bus_thread = Consumer(self.on_message, st.RABBITMQ_SERVER,
+                            st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, self.subscriptions,
+                            st.RABBITMQ_QUEUE,  error)
+
         self.bus_thread.start()
 
     def stop(self):
@@ -71,3 +73,6 @@ class BusConnectionHandler(object):
 
             st.logger.info('Notification to: %r' % (user['email']))
             self.smtp.send(user['email'], self.templates_handler.parse(template['subject'], message), self.templates_handler.parse(template['text'], message))
+
+    def set_subscriptions(self, subscriptions):
+        self.subscriptions = subscriptions
