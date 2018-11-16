@@ -12,6 +12,7 @@ class BusFilterSchema(Schema):
     id = fields.Str()
     exchange = fields.Str(required=True)
     key = fields.Str()
+    exchange_type = fields.Str(required=True)
 
 
 class BusFiltersHandler(object):

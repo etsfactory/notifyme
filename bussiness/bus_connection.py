@@ -32,7 +32,7 @@ class BusConnectionHandler(object):
         error = queue.Queue()
         self.bus_thread = RabbitMqConsumer(self.on_message, st.RABBITMQ_SERVER,
                             st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, self.subscriptions,
-                            st.RABBITMQ_QUEUE,  error, exchange_type='direct')
+                            st.RABBITMQ_QUEUE,  error)
 
     def start(self):
         """
