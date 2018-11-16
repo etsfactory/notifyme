@@ -49,9 +49,10 @@ def process_exception(exception, excepcion_type=None, msg=None, exc_tb=None, bod
             msg.update({
                 "tag": 'Message received involved in the error: ' + str(body),
         })
-
-        with Publisher(st.BUS_HOST, st.BUS_USER, st.BUS_PASSWORD, st.EXCHANGE_OUT_ERROR) as bus:
+        
+        with Publisher(st.RABBITMQ_SERVER, st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 'nerrors', exchange_type='direct') as bus:
             bus.publish_msg(msg)
+            
 
     except:
         st.logger.error('Error while processing another error')
