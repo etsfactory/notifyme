@@ -4,29 +4,21 @@ Users handler
 """
 import settings as st
 
-from connectors.rethink import RethinkHandler
 from bussiness.db_handler import DBHandler
-from marshmallow import Schema, fields, pprint
+from marshmallow import Schema, fields
+
 
 class UserSchema(Schema):
     id = fields.Str()
     name = fields.Str()
     email = fields.Email()
 
-class User(object):
-    def __init__(self, name, email, id=None):
-        self.name = name
-        self.email = email
-        if id:
-            self.id = id
 
-    def __eq__(self, other): 
-        return self.__dict__ == other.__dict__
-    
 class UsersHandler(object):
     """
     Users handlers class to get, edit, and streaming users from the database
     """
+
     def __init__(self):
         self.db_handler = DBHandler("users")
         self.db_handler.create_table()
@@ -35,7 +27,7 @@ class UsersHandler(object):
         """
         Get all the users from the database
         """
-        return self.to_object(self.db_handler.get_data(user_id))
+        return self.db_handler.get_data(user_id)
 
     def get_realtime(self):
         """
@@ -49,41 +41,35 @@ class UsersHandler(object):
         """
         Insert user or users to the database
         """
-        return self.db_handler.insert_data(user)
+        result, errors = UserSchema().load(user)
+        if errors:
+            st.logger.error('User creation error: %s', errors)
+        else:
+            return self.db_handler.insert_data(result)
 
     def edit(self, user, user_id):
         """
         Modify user by his id
         """
         self.db_handler.edit_data(user, user_id, 'id')
-    
-    def delete(self, user):
-        self.db_handler.delete_data(user.id)
-    
+
+    def delete(self, user_id):
+        self.db_handler.delete_data(user_id)
+
     def get_by_email(self, email):
         """
         Get user by his email
         """
-        return self.to_object(self.db_handler.filter_data({'email': email}))[0]
+        users = self.db_handler.filter_data({'email': email})
+        if len(users) > 0:
+            return users[0]
+        else:
+            return None
 
     def search(self, user):
-        users = self.db_handler.filter_data({'email': user.email, 'name': user.name})
+        users = self.db_handler.filter_data(
+            {'email': user['email'], 'name': user['name']})
         if len(users) > 0:
-            return users[0]['id'], False
+            return users[0]['id']
         else:
-            return None, True
-     
-    def to_object(self, data):
-        """
-        Parse db user object to User instance
-        """
-        if (not data):
             return None
-        users = []
-        if isinstance(data, dict):
-            return User(data['name'], data['email'], data['id'])
-        else:
-            for user in data:
-                users.append(User(user['name'], user['email'], user['id']))
-            return users
-    

@@ -1,19 +1,10 @@
 from flask import Flask, Response
-from flask_restful import Resource, Api, request
-from marshmallow import pprint
+from flask_restful import Resource, request
 
 from bussiness.users import UsersHandler
-from bussiness.users import User
 from bussiness.bus_filters import BusFiltersHandler
-from bussiness.bus_filters import BusFilter
-
-from bussiness.subscriptions import SubscriptionsHandler
-from bussiness.subscriptions import SubscriptionSchema
-from bussiness.subscriptions import Subscription
-
-from bussiness.templates import TemplatesHandler
-from bussiness.templates import TemplateSchema
-from bussiness.templates import Template
+from bussiness.subscriptions import SubscriptionsHandler, SubscriptionSchema
+from bussiness.templates import TemplatesHandler, TemplateSchema
 
 import utils.json_parser as json_parser
 
@@ -23,7 +14,11 @@ subscriptions = SubscriptionsHandler()
 templates = TemplatesHandler()
 templates_schema = TemplateSchema()
 
+
 class TemplatesView(Resource):
+    """
+    Templates endpoints /templates/
+    """
 
     def get(self):
         """
@@ -38,47 +33,57 @@ class TemplatesView(Resource):
         """
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+            return {'message': 'No input data provided'}, 400
         result, errors = templates_schema.load(json_data)
         if errors:
             return errors, 422
 
-        template = Template(result['name'], result['text'])
-        templates.insert(template)
-        response = json_parser.to_json_list(template)
-        return response, 201
-    
+        templates.insert(result)
+        return result, 201
+
+
 class TemplateView(Resource):
+    """
+    Template endpoints /templates/id
+    """
 
     def get(self, template_id):
         """
         Get specific template
         """
-        template = templates.get(template_id)
-        response = json_parser.to_json_list(template)
-        return response
- 
+        response = templates.get(template_id)
+        
+        if response:
+            return response
+        else:
+            return {'message': 'Template not found'}, 404
+
     def put(self, template_id):
         """
         Update template passing his id
         """
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+            return {'message': 'No input data provided'}, 400
         result, errors = templates_schema.load(json_data)
         if errors:
             return errors, 422
 
-        template = Template(result['name'], result['text'])
-        templates.edit(template, template_id)
-        response = json_parser.to_json_list(template)
-        return response
+        template = templates.get(template_id)
+        if template:
+            templates.edit(result, template_id)
+            return result
+        else:
+            return {'message': 'Template not found'}, 404
 
-    def delete(self, subscription_id):
+    def delete(self, template_id):
         """
         Delete template by his id
         """
-        subscription = subscriptions.get(subscription_id)
-        subscriptions.delete(subscription)
-        response = json_parser.to_json_list(subscription)
-        return response
+        template = templates.get(template_id)
+        if template:
+            templates.delete(template_id)
+            response = {'deleted': True}
+            return response
+        else:
+            return {'message': 'Template not found'}, 404

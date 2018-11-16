@@ -1,6 +1,11 @@
 {
-  "rabbitmq": {
-    "server": "localhost"
+  "config_ini_file": "./config.json",
+  "bus": {
+    "host": "eee",
+    "user": "",
+    "password": "",
+    "queue_name": "notifyme",
+    "error_exchange": "notifyme.error"
   },
   "smtp": {
     "server": "smtp.gmail.com",
@@ -8,12 +13,20 @@
     "email": "#YOUR_EMAIL#",
     "password": "#YOUR_PASSWORD#"
   },
-  "loggin": "./",
-  "users": [
-    {
-      "name": "Diego",
-      "email": "d.lopez@ets.es"
-    }
-  ],
-  "default_template_text": "Texto por defecto de los templates: [[foo]]"
+  "loggin": {
+    "root_path": "./logs"
+  },
+  "db": {
+    "refresh_database": true
+  },
+  "api": {
+    "server": "0.0.0.0",
+    "port": "5000",
+    "user": "admin",
+    "password": ""
+  },
+  "default_template": {
+    "text": "Ha llegado un mensaje desde el bus",
+    "subject": "Nueva notificación"
+  }
 }

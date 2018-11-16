@@ -1,17 +1,9 @@
 from flask import Flask, Response
-from flask_restful import Resource, Api, request
-from marshmallow import pprint
+from flask_restful import Resource, request
 
-from bussiness.users import UsersHandler
-from bussiness.users import User
-from bussiness.users import UserSchema
-
+from bussiness.users import UsersHandler, UserSchema
 from bussiness.subscriptions import SubscriptionsHandler
-from bussiness.subscriptions import Subscription
-
-from bussiness.bus_filters import BusFilterSchema
-from bussiness.bus_filters import BusFilter
-from bussiness.bus_filters import BusFiltersHandler
+from bussiness.bus_filters import BusFiltersHandler, BusFilterSchema
 
 import utils.json_parser as json_parser
 
@@ -21,10 +13,12 @@ filters = BusFiltersHandler()
 user_schema = UserSchema()
 bus_filter_schema = BusFilterSchema()
 
+
 class UsersView(Resource):
     """
-    Handles users list endpoints
+    Handles users list endpoints /users/
     """
+
     def get(self):
         """
         Get users from the db
@@ -37,28 +31,48 @@ class UsersView(Resource):
         Create user and stores in the db
         """
         json_data = request.get_json(force=True)
+        users = []
         if not json_data:
-               return {'message': 'No input data provided'}, 400
-        result, errors = user_schema.load(json_data)
+            return {'message': 'No input data provided'}, 400
+        if isinstance(json_data, list):
+
+            for user in json_data:
+                response, http_code = self.insert_user(user)
+                
+                if (http_code != 201):
+                    return response, http_code
+
+        else:
+            response, http_code = self.insert_user(json_data)
+
+        return json_data, http_code
+
+    def insert_user(self, data):
+
+        result, errors = user_schema.load(data)
         if errors:
             return errors, 422
 
-        user = User(result['name'], result['email'])
-        users.insert(user)
-        response = json_parser.to_json_list(user)
-        return response, 201
+        users.insert(result)
+        return result, 201
 
 
 class UserView(Resource):
     """
-    Handles user endpoints
+    Specific user endpoints /users/id
     """
+
     def get(self, user_id):
         """
         Get specific user from the db
         """
-        response = json_parser.to_json_list(users.get(user_id))
-        return response
+    
+        response = users.get(user_id)
+        
+        if response:
+            return response
+        else:
+            return {'message': 'User not found'}, 404
 
     def put(self, user_id):
         """
@@ -66,60 +80,82 @@ class UserView(Resource):
         """
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+            return {'message': 'No input data provided'}, 400
         result, errors = user_schema.load(json_data)
         if errors:
             return errors, 422
 
-        user = User(result['name'], result['email'])
-        users.edit(user, user_id)
-        response = json_parser.to_json_list(user)
-        return response
+        user = users.get(user_id)
+        if user:
+            users.edit(result, user_id)
+            return result
+        else:
+            return {'message': 'User not found'}, 404
 
     def delete(self, user_id):
         """
         Delete user from the db passing an user id
         """
         user = users.get(user_id)
-        users.delete(user)
-        response = json_parser.to_json_list(user)
-        return response
+        if user:
+            users.delete(user_id)
+            subscriptions.delete_user(user_id)
+            response = {'deleted': True}
+            return response
+        else:
+            return {'message': 'User not found'}, 404
 
 class UserFiltersView(Resource):
     """
-    Handles user bus filter endpoints
+    Specific user bus filters /users/id/bus_filters
     """
+
     def get(self, user_id):
         """
         Get user bus filters
         """
         user = users.get(user_id)
-        bus_filters = subscriptions.get_filters_by_user(user)
-        response = json_parser.to_json_list(bus_filters)
-        return response
+        if user:
+            bus_filters = subscriptions.get_filters_by_user(user)
+            response = json_parser.to_json_list(bus_filters)
+            return response
+        else:
+            return {'message': 'User not found'}, 404
 
     def post(self, user_id):
         """
         Add bus filter to an user 
         """
         json_data = request.get_json(force=True)
+        
         if not json_data:
-               return {'message': 'No input data provided'}, 400
-        result, errors = bus_filter_schema.load(json_data)
+            return {'message': 'No input data provided'}, 400
+
+        if isinstance(json_data, list):
+            for bus_filter in json_data:
+                response, http_code = self.check_filter_insert_subscription(bus_filter, user_id)
+                if (http_code != 201):
+                    return response, http_code
+        else:
+            response, http_code = self.check_filter_insert_subscription(json_data, user_id)
+                
+        return json_data, http_code
+    
+    def check_filter_insert_subscription(self, bus_filter, user_id):
+        result, errors = bus_filter_schema.load(bus_filter)
         if errors:
             return errors, 422
 
-        bus_filter = BusFilter(result['exchange'], result['key'])
-        bus_filter_id, not_exits = filters.search(bus_filter)
+        user = users.get(user_id)
+        if user:
+            bus_filter_id = filters.search(result)
 
-        if not_exits:
-            bus_filter_id = filters.insert(bus_filter)['generated_keys'][0]
+            if not bus_filter_id:
+                bus_filter_id = filters.insert(result)['generated_keys'][0]
 
-        subscription = Subscription(user_id, bus_filter_id)
-        print(str(subscription.__dict__))
-        subscriptions.insert(subscription)
+            subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
+            subscriptions.insert(subscription)
+            return result, 201
 
-        response = json_parser.to_json_list(subscription)
-        return response
-
-   
+        else:
+            return {'message': 'User not found'}, 404

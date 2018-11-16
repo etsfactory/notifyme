@@ -1,48 +1,47 @@
 import os
 import logging.config
-import json
-from configparser import ConfigParser
+import ast
+from utils.config_manager import ConfigManager
 
+APP_NAME = "notifyme"
+APP_CHARSET = 'UTF-8'
 
-APP_NAME = "notify.me"
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Config file paths
 CONFIGURATION_FILE = 'config.json'
 CONFIGURATION_FILE_DEV = 'config_development.json'
+CONFIGURATION_FILE = 'config.ini'
 
-try:
-    config_file = CONFIGURATION_FILE
-    if os.path.isfile(CONFIGURATION_FILE_DEV):
-        config_file = CONFIGURATION_FILE_DEV
-except IOError:
-    print('Error finding config file')
+config = ConfigManager(CONFIGURATION_FILE, CONFIGURATION_FILE_DEV, CONFIGURATION_FILE)
 
-# Loads confid from file
-with open(config_file) as json_data:
-    try:    
-        print(config_file)
-        config = json.load(json_data)
-    except IOError:
-        print('JSON loading problem')
+LOG_ROOT_PATH = config.load('LOG_ROOT_PATH', 'loggin', 'root_path')
+RABBITMQ_SERVER = config.load('RABBITMQ_SERVER', 'bus', 'host')
+RABBITMQ_USER = config.load('RABBITMQ_USER', 'bus', 'user')
+RABBITMQ_PASSWORD = config.load('RABBITMQ_PASSWORD', 'bus', 'password')
+RABBITMQ_QUEUE = config.load('RABBITMQ_QUEUE', 'bus', 'queue_name')
+RABBIRMQ_EXCHANGE_ERROR = config.load('RABBIRMQ_EXCHANGE_ERROR', 'bus', 'error_exchange')
 
+SMTP_EMAIL = config.load('SMTP_EMAIL', 'smtp', 'email')
+SMTP_HOST = config.load('SMTP_HOST', 'smtp', 'server')
+SMTP_PORT = config.load('SMTP_PORT', 'smtp', 'port')
+SMTP_PASS = config.load('SMTP_PASS', 'smtp', 'password')
 
-DEFAULT_TEMPLATE_TEXT = config['default_template_text']
-LOG_ROOT_PATH = config['loggin']
-RABBITMQ = config['rabbitmq']
-RABBITMQ_SERVER = RABBITMQ['server']
+DB_SERVER = config.load('DB_SERVER', 'db', 'server')
+DB_PORT = config.load('DB_SERVER', 'db', 'port')
+DB_USER = config.load('DB_USER', 'db', 'user')
+DB_PASSWORD = config.load('DB_PASSWORD', 'db', 'password')
 
-SMTP = config['smtp']
-SMTP_EMAIL = SMTP['email']
-SMTP_HOST = SMTP['server']
-SMTP_PORT = SMTP['port']
-SMTP_PASS = SMTP['password']
+REFRESH_DATABASE = config.load('DB_REFRESH', 'db', 'refresh_database')
 
-DB_SERVER = os.getenv('DB_SERVER', '172.17.0.2')
-DB_PORT = os.getenv('DB_HOST', 28015)
+API_SERVER = config.load('API_SERVER', 'api', 'server')
+API_PORT = config.load('API_PORT', 'api', 'port')
+
+DEFAULT_TEMPLATE_TEXT = config.load('DEFAULT_TEMPLATE_TEXT', 'default_template', 'text')
+DEFAULT_TEMPLATE_SUBJECT = config.load('DEFAULT_TEMPLATE_SUBJECT', 'default_template', 'subject')
 
 DB_NAME = 'notify_me'
-
-USERS = config['users']
 
 LOGGING = {
     'version': 1,
@@ -75,3 +74,4 @@ LOGGING = {
 # Logger inicialization
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('notify_me')
+
