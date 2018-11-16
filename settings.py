@@ -10,11 +10,11 @@ APP_CHARSET = 'UTF-8'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Config file paths
-CONFIGURATION_FILE = 'config.json'
-CONFIGURATION_FILE_DEV = 'config_development.json'
-CONFIGURATION_FILE = 'config.ini'
+CONFIGURATION_JSON_FILE = 'config.json'
+CONFIGURATION_JOSN_FILE_DEV = 'config_development.json'
+CONFIGURATION_FILE = '/ETS/configs/config.ini'
 
-config = ConfigManager(CONFIGURATION_FILE, CONFIGURATION_FILE_DEV, CONFIGURATION_FILE)
+config = ConfigManager(CONFIGURATION_JSON_FILE, CONFIGURATION_JOSN_FILE_DEV, CONFIGURATION_FILE)
 
 LOG_ROOT_PATH = config.load('LOG_ROOT_PATH', 'loggin', 'root_path')
 RABBITMQ_SERVER = config.load('RABBITMQ_SERVER', 'bus', 'host')

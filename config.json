@@ -1,23 +1,27 @@
 {
   "config_ini_file": "./config.json",
   "bus": {
-    "host": "eee",
-    "user": "",
-    "password": "",
+    "host": "localhost",
+    "user": "guest",
+    "password": "guest",
     "queue_name": "notifyme",
     "error_exchange": "notifyme.error"
   },
   "smtp": {
-    "server": "smtp.gmail.com",
-    "port": 465,
-    "email": "#YOUR_EMAIL#",
-    "password": "#YOUR_PASSWORD#"
+    "server": "smtpsistemas.ets.es",
+    "port": 25,
+    "email": "",
+    "password": ""
   },
   "loggin": {
     "root_path": "./logs"
   },
   "db": {
-    "refresh_database": true
+    "server":"172.17.0.2",
+    "port": "28015",
+    "refresh_database": false,
+    "user": "admin",
+    "password": ""
   },
   "api": {
     "server": "0.0.0.0",
