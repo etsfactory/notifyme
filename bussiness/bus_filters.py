@@ -42,11 +42,7 @@ class BusFiltersHandler(object):
         """
         Insert bus_filter to the database
         """
-        result, errors = BusFilterSchema().load(bus_filter)
-        if errors:
-            st.logger.error('Bus filter creation error: %s', errors)
-        else:
-            return self.db_handler.insert_data(result)
+        return self.db_handler.insert_data(bus_filter)
 
     def edit(self, bus_filter, bus_filter_id):
         """

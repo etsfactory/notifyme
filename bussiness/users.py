@@ -41,11 +41,7 @@ class UsersHandler(object):
         """
         Insert user or users to the database
         """
-        result, errors = UserSchema().load(user)
-        if errors:
-            st.logger.error('User creation error: %s', errors)
-        else:
-            return self.db_handler.insert_data(result)
+        return self.db_handler.insert_data(user)
 
     def edit(self, user, user_id):
         """

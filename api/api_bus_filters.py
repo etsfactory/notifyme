@@ -28,35 +28,38 @@ class BusFiltersView(Resource):
 
     def post(self):
         """
-        Create bus filter and stores in the db
+        Create user and stores in the db
         """
         json_data = request.get_json(force=True)
-        bus_filters = []
+        bus_filter_list = []
         if not json_data:
             return {'message': 'No input data provided'}, 400
-
         if isinstance(json_data, list):
-            for bus_filter in json_data:
-                response, http_code = self.insert_bus_filter(bus_filter)
 
-                if http_code != 201:
+            for bus_filter in json_data:
+                response, http_code = self.check_bus_filter(bus_filter)
+                
+                if (http_code != 201):
                     return response, http_code
+                
+                bus_filter_list.append(response)
+            filters.insert(bus_filter_list)
+            return bus_filter_list, 201
 
         else:
-            response, http_code = self.insert_bus_filter(json_data)
-        
-        return json_data, http_code
+            response, http_code = self.check_bus_filter(json_data)
+            if (http_code != 201):
+                return response, http_code
 
-    def insert_bus_filter(self, data):
-        """
-        Validate bus filter and insert it into the database
-        """
+            filters.insert(response)
+            return response, 201
+
+    def check_bus_filter(self, data):
+
         result, errors = bus_filter_schema.load(data)
-        
         if errors:
             return errors, 422
 
-        filters.insert(result)
         return result, 201
 
 

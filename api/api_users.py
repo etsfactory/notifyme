@@ -31,29 +31,36 @@ class UsersView(Resource):
         Create user and stores in the db
         """
         json_data = request.get_json(force=True)
-        users = []
+        users_list = []
         if not json_data:
             return {'message': 'No input data provided'}, 400
         if isinstance(json_data, list):
 
             for user in json_data:
-                response, http_code = self.insert_user(user)
+                response, http_code = self.check_user(user)
                 
                 if (http_code != 201):
                     return response, http_code
+                
+                users_list.append(response)
+            users.insert(users_list)
+            return users_list, 201
 
         else:
-            response, http_code = self.insert_user(json_data)
+            response, http_code = self.check_user(json_data)
+            if (http_code != 201):
+                return response, http_code
 
-        return json_data, http_code
+            users.insert(response)
+            return response, 201
 
-    def insert_user(self, data):
+    def check_user(self, data):
 
         result, errors = user_schema.load(data)
         if errors:
             return errors, 422
 
-        users.insert(result)
+        print(result)
         return result, 201
 
 
