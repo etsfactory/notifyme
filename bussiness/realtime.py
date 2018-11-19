@@ -50,8 +50,8 @@ class Realtime(object):
                     When a subscription is added or edited
                     """
                     self.connection_start()
-        except ConnectionLost:
-            raise
+        except:
+            raise ConnectionLost()
 
     def realtime_filters(self):
         """
@@ -63,18 +63,13 @@ class Realtime(object):
         cursor = self.filters.get_realtime()
         try:
             for bus_filter in cursor:
-                if not bus_filter['new_val']:
+                if bus_filter['new_val'] and bus_filter['old_val']:
                     """
-                    When a subscription is deleted
-                    """
-                    self.connection_stop()
-                if bus_filter['new_val']:
-                    """
-                    When a subscription is added or edited
+                    When a subscription is edited
                     """
                     self.connection_start()
-        except ConnectionLost:
-            raise
+        except:
+            raise ConnectionLost()
 
     def connection_start(self):
         """
@@ -84,9 +79,8 @@ class Realtime(object):
         subscriptions_list = self.subscriptions.get()
         for sub in subscriptions_list:
             subscriptions = subscriptions + self.check_subscription(sub)
-        
-        self.connection_stop()
-        self.create_connection(subscriptions)
+        if subscriptions:
+            self.create_connection(subscriptions)
     
     def check_subscription(self, subscription):
         subscriptions = []
@@ -103,6 +97,7 @@ class Realtime(object):
         if not hasattr(self, 'bus_tread'):
             self.bus_thread = BusConnectionHandler(subscriptions)
         else:
+            self.connection_stop()
             self.bus_thread.set_subscriptions(subscriptions)
         self.bus_thread.start()
 

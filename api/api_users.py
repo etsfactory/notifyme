@@ -132,16 +132,21 @@ class UserFiltersView(Resource):
             return {'message': 'No input data provided'}, 400
 
         if isinstance(json_data, list):
+            sub_list = []
             for bus_filter in json_data:
-                response, http_code = self.check_filter_insert_subscription(bus_filter, user_id)
-                if (http_code != 201):
-                    return response, http_code
+                response, error = self.check_filter(bus_filter, user_id)
+                if error:
+                    return response, error
+                print(error)
+                sub_list.append(response)
+            subscriptions.insert(sub_list)
+            return sub_list, 201
         else:
-            response, http_code = self.check_filter_insert_subscription(json_data, user_id)
+            response, error = self.check_filter(json_data, user_id)
+            subscriptions.insert(response)
+            return response, error
                 
-        return json_data, http_code
-    
-    def check_filter_insert_subscription(self, bus_filter, user_id):
+    def check_filter(self, bus_filter, user_id):
         result, errors = bus_filter_schema.load(bus_filter)
         if errors:
             return errors, 422
@@ -154,8 +159,7 @@ class UserFiltersView(Resource):
                 bus_filter_id = filters.insert(result)['generated_keys'][0]
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
-            subscriptions.insert(subscription)
-            return result, 201
+            return subscription, None
 
         else:
             return {'message': 'User not found'}, 404

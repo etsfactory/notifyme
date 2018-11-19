@@ -35,12 +35,13 @@ class BusConnectionHandler(object):
         """
         Starts the thread
         """
-        error = queue.Queue()
-        self.bus_thread = Consumer(self.on_message, st.RABBITMQ_SERVER,
-                            st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, self.subscriptions,
-                            st.RABBITMQ_QUEUE,  error)
+        if (self.subscriptions):
+            error = queue.Queue()
+            self.bus_thread = Consumer(self.on_message, st.RABBITMQ_SERVER,
+                                st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, self.subscriptions,
+                                st.RABBITMQ_QUEUE,  error)
 
-        self.bus_thread.start()
+            self.bus_thread.start()
 
     def stop(self):
         """

@@ -91,18 +91,26 @@ class SubscriptionsHandler(object):
         """
         return self.db_handler.filter_data({'user_id': user['id']})
 
-    def insert(self, subscription):
+    def insert(self, subscriptions):
         """
         Insert subscriptions to the database
         """
+        if (isinstance(subscriptions, list)):
+            for sub in subscriptions:
+                sub = self.set_subscription_template(sub)
+        else:
+            subscriptions = self.set_subscription_template(subscriptions)
+        return self.db_handler.insert_data(subscriptions)
+        
+    def set_subscription_template(self, subscription):
+         
         bus_filter = self.filters.get(subscription['filter_id'])
 
         if not hasattr(subscription, 'template_id') and hasattr(bus_filter, 'template_id'):
             subscription['template_id'] = bus_filter['template_id']
         else:
             subscription['template_id'] = self.templates.get_default_template()
-
-        return self.db_handler.insert_data(subscription)
+        return subscription
 
     def edit(self, subscription, subscription_id):
         """

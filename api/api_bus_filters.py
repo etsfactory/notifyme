@@ -183,15 +183,18 @@ class BusFilterUsersView(Resource):
             return {'message': 'No input data provided'}, 400
         
         if isinstance(json_data, list):
+            sub_list = []
             for user in json_data:
-                response, http_code = self.check_user_insert_subscription(user, bus_filter_id)
-                if (http_code != 201):
-                    return response, http_code
+                response, error = self.check_user_insert_subscription(user, bus_filter_id)
+                if error:
+                    return response, error
+                sub_list.append(response)
+            subscriptions.insert(sub_list)
+            return sub_list, 201
         else:
-            response, http_code = self.check_user_insert_subscription(user, bus_filter_id)
-        
-        return json_data, http_code
-        
+            response, error = self.check_user_insert_subscription(json_data, bus_filter_id)
+            subscriptions.insert(response)
+            return response, error
     
     def check_user_insert_subscription(self, user, bus_filter_id):
 
@@ -206,7 +209,7 @@ class BusFilterUsersView(Resource):
                 user_id = users.insert(result)['generated_keys'][0]
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
-            subscriptions.insert(subscription)
+            return subscription, None
 
             return result, 201
         else:
