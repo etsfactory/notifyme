@@ -81,7 +81,6 @@ class SubscriptionView(Resource):
         else:
             return {'message': 'Subscription not found'}, 404
 
-
     def put(self, subscription_id):
         """
         Update template passing his id
@@ -90,7 +89,7 @@ class SubscriptionView(Resource):
         if not json_data:
             return {'message': 'No input data provided'}, 400
         result, errors = subscription_schema.load(json_data)
-        
+
         if errors:
             return errors, 422
 

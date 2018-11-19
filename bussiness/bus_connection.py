@@ -15,6 +15,7 @@ from bussiness.templates import TemplatesHandler
 
 import utils.json_parser as json_parser
 
+
 class BusConnectionHandler(object):
     """
     Bus connection class
@@ -29,8 +30,7 @@ class BusConnectionHandler(object):
         self.templates_handler = TemplatesHandler()
         self.smtp = SMTPHandler(
             st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
-       
-        
+
     def start(self):
         """
         Starts the thread
@@ -38,8 +38,8 @@ class BusConnectionHandler(object):
         if (self.subscriptions):
             error = queue.Queue()
             self.bus_thread = Consumer(self.on_message, st.RABBITMQ_SERVER,
-                                st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, self.subscriptions,
-                                st.RABBITMQ_QUEUE,  error)
+                                       st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, self.subscriptions,
+                                       st.RABBITMQ_QUEUE,  error)
 
             self.bus_thread.start()
 
@@ -73,7 +73,8 @@ class BusConnectionHandler(object):
             template = self.templates_handler.get(sub['template_id'])
 
             st.logger.info('Notification to: %r' % (user['email']))
-            self.smtp.send(user['email'], self.templates_handler.parse(template['subject'], message), self.templates_handler.parse(template['text'], message))
+            self.smtp.send(user['email'], self.templates_handler.parse(
+                template['subject'], message), self.templates_handler.parse(template['text'], message))
 
     def set_subscriptions(self, subscriptions):
         self.subscriptions = subscriptions

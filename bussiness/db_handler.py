@@ -18,7 +18,8 @@ class DBHandler(object):
     """
 
     def __init__(self, table_name):
-        self.db = RethinkHandler(st.DB_SERVER, st.DB_PORT, st.DB_NAME, st.DB_USER, st.DB_PASSWORD)
+        self.db = RethinkHandler(
+            st.DB_SERVER, st.DB_PORT, st.DB_NAME, st.DB_USER, st.DB_PASSWORD)
         self.db_realtime = BDRealtime(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
         self.table_name = table_name
 
@@ -46,7 +47,6 @@ class DBHandler(object):
             return data_list
         else:
             return data
-        
 
     def get_data_streaming(self):
         """
@@ -61,7 +61,6 @@ class DBHandler(object):
         Inserts data into the database
         """
         return self.db.insert_data(self.table_name, data)
-        
 
     def edit_data(self, data, key_value, key='id'):
         """
@@ -71,7 +70,6 @@ class DBHandler(object):
         for document in entries:
             return self.db.edit_data(
                 self.table_name, document[key], data)
-    
 
     def delete_data(self, key_value):
         self.db.delete_data(self.table_name, key_value)
@@ -85,7 +83,6 @@ class DBHandler(object):
         for entry in data:
             data_list.append(entry)
         return data_list
-        
 
     def join_tables(self, table1, table2, table3, key1, key2):
         """
@@ -96,7 +93,7 @@ class DBHandler(object):
         :key1: Foering key from the left table
         :key2: Foering key for the right table
         """
-            
+
         return self.db.join_tables(table1, table2, table3, key1, key2)
 
     def table_join_streaming(self, table1, table2, table3, key1, key2):

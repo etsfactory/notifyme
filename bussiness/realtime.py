@@ -81,7 +81,7 @@ class Realtime(object):
             subscriptions = subscriptions + self.check_subscription(sub)
         if subscriptions:
             self.create_connection(subscriptions)
-    
+
     def check_subscription(self, subscription):
         subscriptions = []
         bus_filter = self.filters.get(subscription['filter_id'])

@@ -7,10 +7,12 @@ import settings as st
 
 from exceptions.smtp_exceptions import SMTPAuthenticationError, SMTPSendEmailError
 
+
 class SMTPHandler(object):
     """
     SMTPHandler class to send emails
     """
+
     def __init__(self, username, password, host, port):
         """
         Initializes the connection with SMTP server provided and login with username and password
@@ -38,7 +40,7 @@ class SMTPHandler(object):
             msg['Subject'] = subject
             msg['From'] = self.username
             msg['To'] = send_to
-            msg.add_header('Content-Type','text/html')
+            msg.add_header('Content-Type', 'text/html')
             msg.set_payload(body)
             self.server.sendmail(msg['From'], [msg['To']], msg.as_string())
         except:

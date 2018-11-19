@@ -22,6 +22,7 @@ class TemplatesHandler(object):
     """
     Templates handlers class to get, edit, and streaming users from the database
     """
+
     def __init__(self):
         self.db_handler = DBHandler("templates")
         self.db_handler.create_table()
@@ -75,12 +76,12 @@ class TemplatesHandler(object):
         default_template = {'name': 'default',
                             'text': st.DEFAULT_TEMPLATE_TEXT, 'subject': st.DEFAULT_TEMPLATE_SUBJECT}
         return self.insert(default_template)['generated_keys'][0]
-    
+
     def get_default_template(self):
         default_template = self.get_by_name('default')
         if (len(default_template) > 0):
             return default_template[0]['id']
-        else: 
+        else:
             return self.create_default()
 
     def parse(self, field, data):
@@ -89,7 +90,7 @@ class TemplatesHandler(object):
             for key in data:
                 parse_regex = '\[\[' + key + '\]\]'
                 text = re.sub(parse_regex, data[key], text)
-                
+
                 # If var has not been parsed, delete it
 
                 delete_regex = '\[\[+.*?\]\]'

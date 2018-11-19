@@ -15,7 +15,7 @@ class RethinkHandler(object):
         self.db_name = db_name
         try:
             self.con = r.connect(host=server, port=port,
-                                db=db_name, user=user, password=password).repl()
+                                 db=db_name, user=user, password=password).repl()
         except:
             raise ConnectionLost()
 

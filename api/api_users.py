@@ -38,10 +38,10 @@ class UsersView(Resource):
 
             for user in json_data:
                 response, http_code = self.check_user(user)
-                
+
                 if (http_code != 201):
                     return response, http_code
-                
+
                 users_list.append(response)
             users.insert(users_list)
             return users_list, 201
@@ -73,9 +73,9 @@ class UserView(Resource):
         """
         Get specific user from the db
         """
-    
+
         response = users.get(user_id)
-        
+
         if response:
             return response
         else:
@@ -112,6 +112,7 @@ class UserView(Resource):
         else:
             return {'message': 'User not found'}, 404
 
+
 class UserFiltersView(Resource):
     """
     Specific user bus filters /users/id/bus_filters
@@ -134,7 +135,7 @@ class UserFiltersView(Resource):
         Add bus filter to an user 
         """
         json_data = request.get_json(force=True)
-        
+
         if not json_data:
             return {'message': 'No input data provided'}, 400
 
@@ -152,7 +153,7 @@ class UserFiltersView(Resource):
             response, error = self.check_filter(json_data, user_id)
             subscriptions.insert(response)
             return response, error
-                
+
     def check_filter(self, bus_filter, user_id):
         result, errors = bus_filter_schema.load(bus_filter)
         if errors:

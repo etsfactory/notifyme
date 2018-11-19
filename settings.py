@@ -61,10 +61,17 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_ROOT_PATH, '{0}/{0}.log'.format(APP_NAME)),
+            'formatter': 'verbose',
+            'encoding': 'utf-8'
+        },
     },
     'loggers': {
         'notify_me': {
-            'handlers': ['console'],
+            'handlers': ['file','console'],
             'level': 'DEBUG',
             'propagate': False,
         },

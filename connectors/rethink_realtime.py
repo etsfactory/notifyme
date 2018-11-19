@@ -4,11 +4,12 @@ Data streaming from the DB.
 """
 import rethinkdb as r
 
-class BDRealtime(object): 
+
+class BDRealtime(object):
     def __init__(self, server, port, db_name):
         self.db_name = db_name
         self.con = r.connect(host=server, port=port,
-                   db=db_name)
+                             db=db_name)
 
     def get_data(self, table_name):
         """"
@@ -17,7 +18,7 @@ class BDRealtime(object):
         con = self.con
         try:
             return r.table(table_name).changes().run(con)
-        except: 
+        except:
             'Error reading database'
 
     def table_join_streaming(self, table1, table2, table3, key1, key2):

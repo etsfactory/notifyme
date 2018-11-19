@@ -101,9 +101,9 @@ class SubscriptionsHandler(object):
         else:
             subscriptions = self.set_subscription_template(subscriptions)
         return self.db_handler.insert_data(subscriptions)
-        
+
     def set_subscription_template(self, subscription):
-         
+
         bus_filter = self.filters.get(subscription['filter_id'])
 
         if not hasattr(subscription, 'template_id') and hasattr(bus_filter, 'template_id'):
