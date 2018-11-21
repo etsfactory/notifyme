@@ -13,6 +13,7 @@ class BusFilterSchema(Schema):
     exchange = fields.Str(required=True)
     key = fields.Str()
     exchange_type = fields.Str(required=True)
+    durable = fields.Str(required=True)
 
 
 class BusFiltersHandler(object):

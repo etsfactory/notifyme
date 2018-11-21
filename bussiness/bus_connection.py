@@ -6,6 +6,8 @@ import queue
 import settings as st
 
 from raccoon import Consumer
+import errors
+
 from connectors.smtp import SMTPHandler
 
 from bussiness.users import UsersHandler
@@ -47,6 +49,16 @@ class BusConnectionHandler(object):
                 error)
 
             self.bus_thread.start()
+
+        while True:
+            try:
+                exc = error.get()
+            except queue.Empty:
+                pass
+            else:
+                body = exc['body'] if 'body' in exc else None
+                errors.process_exception(exc['error'], exc_tb=exc['trace'], body=body)
+
 
     def stop(self):
         """
