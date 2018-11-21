@@ -52,7 +52,7 @@ class TemplateView(Resource):
         Get specific template
         """
         response = templates.get(template_id)
-        
+
         if response:
             return response
         else:

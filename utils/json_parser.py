@@ -12,7 +12,8 @@ def to_json_list(data):
         else:
             return []
     if data: 
-        return to_json(data)
+        entry = ujson.dumps([ob for ob in data])
+        return ast.literal_eval(entry)
     else:
         return []
         

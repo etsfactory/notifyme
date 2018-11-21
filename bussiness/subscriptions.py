@@ -21,7 +21,8 @@ class SubscriptionSchema(Schema):
 
 class SubscriptionsHandler(object):
     """
-    Subscription type handlers class to get, edit, and streaming subscriptions from the database
+    Subscription type handlers class to get, edit, and streaming
+    subscriptions from the database
     """
 
     def __init__(self):
@@ -33,7 +34,9 @@ class SubscriptionsHandler(object):
 
     def get(self, sub_id=None):
         """
-        Get all the subscriptions from the database. If id is provided search for a single subscription
+        Get all the subscriptions from the database.
+        If id is provided search for a single subscription
+        :sub_id: Id of the subscription to search for if provided
         """
         return self.db_handler.get_data(sub_id)
 
@@ -41,19 +44,26 @@ class SubscriptionsHandler(object):
         """
         Get subscriptions joining users and bus_filtes tables
         """
-        return self.db_handler.join_tables("subscriptions", "users", "bus_filters", "user_id", "filter_id")
+        return self.db_handler.join_tables(
+            "subscriptions",
+            "users",
+            "bus_filters",
+            "user_id",
+            "filter_id")
 
     def get_realtime(self):
         """
         Get all subscriptions from the database in realtime.
-        If user is added or modified in the db it returns the change.
-        This method blocks the curren thread so use this method in a separated thread
+        If user is edited in the db it returns the change.
+        This method blocks the current thread
+        use this method in a separated thread
         """
         return self.db_handler.get_data_streaming()
 
     def get_users_by_filter(self, bus_filter):
         """
         Get user associates with filter
+        :bus_filter: Bus filter to search users
         """
         users = []
         subscriptions = self.get_by_filter(bus_filter)
@@ -65,6 +75,7 @@ class SubscriptionsHandler(object):
     def get_filters_by_user(self, user):
         """
         Get filters associates with user
+        :user: User to seach for bus filters
         """
         filters = []
         subscriptions = self.get_by_user(user)
@@ -76,47 +87,78 @@ class SubscriptionsHandler(object):
     def get_by_id(self, subsc_id):
         """
         Get subscription by his id
+        :subsc_id: ID of the subscription to search
         """
         return self.db_handler.filter_data({'id': subsc_id})
 
     def get_by_filter(self, bus_filter):
         """
         Get subscription by his id
+        :bus_filter: Bus filter to search for
         """
         return self.db_handler.filter_data({'filter_id': bus_filter['id']})
 
     def get_by_user(self, user):
         """
         Get subscription by his id
+        :user: User to seach for
         """
         return self.db_handler.filter_data({'user_id': user['id']})
 
-    def insert(self, subscription):
+    def insert(self, subscriptions):
         """
         Insert subscriptions to the database
+        :subscriptions: Subscription or bus subscriptions to insert
+        """
+        if (isinstance(subscriptions, list)):
+            for sub in subscriptions:
+                sub = self.set_subscription_template(sub)
+        else:
+            subscriptions = self.set_subscription_template(subscriptions)
+        return self.db_handler.insert_data(subscriptions)
+
+    def set_subscription_template(self, subscription):
+        """
+        Sets subscription notification template
+        If the bus filter associated with the subscription
+        has template uses it. If not create default one
+        :subscription: Subscription to add template
         """
         bus_filter = self.filters.get(subscription['filter_id'])
 
-        if not hasattr(subscription, 'template_id') and hasattr(bus_filter, 'template_id'):
+        if not hasattr(
+                subscription,
+                'template_id') and hasattr(
+                bus_filter,
+                'template_id'):
             subscription['template_id'] = bus_filter['template_id']
         else:
             subscription['template_id'] = self.templates.get_default_template()
-
-        return self.db_handler.insert_data(subscription)
+        return subscription
 
     def edit(self, subscription, subscription_id):
         """
         Modify subscriptions
+        :subscription: Modified subscription
+        :subscription_id: Id of the subscription to edit
         """
         self.db_handler.edit_data(subscription, subscription_id, 'id')
 
     def delete_user(self, user_id):
+        """
+        Delete subscriptions associated with the user
+        :user_id: user id to search for
+        """
         subscriptions = self.get()
         for sub in subscriptions:
             if sub['user_id'] == user_id:
                 self.delete(sub['id'])
 
     def delete_bus_filter(self, bus_filter_id):
+        """
+        Delete subscriptions associated with the bus filter
+        :bus_filter_id: filter id to search for
+        """
         subscriptions = self.get()
         for sub in subscriptions:
             if sub['filter_id'] == bus_filter_id:
@@ -125,5 +167,6 @@ class SubscriptionsHandler(object):
     def delete(self, subscription_id):
         """
         Delete subscription.
+        :subscription_id: Subscription id to delete
         """
         self.db_handler.delete_data(subscription_id)

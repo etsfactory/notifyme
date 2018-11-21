@@ -1,6 +1,7 @@
 import socket
 import traceback as tb
 from datetime import datetime
+from raccoon import Publisher
 
 import settings as st
 
@@ -48,10 +49,11 @@ def process_exception(exception, excepcion_type=None, msg=None, exc_tb=None, bod
             msg.update({
                 "tag": 'Message received involved in the error: ' + str(body),
         })
+        
+        with Publisher(st.RABBITMQ_SERVER, st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 'nerrors', exchange_type='direct') as bus:
+            bus.publish_msg(msg)
+            
 
-        # with RabbitMQPublisher(st.RABBITMQ_SERVER,
-        #                  st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, st.RABBIRMQ_EXCHANGE_ERROR) as bus:
-        #    bus.send_message(msg)
     except:
         st.logger.error('Error while processing another error')
 

@@ -10,11 +10,10 @@ APP_CHARSET = 'UTF-8'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Config file paths
-CONFIGURATION_FILE = 'config.json'
-CONFIGURATION_FILE_DEV = 'config_development.json'
-CONFIGURATION_FILE = 'config.ini'
+CONFIGURATION_JSON_FILE = 'config.json'
+CONFIGURATION_JOSN_FILE_DEV = 'config_development.json'
 
-config = ConfigManager(CONFIGURATION_FILE, CONFIGURATION_FILE_DEV, CONFIGURATION_FILE)
+config = ConfigManager(CONFIGURATION_JSON_FILE, CONFIGURATION_JOSN_FILE_DEV)
 
 LOG_ROOT_PATH = config.load('LOG_ROOT_PATH', 'loggin', 'root_path')
 RABBITMQ_SERVER = config.load('RABBITMQ_SERVER', 'bus', 'host')
@@ -61,10 +60,17 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_ROOT_PATH, '{0}/{0}.log'.format(APP_NAME)),
+            'formatter': 'verbose',
+            'encoding': 'utf-8'
+        },
     },
     'loggers': {
         'notify_me': {
-            'handlers': ['console'],
+            'handlers': ['file', 'console'],
             'level': 'DEBUG',
             'propagate': False,
         },

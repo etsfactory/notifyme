@@ -23,7 +23,7 @@ class SubscriptionsView(Resource):
         """
         Get subscriptions from the db
         """
-        response = json_parser.to_json_list(subscriptions.get())
+        response = json_parser.to_json_list(subscriptions.get_with_relationships())
         return response
 
     def post(self):
@@ -47,7 +47,8 @@ class SubscriptionsView(Resource):
 
     def insert_subscription(self, data):
         """
-        Insert and validate subscription. Checks if user and bus filter exits
+        Insert and validate subscription. 
+        Checks if user and bus filter exits
         """
         result, errors = subscription_schema.load(data)
         if errors:
@@ -61,7 +62,8 @@ class SubscriptionsView(Resource):
                 'user_id': result['user_id'], 'filter_id': result['filter_id']}
             subscriptions.insert(subscription)
         else:
-            return {'message': 'Bus filter id or user filter id does not exits'}, 422
+            return {
+                'message': 'Bus filter id or user filter id does not exits'}, 422
 
 
 class SubscriptionView(Resource):
@@ -81,7 +83,6 @@ class SubscriptionView(Resource):
         else:
             return {'message': 'Subscription not found'}, 404
 
-
     def put(self, subscription_id):
         """
         Update template passing his id
@@ -90,14 +91,16 @@ class SubscriptionView(Resource):
         if not json_data:
             return {'message': 'No input data provided'}, 400
         result, errors = subscription_schema.load(json_data)
-        
+
         if errors:
             return errors, 422
 
         subscription = subscriptions.get(subscription_id)
         if subscription:
             subscription = {
-                'user_id': result['user_id'], 'filter_id': result['filter_id'], 'template_id': result['template_id']}
+                'user_id': result['user_id'],
+                'filter_id': result['filter_id'],
+                'template_id': result['template_id']}
             subscriptions.edit(subscription, subscription_id)
             return subscription
         else:

@@ -17,7 +17,8 @@ class BusFilterSchema(Schema):
 
 class BusFiltersHandler(object):
     """
-    Bus_filters handlers class to get, edit, and streaming bus_filters from the database
+    Bus_filters handlers class to get, edit, and streaming 
+    bus_filters from the database
     """
 
     def __init__(self):
@@ -27,42 +28,46 @@ class BusFiltersHandler(object):
     def get(self, key=None):
         """
         Get all the bus_filters from the database
+        :key: Key to search for if is provided
         """
         return self.db_handler.get_data(key)
 
     def get_realtime(self):
         """
         Get all bus_filters from the database in realtime.
-        If user is added or modified in the db it returns the change.
-        This method blocks the curren thread so use this method in a separated thread
+        If user is edited in the db it returns the change.
+        This method blocks the curren thread
+        Use this method in a separated thread
         """
         return self.db_handler.get_data_streaming()
 
     def insert(self, bus_filter):
         """
         Insert bus_filter to the database
+        :bus_filter: Bus filter or bus filters to insert
         """
-        result, errors = BusFilterSchema().load(bus_filter)
-        if errors:
-            st.logger.error('Bus filter creation error: %s', errors)
-        else:
-            return self.db_handler.insert_data(result)
+        return self.db_handler.insert_data(bus_filter)
 
     def edit(self, bus_filter, bus_filter_id):
         """
         Modify bus_filter by his email
+        :bus_filter: Bus filter with data edited
+        :bus_filter_id: Id of the bus filter to search
         """
         self.db_handler.edit_data(bus_filter, bus_filter_id, 'id')
 
     def delete(self, bus_filter_id):
         """
-        Delete bus_filter by his id 
+        Delete bus_filter by his id
+        :bus_filter_id: Id of the bus filter to delete
         """
         self.db_handler.delete_data(bus_filter_id)
 
     def get_by_exchange_key(self, exchange, key):
         """
-        Passing an exchange and key searchs in the db for a bus filter 
+        Get bus filter by his exhange and key
+        :exchange: Exchange param to search
+        :key: Key param to search
         """
         bus_filters = self.db_handler.filter_data(
             {'exchange': exchange, 'key': key})
@@ -73,7 +78,8 @@ class BusFiltersHandler(object):
 
     def search(self, bus_filter):
         """
-        Searchs for a bus filter in a db and returns the id
+        Searchs for a bus filter in a db and returns his id
+        :bus_filter: Bus filter to search in the database without id
         """
         bus_filters = self.db_handler.filter_data(
             {'exchange': bus_filter['exchange'], 'key': bus_filter['key']})

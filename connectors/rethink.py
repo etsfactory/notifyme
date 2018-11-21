@@ -14,16 +14,20 @@ class RethinkHandler(object):
     def __init__(self, server, port, db_name, user=None, password=None):
         self.db_name = db_name
         try:
-            self.con = r.connect(host=server, port=port,
-                                db=db_name, user=user, password=password).repl()
-        except:
+            self.con = r.connect(
+                host=server,
+                port=port,
+                db=db_name,
+                user=user,
+                password=password).repl()
+        except BaseException:
             raise ConnectionLost()
 
         self.create_database()
 
     def create_database(self):
         """
-        Database creation. 
+        Database creation.
         """
         db_name = self.db_name
         con = self.con
@@ -32,7 +36,8 @@ class RethinkHandler(object):
 
     def reset_database(self):
         """
-        Database reset. If the database exists drops it and recreates. If it doesn't exist, create it
+        Database reset. If the database exists drops it and recreates.
+        If it doesn't exist, create it
         """
         db_name = self.db_name
         con = self.con
@@ -58,7 +63,7 @@ class RethinkHandler(object):
         try:
             if table_name in r.db(db_name).table_list().run(con):
                 return r.table(table_name).insert(data).run(con)
-        except:
+        except BaseException:
             raise WriteError()
 
     def get_data(self, table_name, key):
@@ -71,7 +76,7 @@ class RethinkHandler(object):
                 return r.table(table_name).get(key).run(con)
             return r.table(table_name).run(con)
 
-        except:
+        except BaseException:
             raise ReadError()
 
     def edit_data(self, table_name, primary_key, new_data):
@@ -80,9 +85,10 @@ class RethinkHandler(object):
         """
         con = self.con
         try:
-            return r.table(table_name).get(primary_key).update(new_data).run(con)
+            return r.table(table_name).get(
+                primary_key).update(new_data).run(con)
 
-        except:
+        except BaseException:
             raise WriteError()
 
     def filter_data(self, table_name, filter_data):
@@ -93,7 +99,7 @@ class RethinkHandler(object):
         con = self.con
         try:
             return r.table(table_name).filter(filter_data).run(con)
-        except:
+        except BaseException:
             raise ReadError()
 
     def delete_data(self, table_name, data_to_delete):
@@ -104,13 +110,14 @@ class RethinkHandler(object):
         con = self.con
         try:
             return (r.table(table_name).get(data_to_delete).delete().run(con))
-        except:
+        except BaseException:
             raise ReadError()
 
     def join_tables(self, table1, table2, table3, key1, key2):
         con = self.con
         try:
-            return r.table(table1).eq_join(key1, r.table(table2)).zip().eq_join(key2, r.table(table3)).without({"right": {"id": True}}).without({"left": {"id": True}}).zip().run(con)
+            return r.table(table1).eq_join(key1, r.table(table2)).without({"right": {"id": True}}).zip(
+            ).eq_join(key2, r.table(table3)).without({"right": {"id": True}}).zip().run(con)
 
-        except:
+        except BaseException:
             raise ReadError()
