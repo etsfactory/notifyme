@@ -31,8 +31,11 @@ class ConfigManager():
                 self.config_json, variable, section)
             ini_file = self.check_if_path(config)
             if (ini_file):
+                print(ini_file)
                 self.load_config_ini_file(ini_file)
                 section, option = self.parse_path(config)
+                print(section)
+                print(option)
                 config = self.from_config_ini(self.config_ini, section, option)
             return config
             
