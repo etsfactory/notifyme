@@ -12,8 +12,8 @@
     "email": "/ETS/configs/config.ini/smtp/email",
     "password": ""
   },
-  "loggin": {
-    "root_path": "/ETS/configs/config.ini/loggin/root_path"
+  "logging": {
+    "root_path": "/ETS/configs/config.ini/logging/root_path"
   },
   "db": {
     "server":"localhost",
@@ -23,7 +23,7 @@
     "password": ""
   },
   "api": {
-    "server": "localhost",
+    "server": "0.0.0.0",
     "port": "8003"
   },
   "default_template": {
