@@ -24,6 +24,8 @@ class UsersView(Resource):
         Get users from the db
         """
         response = json_parser.to_json_list(users.get())
+        print('-------------------------')
+        print(response)
         return response
 
     def post(self):
@@ -132,7 +134,7 @@ class UserFiltersView(Resource):
 
     def post(self, user_id):
         """
-        Add bus filter to an user 
+        Add bus filter to an user
         """
         json_data = request.get_json(force=True)
 
@@ -145,7 +147,6 @@ class UserFiltersView(Resource):
                 response, error = self.check_filter(bus_filter, user_id)
                 if error:
                     return response, error
-                print(error)
                 sub_list.append(response)
             subscriptions.insert(sub_list)
             return sub_list, 201

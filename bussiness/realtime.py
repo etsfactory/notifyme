@@ -31,8 +31,8 @@ class Realtime(object):
         """
         Realtime filters. Creates a thread per new change
         to listen for a exchange and key in the bus.
-        If a filter is removed, the bus connection stops listening and the thread is stopped
-        If a filter is updated, the thread stops and creates and new thread
+        If a filter is removed, the bus connection stops
+        If a filter is updated, recreates the thread
         """
         self.connection_start()
 
@@ -50,15 +50,14 @@ class Realtime(object):
                     When a subscription is added or edited
                     """
                     self.connection_start()
-        except:
+        except BaseException:
             raise ConnectionLost()
 
     def realtime_filters(self):
         """
         Realtime filters. Creates a thread per new change
         to listen for a exchange and key in the bus.
-        If a filter is removed, the bus connection stops listening and the thread is stopped
-        If a filter is updated, the thread stops and creates and new thread
+        If a filter is updated, the thread is recreated
         """
         cursor = self.filters.get_realtime()
         try:
@@ -68,7 +67,7 @@ class Realtime(object):
                     When a subscription is edited
                     """
                     self.connection_start()
-        except:
+        except BaseException:
             raise ConnectionLost()
 
     def connection_start(self):
@@ -83,16 +82,22 @@ class Realtime(object):
             self.create_connection(subscriptions)
 
     def check_subscription(self, subscription):
-        subscriptions = []
+        """
+        Returns bus filters with the same bus filter id 
+        than the subscription bus filter
+        :subscription: Subscription that is going to look for bus filters
+        """
+        bus_filters = []
         bus_filter = self.filters.get(subscription['filter_id'])
-        for sub in self.subscriptions.get_with_relationships():
+        for sub in self.subscriptions.get():
             if sub['filter_id'] == bus_filter['id']:
-                subscriptions.append(sub)
-        return subscriptions
+                bus_filters.append(bus_filter)
+        return bus_filters
 
     def create_connection(self, subscriptions):
         """
         Creates a thread with a new rabbitmq connection
+        :subscriptions: Subscriptions to add to bus thread
         """
         if not hasattr(self, 'bus_tread'):
             self.bus_thread = BusConnectionHandler(subscriptions)

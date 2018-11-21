@@ -15,7 +15,7 @@ class SMTPHandler(object):
 
     def __init__(self, username, password, host, port):
         """
-        Initializes the connection with SMTP server provided and login with username and password
+        Initializes the connection with SMTP server and credentials provided
         """
         self.username = username
         self.passwod = password
@@ -25,7 +25,7 @@ class SMTPHandler(object):
             self.server = smtplib.SMTP_SSL(host, port)
             self.server.ehlo()
             self.server.login(username, password)
-        except:
+        except BaseException:
             raise SMTPAuthenticationError()
 
     def send(self, send_to, subject, body):
@@ -43,5 +43,5 @@ class SMTPHandler(object):
             msg.add_header('Content-Type', 'text/html')
             msg.set_payload(body)
             self.server.sendmail(msg['From'], [msg['To']], msg.as_string())
-        except:
+        except BaseException:
             raise SMTPSendEmailError()

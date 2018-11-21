@@ -18,9 +18,11 @@ class BDRealtime(object):
         con = self.con
         try:
             return r.table(table_name).changes().run(con)
-        except:
+        except BaseException:
             'Error reading database'
 
     def table_join_streaming(self, table1, table2, table3, key1, key2):
         con = self.con
-        return r.table(table1).changes().eq_join(key1, r.table(table2)).zip().eq_join(key2, r.table(table3)).zip().run(con)
+        return r.table(table1).changes().eq_join(
+            key1, r.table(table2)).zip().eq_join(
+            key2, r.table(table3)).zip().run(con)

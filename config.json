@@ -1,23 +1,22 @@
 {
-  "config_ini_file": "./config.json",
   "bus": {
-    "host": "localhost",
-    "user": "guest",
-    "password": "guest",
+    "host": "/ETS/configs/config.ini/bus/host",
+    "user": "/ETS/configs/config.ini/bus/user",
+    "password": "/ETS/configs/config.ini/bus/password",
     "queue_name": "notifyme",
     "error_exchange": "notifyme.error"
   },
   "smtp": {
-    "server": "smtpsistemas.ets.es",
-    "port": 25,
-    "email": "",
+    "server": "/ETS/configs/config.ini/smtp/server",
+    "port": "/ETS/configs/config.ini/smtp/port",
+    "email": "/ETS/configs/config.ini/smtp/email",
     "password": ""
   },
   "loggin": {
-    "root_path": "./logs"
+    "root_path": "/ETS/configs/config.ini/loggin/root_path"
   },
   "db": {
-    "server":"172.17.0.2",
+    "server":"localhost",
     "port": "28015",
     "refresh_database": false,
     "user": "admin",
@@ -25,7 +24,7 @@
   },
   "api": {
     "server": "localhost",
-    "port": "8006"
+    "port": "8003"
   },
   "default_template": {
     "text": "Ha llegado un mensaje desde el bus",
