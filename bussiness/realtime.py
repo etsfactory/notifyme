@@ -74,12 +74,12 @@ class Realtime(object):
         """
         Subscriptions added. Creates a new connection thread
         """
-        subscriptions = []
+        bus_filters = []
         subscriptions_list = self.subscriptions.get()
         for sub in subscriptions_list:
-            subscriptions = subscriptions + self.check_subscription(sub)
-        if len(subscriptions):
-            self.create_connection(subscriptions)
+            bus_filters = bus_filters + self.check_subscription(sub)
+        if len(bus_filters) > 0:
+            self.create_connection(bus_filters)
         else:
             self.connection_stop()
 
@@ -89,12 +89,7 @@ class Realtime(object):
         than the subscription bus filter
         :subscription: Subscription that is going to look for bus filters
         """
-        bus_filters = []
-        bus_filter = self.filters.get(subscription['filter_id'])
-        for sub in self.subscriptions.get():
-            if sub['filter_id'] == bus_filter['id']:
-                bus_filters.append(bus_filter)
-        return bus_filters
+        return self.filters.get(subscription['filter_id'])
 
     def create_connection(self, subscriptions):
         """
