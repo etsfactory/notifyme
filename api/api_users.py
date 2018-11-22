@@ -162,7 +162,8 @@ class UserFiltersView(Resource):
 
         user = users.get(user_id)
         if user:
-            bus_filter_id = filters.get_by_exchange_key(result['exchange'], result['key'])
+            key = result.get('key')
+            bus_filter_id = filters.get_by_exchange_key(result['exchange'], key)
 
             if not bus_filter_id:
                 bus_filter_id = filters.insert(result)['generated_keys'][0]

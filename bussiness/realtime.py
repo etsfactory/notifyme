@@ -101,7 +101,7 @@ class Realtime(object):
         Creates a thread with a new rabbitmq connection
         :subscriptions: Subscriptions to add to bus thread
         """
-        if not hasattr(self, 'bus_tread'):
+        if not hasattr(self, 'bus_thread'):
             self.bus_thread = BusConnectionHandler(subscriptions)
         else:
             self.connection_stop()
