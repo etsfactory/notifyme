@@ -76,15 +76,3 @@ class BusFiltersHandler(object):
             return bus_filters[0]
         else:
             return None
-
-    def search(self, bus_filter):
-        """
-        Searchs for a bus filter in a db and returns his id
-        :bus_filter: Bus filter to search in the database without id
-        """
-        bus_filters = self.db_handler.filter_data(
-            {'exchange': bus_filter['exchange'], 'key': bus_filter['key']})
-        if len(bus_filters) > 0:
-            return bus_filters[0]['id']
-        else:
-            return None
