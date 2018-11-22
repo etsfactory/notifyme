@@ -44,12 +44,13 @@ class Realtime(object):
                     """
                     When a subscription is deleted
                     """
-                    self.connection_stop()
+                    # self.connection_stop()
                 if subscription['new_val']:
+                    print(subscription)
                     """
                     When a subscription is added or edited
                     """
-                    self.connection_start()
+                    # self.connection_start()
         except BaseException:
             raise ConnectionLost()
 
@@ -76,12 +77,13 @@ class Realtime(object):
         """
         bus_filters = []
         subscriptions_list = self.subscriptions.get()
-        for sub in subscriptions_list:
-            bus_filters = bus_filters + self.check_subscription(sub)
-        if len(bus_filters) > 0:
-            self.create_connection(bus_filters)
-        else:
-            self.connection_stop()
+        if (len(subscriptions_list) > 0):
+            for sub in subscriptions_list:
+                bus_filters.append(self.check_subscription(sub))
+            if len(bus_filters) > 0:
+                self.create_connection(bus_filters)
+            else:
+                self.connection_stop()
 
     def check_subscription(self, subscription):
         """
