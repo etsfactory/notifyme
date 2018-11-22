@@ -44,12 +44,16 @@ class SubscriptionsHandler(object):
         """
         Get subscriptions joining users and bus_filtes tables
         """
-        return self.db_handler.join_tables(
+        sub_list = []
+        subscriptions = self.db_handler.join_tables(
             "subscriptions",
             "users",
             "bus_filters",
             "user_id",
             "filter_id")
+        for sub in subscriptions:
+            sub_list.append(sub)
+        return sub_list
 
     def get_realtime(self):
         """

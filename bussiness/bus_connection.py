@@ -37,7 +37,7 @@ class BusConnectionHandler(object):
         """
         Starts the thread
         """
-        if (self.subscriptions):
+        if (len(self.subscriptions) > 0):
             error = queue.Queue()
             self.bus_thread = Consumer(
                 self.on_message,
@@ -58,7 +58,6 @@ class BusConnectionHandler(object):
             else:
                 body = exc['body'] if 'body' in exc else None
                 errors.process_exception(exc['error'], exc_tb=exc['trace'], body=body)
-
 
     def stop(self):
         """
@@ -85,15 +84,16 @@ class BusConnectionHandler(object):
         """
         bus_filter = self.filters_handler.get_by_exchange_key(
             method.exchange, method.routing_key)
-        for sub in self.subscriptions_handler.get_by_filter(bus_filter):
-            user = self.users_handler.get(sub['user_id'])
-            template = self.templates_handler.get(sub['template_id'])
+        if bus_filter:
+            for sub in self.subscriptions_handler.get_by_filter(bus_filter):
+                user = self.users_handler.get(sub['user_id'])
+                template = self.templates_handler.get(sub['template_id'])
 
-            st.logger.info('Notification to: %r' % (user['email']))
-            self.smtp.send(
-                user['email'], self.templates_handler.parse(
-                    template['subject'], message), self.templates_handler.parse(
-                    template['text'], message))
+                st.logger.info('Notification to: %r' % (user['email']))
+                self.smtp.send(
+                    user['email'], self.templates_handler.parse(
+                        template['subject'], message), self.templates_handler.parse(
+                        template['text'], message))
 
     def set_subscriptions(self, subscriptions):
         self.subscriptions = subscriptions

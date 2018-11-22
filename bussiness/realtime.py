@@ -78,8 +78,10 @@ class Realtime(object):
         subscriptions_list = self.subscriptions.get()
         for sub in subscriptions_list:
             subscriptions = subscriptions + self.check_subscription(sub)
-        if subscriptions:
+        if len(subscriptions):
             self.create_connection(subscriptions)
+        else:
+            self.connection_stop()
 
     def check_subscription(self, subscription):
         """
