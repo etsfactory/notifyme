@@ -88,21 +88,24 @@ class Realtime(object):
         self.connection_stop(bus_filter)
     
     def on_subscription_delete(self, subscription):
-
+        subscriptions = []
         if isinstance(subscription, list):
             for sub in subscription:
-                bus_filters = self.bus_filters_from_subsc(sub)
+                subscriptions = subscriptions + self.bus_filters_from_subsc(sub)
         else:
-            bus_filters = self.bus_filters_from_subsc(subscription)
+            subscriptions = self.bus_filters_from_subsc(subscription)
 
-        print(bus_filters)
-        if bus_filters:
-            if (len(bus_filters) == 1):
-                self.connection_stop(bus_filters[0])
+        print(subscriptions)
+        if subscriptions:
+            if (len(subscriptions) == 1):
+                bus_filter = self.check_subscription(subscription)
+                self.connection_stop(bus_filter)
     
     def bus_filters_from_subsc(self, subscription):
-        bus_filter = self.check_subscription(subscription)
-        return self.subscriptions.get_by_filter(bus_filter)
+        try:
+            return self.subscriptions.get_by_filter_id(subscription.get('filter_id'))
+        except: 
+            pass
 
     def check_subscription(self, subscription):
         """

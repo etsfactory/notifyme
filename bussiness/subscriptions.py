@@ -102,6 +102,13 @@ class SubscriptionsHandler(object):
         """
         return self.db_handler.filter_data({'filter_id': bus_filter['id']})
 
+    def get_by_filter_id(self, bus_filter_id):
+        """
+        Get subscription by his id
+        :bus_filter: Bus filter to search for
+        """
+        return self.db_handler.filter_data({'filter_id': bus_filter_id})
+
     def get_by_user(self, user):
         """
         Get subscription by his id
