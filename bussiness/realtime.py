@@ -46,7 +46,6 @@ class Realtime(object):
                     """
                     self.on_subscription_delete(subscription['old_val'])
                 if subscription['new_val']:
-                    print(subscription)
                     """
                     When a subscription is added or edited
                     """
@@ -63,6 +62,8 @@ class Realtime(object):
         cursor = self.filters.get_realtime()
         try:
             for bus_filter in cursor:
+                if bus_filter['old_val'] and not bus_filter['new_val']:
+                    self.on_bus_filter_delete(bus_filter['old_val'])
                 if bus_filter['new_val'] and bus_filter['old_val']:
                     """
                     When a subscription is edited
@@ -82,6 +83,9 @@ class Realtime(object):
                 bus_filters.append(self.check_subscription(sub))
             if len(bus_filters) > 0:
                 self.create_connection(bus_filters)
+
+    def on_bus_filter_delete(self, bus_filter):
+        self.connection_stop(bus_filter)
     
     def on_subscription_delete(self, subscription):
 
@@ -92,8 +96,9 @@ class Realtime(object):
             bus_filters = self.bus_filters_from_subsc(subscription)
 
         print(bus_filters)
-        if (len(bus_filters) == 1):
-            self.connection_stop(bus_filters[0])
+        if bus_filters:
+            if (len(bus_filters) == 1):
+                self.connection_stop(bus_filters[0])
     
     def bus_filters_from_subsc(self, subscription):
         bus_filter = self.check_subscription(subscription)
@@ -123,8 +128,6 @@ class Realtime(object):
         Search for a thread with the bus_filter to pause and delete it
         """
         if hasattr(self, 'bus_thread'):
-           
-
             self.bus_thread.stop()
             if bus_filter:
                 self.bus_thread.unbind(bus_filter['exchange'], bus_filter['key'])
