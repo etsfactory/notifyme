@@ -40,17 +40,17 @@ class Realtime(object):
 
         try:
             for subscription in cursor:
-                if not subscription['new_val']:
+                if subscription['old_val']:
                     """
                     When a subscription is deleted
                     """
-                    # self.connection_stop()
+                    self.connection_stop(subscription['old_val'])
                 if subscription['new_val']:
                     print(subscription)
                     """
                     When a subscription is added or edited
                     """
-                    # self.connection_start()
+                    self.start_connection()
         except BaseException:
             raise ConnectionLost()
 
@@ -67,11 +67,11 @@ class Realtime(object):
                     """
                     When a subscription is edited
                     """
-                    self.connection_start()
+                    self.start_connection()
         except BaseException:
             raise ConnectionLost()
 
-    def connection_start(self):
+    def start_connection(self):
         """
         Subscriptions added. Creates a new connection thread
         """
@@ -82,8 +82,6 @@ class Realtime(object):
                 bus_filters.append(self.check_subscription(sub))
             if len(bus_filters) > 0:
                 self.create_connection(bus_filters)
-            else:
-                self.connection_stop()
 
     def check_subscription(self, subscription):
         """
@@ -105,9 +103,17 @@ class Realtime(object):
             self.bus_thread.set_subscriptions(subscriptions)
         self.bus_thread.start()
 
-    def connection_stop(self):
+    def connection_stop(self, subscription):
         """
         Search for a thread with the bus_filter to pause and delete it
         """
         if hasattr(self, 'bus_thread'):
+            if isinstance(subscription, list):
+                for sub in subscription:
+                    bus_filter = self.check_subscription(sub)
+            else:
+                bus_filter = self.check_subscription(subscription)
+
             self.bus_thread.stop()
+            if bus_filter:
+                self.bus_thread.unbind(bus_filter['exchange'], bus_filter['key'])

@@ -50,15 +50,6 @@ class BusConnectionHandler(object):
 
             self.bus_thread.start()
 
-        while True:
-            try:
-                exc = error.get()
-            except queue.Empty:
-                pass
-            else:
-                body = exc['body'] if 'body' in exc else None
-                errors.process_exception(exc['error'], exc_tb=exc['trace'], body=body)
-
     def stop(self):
         """
         Stops the thread
@@ -97,3 +88,6 @@ class BusConnectionHandler(object):
 
     def set_subscriptions(self, subscriptions):
         self.subscriptions = subscriptions
+    
+    def unbind(self, exchange, key):
+        self.bus_thread.unbind_queue(exchange, key)
