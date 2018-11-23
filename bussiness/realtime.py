@@ -34,7 +34,7 @@ class Realtime(object):
         If a filter is removed, the bus connection stops
         If a filter is updated, recreates the thread
         """
-        self.connection_start()
+        self.start_connection()
 
         cursor = self.subscriptions.get_realtime()
 
@@ -44,7 +44,7 @@ class Realtime(object):
                     """
                     When a subscription is deleted
                     """
-                    self.connection_stop(subscription['old_val'])
+                    self.on_subscription_delete(subscription['old_val'])
                 if subscription['new_val']:
                     print(subscription)
                     """
@@ -82,6 +82,22 @@ class Realtime(object):
                 bus_filters.append(self.check_subscription(sub))
             if len(bus_filters) > 0:
                 self.create_connection(bus_filters)
+    
+    def on_subscription_delete(self, subscription):
+
+        if isinstance(subscription, list):
+            for sub in subscription:
+                bus_filters = self.bus_filters_from_subsc(sub)
+        else:
+            bus_filters = self.bus_filters_from_subsc(subscription)
+
+        print(bus_filters)
+        if (len(bus_filters) == 1):
+            self.connection_stop(bus_filters[0])
+    
+    def bus_filters_from_subsc(self, subscription):
+        bus_filter = self.check_subscription(subscription)
+        return self.subscriptions.get_by_filter(bus_filter)
 
     def check_subscription(self, subscription):
         """
@@ -99,20 +115,15 @@ class Realtime(object):
         if not hasattr(self, 'bus_thread'):
             self.bus_thread = BusConnectionHandler(subscriptions)
         else:
-            self.connection_stop()
             self.bus_thread.set_subscriptions(subscriptions)
         self.bus_thread.start()
 
-    def connection_stop(self, subscription):
+    def connection_stop(self, bus_filter):
         """
         Search for a thread with the bus_filter to pause and delete it
         """
         if hasattr(self, 'bus_thread'):
-            if isinstance(subscription, list):
-                for sub in subscription:
-                    bus_filter = self.check_subscription(sub)
-            else:
-                bus_filter = self.check_subscription(subscription)
+           
 
             self.bus_thread.stop()
             if bus_filter:
