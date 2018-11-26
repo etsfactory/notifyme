@@ -13,6 +13,7 @@ class BusFilterSchema(Schema):
     exchange = fields.Str(required=True)
     key = fields.Str()
     exchange_type = fields.Str(required=True)
+    durable = fields.Boolean(required=True)
 
 
 class BusFiltersHandler(object):
@@ -46,8 +47,27 @@ class BusFiltersHandler(object):
         Insert bus_filter to the database
         :bus_filter: Bus filter or bus filters to insert
         """
-        return self.db_handler.insert_data(bus_filter)
+        if (isinstance(bus_filter, list)):
+            keys = []
+            for bfilter in bus_filter:
+                bus_filter_to_insert = self.get_by_exchange_key(bfilter.get('exchange'), bfilter.get('key'))
+                if bus_filter_to_insert:
+                    keys.append(bus_filter_to_insert['id'])
+                keys + self.db_handler.insert_data(bus_filter)['generated_keys']
+            return keys
+        else:
+            bus_filter_to_insert = self.get_by_exchange_key(bus_filter.get('exchange'), bus_filter.get('key'))
+            if bus_filter_to_insert:
+                    return bus_filter_to_insert['id']
+            return self.db_handler.insert_data(bus_filter)
 
+    def check_if_filter_exits(self, bus_filter):
+        self.get_by_exchange_key(bus_filter.get('exchange'), bus_filter.get('key'))
+        if bus_filter:
+            return bus_filter['id']
+        else:
+            return None
+    
     def edit(self, bus_filter, bus_filter_id):
         """
         Modify bus_filter by his email
@@ -73,17 +93,5 @@ class BusFiltersHandler(object):
             {'exchange': exchange, 'key': key})
         if len(bus_filters) > 0:
             return bus_filters[0]
-        else:
-            return None
-
-    def search(self, bus_filter):
-        """
-        Searchs for a bus filter in a db and returns his id
-        :bus_filter: Bus filter to search in the database without id
-        """
-        bus_filters = self.db_handler.filter_data(
-            {'exchange': bus_filter['exchange'], 'key': bus_filter['key']})
-        if len(bus_filters) > 0:
-            return bus_filters[0]['id']
         else:
             return None

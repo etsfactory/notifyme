@@ -44,12 +44,16 @@ class SubscriptionsHandler(object):
         """
         Get subscriptions joining users and bus_filtes tables
         """
-        return self.db_handler.join_tables(
+        sub_list = []
+        subscriptions = self.db_handler.join_tables(
             "subscriptions",
             "users",
             "bus_filters",
             "user_id",
             "filter_id")
+        for sub in subscriptions:
+            sub_list.append(sub)
+        return sub_list
 
     def get_realtime(self):
         """
@@ -98,6 +102,13 @@ class SubscriptionsHandler(object):
         """
         return self.db_handler.filter_data({'filter_id': bus_filter['id']})
 
+    def get_by_filter_id(self, bus_filter_id):
+        """
+        Get subscription by his id
+        :bus_filter: Bus filter to search for
+        """
+        return self.db_handler.filter_data({'filter_id': bus_filter_id})
+
     def get_by_user(self, user):
         """
         Get subscription by his id
@@ -125,16 +136,15 @@ class SubscriptionsHandler(object):
         :subscription: Subscription to add template
         """
         bus_filter = self.filters.get(subscription['filter_id'])
-
+        template_id = bus_filter.get('template_id')
         if not hasattr(
                 subscription,
-                'template_id') and hasattr(
-                bus_filter,
-                'template_id'):
+                'template_id') and template_id:
             subscription['template_id'] = bus_filter['template_id']
         else:
             subscription['template_id'] = self.templates.get_default_template()
         return subscription
+
 
     def edit(self, subscription, subscription_id):
         """

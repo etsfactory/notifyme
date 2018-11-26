@@ -34,22 +34,22 @@ class Realtime(object):
         If a filter is removed, the bus connection stops
         If a filter is updated, recreates the thread
         """
-        self.connection_start()
+        self.start_connection()
 
         cursor = self.subscriptions.get_realtime()
 
         try:
             for subscription in cursor:
-                if not subscription['new_val']:
+                if subscription['old_val']:
                     """
                     When a subscription is deleted
                     """
-                    self.connection_stop()
+                    self.on_subscription_delete(subscription['old_val'])
                 if subscription['new_val']:
                     """
                     When a subscription is added or edited
                     """
-                    self.connection_start()
+                    self.start_connection()
         except BaseException:
             raise ConnectionLost()
 
@@ -62,24 +62,49 @@ class Realtime(object):
         cursor = self.filters.get_realtime()
         try:
             for bus_filter in cursor:
+                if bus_filter['old_val'] and not bus_filter['new_val']:
+                    self.on_bus_filter_delete(bus_filter['old_val'])
                 if bus_filter['new_val'] and bus_filter['old_val']:
                     """
                     When a subscription is edited
                     """
-                    self.connection_start()
+                    self.start_connection()
         except BaseException:
             raise ConnectionLost()
 
-    def connection_start(self):
+    def start_connection(self):
         """
         Subscriptions added. Creates a new connection thread
         """
-        subscriptions = []
+        bus_filters = []
         subscriptions_list = self.subscriptions.get()
-        for sub in subscriptions_list:
-            subscriptions = subscriptions + self.check_subscription(sub)
+        if (len(subscriptions_list) > 0):
+            for sub in subscriptions_list:
+                bus_filters.append(self.check_subscription(sub))
+            if len(bus_filters) > 0:
+                self.create_connection(bus_filters)
+
+    def on_bus_filter_delete(self, bus_filter):
+        self.connection_stop(bus_filter)
+    
+    def on_subscription_delete(self, subscription):
+        subscriptions = []
+        if isinstance(subscription, list):
+            for sub in subscription:
+                subscriptions = subscriptions + self.bus_filters_from_subsc(sub)
+        else:
+            subscriptions = self.bus_filters_from_subsc(subscription)
+
         if subscriptions:
-            self.create_connection(subscriptions)
+            if (len(subscriptions) < 1):
+                bus_filter = self.check_subscription(subscription)
+                self.connection_stop(bus_filter)
+    
+    def bus_filters_from_subsc(self, subscription):
+        try:
+            return self.subscriptions.get_by_filter_id(subscription.get('filter_id'))
+        except: 
+            pass
 
     def check_subscription(self, subscription):
         """
@@ -87,28 +112,24 @@ class Realtime(object):
         than the subscription bus filter
         :subscription: Subscription that is going to look for bus filters
         """
-        bus_filters = []
-        bus_filter = self.filters.get(subscription['filter_id'])
-        for sub in self.subscriptions.get():
-            if sub['filter_id'] == bus_filter['id']:
-                bus_filters.append(bus_filter)
-        return bus_filters
+        return self.filters.get(subscription['filter_id'])
 
     def create_connection(self, subscriptions):
         """
         Creates a thread with a new rabbitmq connection
         :subscriptions: Subscriptions to add to bus thread
         """
-        if not hasattr(self, 'bus_tread'):
+        if not hasattr(self, 'bus_thread'):
             self.bus_thread = BusConnectionHandler(subscriptions)
         else:
-            self.connection_stop()
             self.bus_thread.set_subscriptions(subscriptions)
         self.bus_thread.start()
 
-    def connection_stop(self):
+    def connection_stop(self, bus_filter):
         """
         Search for a thread with the bus_filter to pause and delete it
         """
         if hasattr(self, 'bus_thread'):
             self.bus_thread.stop()
+            if bus_filter:
+                self.bus_thread.unbind(bus_filter.get('exchange'), bus_filter.get('key'))

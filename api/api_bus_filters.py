@@ -151,8 +151,8 @@ class BusFilterTemplateView(Resource):
 
         bus_filter = filters.get(bus_filter_id)
         if bus_filter:
-            template = {'name': result['name'], 'text': result['text']}
-            template_id = templates.insert(template)['generated_keys'][0]
+            template = {'name': result['name'], 'text': result['text'], 'subject': result['subject']}
+            template_id = templates.insert(template)[0]
 
             bus_filter['template_id'] = template_id
             filters.edit(bus_filter, bus_filter_id)

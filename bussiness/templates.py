@@ -94,7 +94,7 @@ class TemplatesHandler(object):
         """
         default_template = {'name': 'default',
                             'text': st.DEFAULT_TEMPLATE_TEXT, 'subject': st.DEFAULT_TEMPLATE_SUBJECT}
-        return self.insert(default_template)['generated_keys'][0]
+        return self.insert(default_template)[0]
 
     def get_default_template(self):
         """
@@ -116,8 +116,8 @@ class TemplatesHandler(object):
         if isinstance(data, dict):
             text = field
             for key in data:
-                parse_regex = '\[\[' + key + '\]\]'
-                text = re.sub(parse_regex, data[key], text)
+                parse_regex = '\[\[' + str(key) + '\]\]'
+                text = re.sub(parse_regex, str(data.get(key)), text)
 
                 # If var has not been parsed, delete it
 
