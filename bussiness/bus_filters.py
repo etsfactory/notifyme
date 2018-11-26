@@ -47,7 +47,7 @@ class BusFiltersHandler(object):
         Insert bus_filter to the database
         :bus_filter: Bus filter or bus filters to insert
         """
-        if (type(bus_filter, list)):
+        if (isinstance(bus_filter, list)):
             keys = []
             for bfilter in bus_filter:
                 bus_filter_to_insert = self.get_by_exchange_key(bfilter.get('exchange'), bfilter.get('key'))
