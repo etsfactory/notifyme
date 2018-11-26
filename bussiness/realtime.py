@@ -95,9 +95,8 @@ class Realtime(object):
         else:
             subscriptions = self.bus_filters_from_subsc(subscription)
 
-        print(subscriptions)
         if subscriptions:
-            if (len(subscriptions) == 1):
+            if (len(subscriptions) < 1):
                 bus_filter = self.check_subscription(subscription)
                 self.connection_stop(bus_filter)
     
@@ -133,4 +132,4 @@ class Realtime(object):
         if hasattr(self, 'bus_thread'):
             self.bus_thread.stop()
             if bus_filter:
-                self.bus_thread.unbind(bus_filter['exchange'], bus_filter['key'])
+                self.bus_thread.unbind(bus_filter.get('exchange'), bus_filter.get('key'))

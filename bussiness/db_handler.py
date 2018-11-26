@@ -66,7 +66,10 @@ class DBHandler(object):
         Inserts data into the database
         :data: Data to insert, object or array
         """
-        return self.db.insert_data(self.table_name, data)
+        keys = []
+        inserted_data = self.db.insert_data(self.table_name, data)
+        for key in inserted_data:
+            keys.append(key)
 
     def edit_data(self, data, key_value, key='id'):
         """

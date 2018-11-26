@@ -24,8 +24,6 @@ class UsersView(Resource):
         Get users from the db
         """
         response = json_parser.to_json_list(users.get())
-        print('-------------------------')
-        print(response)
         return response
 
     def post(self):
@@ -166,7 +164,7 @@ class UserFiltersView(Resource):
             bus_filter_id = filters.get_by_exchange_key(result['exchange'], key)
 
             if not bus_filter_id:
-                bus_filter_id = filters.insert(result)['generated_keys'][0]
+                bus_filter_id = filters.insert(result)
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
             return subscription, None

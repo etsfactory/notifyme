@@ -136,16 +136,15 @@ class SubscriptionsHandler(object):
         :subscription: Subscription to add template
         """
         bus_filter = self.filters.get(subscription['filter_id'])
-
+        template_id = bus_filter.get('template_id')
         if not hasattr(
                 subscription,
-                'template_id') and hasattr(
-                bus_filter,
-                'template_id'):
+                'template_id') and template_id:
             subscription['template_id'] = bus_filter['template_id']
         else:
             subscription['template_id'] = self.templates.get_default_template()
         return subscription
+
 
     def edit(self, subscription, subscription_id):
         """

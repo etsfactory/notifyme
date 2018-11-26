@@ -79,12 +79,11 @@ class BusConnectionHandler(object):
             for sub in self.subscriptions_handler.get_by_filter(bus_filter):
                 user = self.users_handler.get(sub['user_id'])
                 template = self.templates_handler.get(sub['template_id'])
-
                 st.logger.info('Notification to: %r' % (user['email']))
-                self.smtp.send(
-                    user['email'], self.templates_handler.parse(
-                        template['subject'], message), self.templates_handler.parse(
-                        template['text'], message))
+                subject = self.templates_handler.parse(template.get('subject'), message)
+                text = self.templates_handler.parse(template.get('text'), message)
+
+                self.smtp.send(user['email'], subject, text)
 
     def set_subscriptions(self, subscriptions):
         self.subscriptions = subscriptions
