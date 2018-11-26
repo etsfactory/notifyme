@@ -70,6 +70,7 @@ class DBHandler(object):
         inserted_data = self.db.insert_data(self.table_name, data)
         for key in inserted_data:
             keys.append(key)
+        return keys
 
     def edit_data(self, data, key_value, key='id'):
         """
