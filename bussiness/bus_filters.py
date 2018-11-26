@@ -56,7 +56,7 @@ class BusFiltersHandler(object):
                 keys + self.db_handler.insert_data(bus_filter)['generated_keys']
             return keys
         else:
-            bus_filter_to_insert = self.get_by_exchange_key(bfilter.get('exchange'), bfilter.get('key'))
+            bus_filter_to_insert = self.get_by_exchange_key(bus_filter.get('exchange'), bus_filter.get('key'))
             if bus_filter_to_insert:
                     return bus_filter_to_insert['id']
             return self.db_handler.insert_data(bus_filter)
