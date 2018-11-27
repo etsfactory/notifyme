@@ -11,10 +11,6 @@ import time
 import errors
 import settings as st
 
-from bussiness.users import UsersHandler
-from bussiness.bus_filters import BusFiltersHandler
-from bussiness.subscriptions import SubscriptionsHandler
-
 from bussiness.realtime import Realtime
 from api.api import ApiHandler
 
@@ -22,7 +18,7 @@ def main():
 
     st.logger.info('Starting notifyme...')
 
-    # Realtime()
+    Realtime()
 
     api = ApiHandler()
     api.start()

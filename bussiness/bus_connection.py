@@ -4,6 +4,7 @@ Bus connection handler
 import json
 import queue
 import settings as st
+from jinja2 import Template
 
 from raccoon import Consumer
 import errors
@@ -80,8 +81,12 @@ class BusConnectionHandler(object):
                 user = self.users_handler.get(sub['user_id'])
                 template = self.templates_handler.get(sub['template_id'])
                 st.logger.info('Notification to: %r' % (user['email']))
-                subject = self.templates_handler.parse(template.get('subject'), message)
-                text = self.templates_handler.parse(template.get('text'), message)
+                
+                subject_t = Template(template.get('subject'))
+                text_t = Template(template.get('text'))
+
+                subject = subject_t.render(message)
+                text = text_t.render(message)
 
                 self.smtp.send(user['email'], subject, text)
 

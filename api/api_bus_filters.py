@@ -214,7 +214,7 @@ class BusFilterUsersView(Resource):
         if bus_filter:
             user_id = users.search(result)
             if not user_id:
-                user_id = users.insert(result)['generated_keys'][0]
+                user_id = users.insert(result)[0]
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
             return subscription, None

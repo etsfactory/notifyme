@@ -50,10 +50,11 @@ class BusFiltersHandler(object):
         if (isinstance(bus_filter, list)):
             keys = []
             for bfilter in bus_filter:
-                bus_filter_to_insert = self.get_by_exchange_key(bfilter.get('exchange'), bfilter.get('key'))
-                if bus_filter_to_insert:
-                    keys.append(bus_filter_to_insert['id'])
-                keys + self.db_handler.insert_data(bus_filter)['generated_keys']
+                bus_filter_exits = self.get_by_exchange_key(bfilter.get('exchange'), bfilter.get('key'))
+                if bus_filter_exits:
+                    keys.append(bus_filter_exits['id'])
+                else:
+                    keys + self.db_handler.insert_data(bfilter)
             return keys
         else:
             bus_filter_to_insert = self.get_by_exchange_key(bus_filter.get('exchange'), bus_filter.get('key'))
@@ -61,13 +62,6 @@ class BusFiltersHandler(object):
                     return bus_filter_to_insert['id']
             return self.db_handler.insert_data(bus_filter)
 
-    def check_if_filter_exits(self, bus_filter):
-        self.get_by_exchange_key(bus_filter.get('exchange'), bus_filter.get('key'))
-        if bus_filter:
-            return bus_filter['id']
-        else:
-            return None
-    
     def edit(self, bus_filter, bus_filter_id):
         """
         Modify bus_filter by his email

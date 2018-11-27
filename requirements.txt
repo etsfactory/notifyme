@@ -4,4 +4,5 @@ rethinkdb==2.3.0
 Flask==1.0.2
 flask-restful==0.3.6
 marshmallow==2.14.0
+Jinja2==2.10
 git+http://ETSGIT1/Snakes/raccoon.git@develop#egg=raccoon
