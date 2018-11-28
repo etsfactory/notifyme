@@ -75,10 +75,18 @@ class DBHandler(object):
         :key_value: The name of the primary key param
         :key: The key value of the data to edit
         """
-        entries = self.filter_data({key: key_value})
-        for document in entries:
-            return self.db.edit_data(
-                self.table_name, document[key], data)
+        return self.db.edit_data(
+                self.table_name, key_value, data)
+
+    def replace_data(self, data, key_value):
+        """
+        Replaces data
+        :data: Edited data to replace
+        :key_value: The name of the primary key param
+        :key: The key value of the data to edit
+        """
+        return self.db.replace_data(
+                self.table_name, data, key_value)
 
     def delete_data(self, key_value):
         """

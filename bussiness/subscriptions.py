@@ -123,9 +123,11 @@ class SubscriptionsHandler(object):
         """
         if (isinstance(subscriptions, list)):
             for sub in subscriptions:
-                sub = self.set_subscription_template(sub)
+                if not sub.get('template_id'):
+                    sub = self.set_subscription_template(sub)
         else:
-            subscriptions = self.set_subscription_template(subscriptions)
+            if not subscriptions.get('template_id'):
+                subscriptions = self.set_subscription_template(subscriptions)
         return self.db_handler.insert_data(subscriptions)
 
     def set_subscription_template(self, subscription):
@@ -135,7 +137,9 @@ class SubscriptionsHandler(object):
         has template uses it. If not create default one
         :subscription: Subscription to add template
         """
-        bus_filter = self.filters.get(subscription['filter_id'])
+        bus_filter = self.filters.get(subscription.get('filter_id'))
+        if isinstance(bus_filter, list):
+            bus_filter = bus_filter[0]
         template_id = bus_filter.get('template_id')
         if not hasattr(
                 subscription,
@@ -164,15 +168,16 @@ class SubscriptionsHandler(object):
             if sub['user_id'] == user_id:
                 self.delete(sub['id'])
 
-    def delete_bus_filter(self, bus_filter_id):
+    def delete_bus_filter(self, bus_filter):
         """
         Delete subscriptions associated with the bus filter
         :bus_filter_id: filter id to search for
         """
-        subscriptions = self.get()
-        for sub in subscriptions:
-            if sub['filter_id'] == bus_filter_id:
-                self.delete(sub['id'])
+        subscription = self.db_handler.filter_data({'filter_id': bus_filter['id']})
+        self.delete(subscription['id'])
+
+    def subscriptions_template(self, template_id):
+        return self.db_handler.filter_data({'template_id': template_id})
 
     def delete(self, subscription_id):
         """

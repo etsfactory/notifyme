@@ -31,8 +31,8 @@ class BusConnectionHandler(object):
         self.subscriptions_handler = SubscriptionsHandler()
         self.users_handler = UsersHandler()
         self.templates_handler = TemplatesHandler()
-        self.smtp = SMTPHandler(
-            st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+        # self.smtp = SMTPHandler(
+        #     st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
 
     def start(self):
         """
@@ -88,7 +88,7 @@ class BusConnectionHandler(object):
                 subject = subject_t.render(message)
                 text = text_t.render(message)
 
-                self.smtp.send(user['email'], subject, text)
+        #        self.smtp.send(user['email'], subject, text)
 
     def set_subscriptions(self, subscriptions):
         self.subscriptions = subscriptions

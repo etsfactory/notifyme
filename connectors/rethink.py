@@ -91,6 +91,18 @@ class RethinkHandler(object):
         except BaseException:
             raise WriteError()
 
+    def replace_data(self, table_name, new_data, primary_key):
+        """
+        Edit document from database with a primary key
+        """
+        con = self.con
+        try:
+            return r.table(table_name).get(
+                primary_key).replace(new_data).run(con)
+
+        except BaseException:
+            raise WriteError()
+
     def filter_data(self, table_name, filter_data):
         """
         Returns filtered documents from database.

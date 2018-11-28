@@ -60,7 +60,6 @@ class UsersView(Resource):
         if errors:
             return errors, 422
 
-        print(result)
         return result, 201
 
 

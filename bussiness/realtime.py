@@ -26,6 +26,7 @@ class Realtime(object):
         self.templates = TemplatesHandler()
         Thread(target=self.realtime_subscriptions).start()
         Thread(target=self.realtime_filters).start()
+        Thread(target=self.realtime_templates).start()
 
     def realtime_subscriptions(self):
         """
@@ -71,6 +72,22 @@ class Realtime(object):
                     self.start_connection()
         except BaseException:
             raise ConnectionLost()
+    
+    def realtime_templates(self):
+
+        cursor = self.templates.get_realtime()
+        try:
+            for template in cursor:
+                if template['old_val'] and not template['new_val']:
+                    self.filters.delete_template(template['old_val']['id'])
+                    subscriptions = self.subscriptions.subscriptions_template(template['old_val']['id'])
+                    for subscription in subscriptions:
+                        del subscription['template_id']
+                        edited_subscription = self.subscriptions.set_subscription_template(subscription)
+                        self.subscriptions.edit(edited_subscription, edited_subscription['id'])
+               
+        except BaseException:
+            raise ConnectionLost()
 
     def start_connection(self):
         """
@@ -85,6 +102,7 @@ class Realtime(object):
                 self.create_connection(bus_filters)
 
     def on_bus_filter_delete(self, bus_filter):
+        self.subscriptions.delete_bus_filter(bus_filter)
         self.connection_stop(bus_filter)
     
     def on_subscription_delete(self, subscription):

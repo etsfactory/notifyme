@@ -7,13 +7,15 @@ import settings as st
 from marshmallow import Schema, fields
 from bussiness.db_handler import DBHandler
 
-
 class BusFilterSchema(Schema):
     id = fields.Str()
     exchange = fields.Str(required=True)
     key = fields.Str()
     exchange_type = fields.Str(required=True)
     durable = fields.Boolean(required=True)
+    description = fields.Str()
+    category = fields.Str()
+    template_id = fields.Str()
 
 
 class BusFiltersHandler(object):
@@ -89,3 +91,10 @@ class BusFiltersHandler(object):
             return bus_filters[0]
         else:
             return None
+        
+    def delete_template(self, template_id):
+        bus_filters = self.db_handler.filter_data({'template_id': template_id})
+        if bus_filters:
+            for bus_filter in bus_filters:
+                del bus_filter['template_id']
+                self.db_handler.replace_data(bus_filter, bus_filter['id'])

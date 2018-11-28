@@ -6,7 +6,10 @@ import re
 import settings as st
 
 from bussiness.db_handler import DBHandler
+from bussiness.bus_filters import BusFiltersHandler
+
 from marshmallow import Schema, fields
+
 
 import utils.json_parser as json_parser
 
@@ -27,6 +30,7 @@ class TemplatesHandler(object):
         self.db_handler = DBHandler("templates")
         self.db_handler.create_table()
         self.default_template_id = ''
+        self.filters = BusFiltersHandler()
 
     def get(self, template_id=None):
         """

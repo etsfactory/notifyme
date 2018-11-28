@@ -107,8 +107,7 @@ class BusFilterView(Resource):
         bus_filter = filters.get(bus_filter_id)
 
         if bus_filter:
-            filters.delete(bus_filter_id)
-            subscriptions.delete_bus_filter(bus_filter_id)
+            filters.delete(bus_filter_id)            
             response = {'deleted': True}
             return response
         else:
