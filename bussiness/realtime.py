@@ -41,12 +41,12 @@ class Realtime(object):
 
         try:
             for subscription in cursor:
-                if subscription['old_val']:
+                if subscription['old_val'] and not subscription['new_val']:
                     """
                     When a subscription is deleted
                     """
                     self.on_subscription_delete(subscription['old_val'])
-                if subscription['new_val']:
+                if subscription['new_val'] and not subscription['new_val']:
                     """
                     When a subscription is added or edited
                     """
@@ -95,6 +95,7 @@ class Realtime(object):
         """
         bus_filters = []
         subscriptions_list = self.subscriptions.get()
+        print(subscriptions_list)
         if (len(subscriptions_list) > 0):
             for sub in subscriptions_list:
                 bus_filters.append(self.check_subscription(sub))
@@ -130,7 +131,8 @@ class Realtime(object):
         than the subscription bus filter
         :subscription: Subscription that is going to look for bus filters
         """
-        return self.filters.get(subscription['filter_id'])
+        print(subscription)
+        return self.filters.get(subscription.get('filter_id'))
 
     def create_connection(self, subscriptions):
         """
