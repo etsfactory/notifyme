@@ -1,7 +1,8 @@
 """
 Main file program.
 """
-# To run a sample database: sudo docker run --memory=4G --memory-swap=0 rethinkdb
+# To run a sample database: 
+# sudo docker run --memory=4G --memory-swap=0 rethinkdb
 
 import sys
 import json
@@ -13,6 +14,7 @@ import settings as st
 
 from bussiness.realtime import Realtime
 from api.api import ApiHandler
+
 
 def main():
 

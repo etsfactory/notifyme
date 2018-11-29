@@ -23,7 +23,8 @@ class SubscriptionsView(Resource):
         """
         Get subscriptions from the db
         """
-        response = json_parser.to_json_list(subscriptions.get_with_relationships())
+        response = json_parser.to_json_list(
+            subscriptions.get_with_relationships())
         return response
 
     def post(self):
@@ -63,7 +64,7 @@ class SubscriptionsView(Resource):
             subscriptions.insert(subscription)
         else:
             return {
-                'message': 'Bus filter id or user filter id does not exits'}, 422
+                'message': 'Bus filter id or user id does not exits'}, 422
 
 
 class SubscriptionView(Resource):

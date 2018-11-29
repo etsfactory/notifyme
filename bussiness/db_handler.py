@@ -26,7 +26,7 @@ class DBHandler(object):
 
     def create_table(self, primary_key='id'):
         """
-        Creates the table in database 
+        Creates the table in database
         regenerates if it already exists
         :primary_key: Name of the primary key to create
         """

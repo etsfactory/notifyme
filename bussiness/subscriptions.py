@@ -149,7 +149,6 @@ class SubscriptionsHandler(object):
             subscription['template_id'] = self.templates.get_default_template()
         return subscription
 
-
     def edit(self, subscription, subscription_id):
         """
         Modify subscriptions
@@ -173,7 +172,8 @@ class SubscriptionsHandler(object):
         Delete subscriptions associated with the bus filter
         :bus_filter_id: filter id to search for
         """
-        subscription = self.db_handler.filter_data({'filter_id': bus_filter['id']})
+        subscription = self.db_handler.filter_data(
+            {'filter_id': bus_filter['id']})
         self.delete(subscription['id'])
 
     def subscriptions_template(self, template_id):
