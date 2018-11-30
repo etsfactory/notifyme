@@ -1,25 +1,21 @@
 """
 Users handler
 """
-import ast
-
 import settings as st
-import utils.json_parser as json_parser
 from connectors.rethink import RethinkHandler
 from connectors.rethink_realtime import BDRealtime
-from exceptions.db_exceptions import WriteError, ReadError
 
 recreate_database = st.REFRESH_DATABASE
 
 
-class DBHandler(object):
+class DBHandler():
     """
     Users handlers class to get, edit, and streaming
     users from the database
     """
 
     def __init__(self, table_name):
-        self.db = RethinkHandler(
+        self.database = RethinkHandler(
             st.DB_SERVER, st.DB_PORT, st.DB_NAME, st.DB_USER, st.DB_PASSWORD)
         self.db_realtime = BDRealtime(st.DB_SERVER, st.DB_PORT, st.DB_NAME)
         self.table_name = table_name
@@ -31,31 +27,30 @@ class DBHandler(object):
         :primary_key: Name of the primary key to create
         """
         global recreate_database
-        if (recreate_database):
-            self.db.reset_database()
+        if recreate_database:
+            self.database.reset_database()
             st.logger.info('Reseting the database...')
             recreate_database = False
         else:
-            self.db.create_table(self.table_name, primary_key)
+            self.database.create_table(self.table_name, primary_key)
 
     def get_data(self, key=None):
         """
         Get data from the database
         :key: If key is passed it searchs in the database
         """
-        data = self.db.get_data(self.table_name, key)
-        if (not key):
+        data = self.database.get_data(self.table_name, key)
+        if not key:
             data_list = []
             for entry in data:
                 data_list.append(entry)
             return data_list
-        else:
-            return data
+        return data
 
     def get_data_streaming(self):
         """
         Get data from the database in realtime.
-        If data is edited in the db it returns the change.
+        If data is edited in the database it returns the change.
         This method blocks the current thread
         use this method in a separated thread
         """
@@ -66,17 +61,18 @@ class DBHandler(object):
         Inserts data into the database
         :data: Data to insert, object or array
         """
-        return self.db.insert_data(self.table_name, data).get('generated_keys')
+        return self.database.insert_data(
+            self.table_name, data).get('generated_keys')
 
-    def edit_data(self, data, key_value, key='id'):
+    def edit_data(self, data, key_value):
         """
         Modifies data
         :data: Edited data to replace
         :key_value: The name of the primary key param
         :key: The key value of the data to edit
         """
-        return self.db.edit_data(
-                self.table_name, key_value, data)
+        return self.database.edit_data(
+            self.table_name, key_value, data)
 
     def replace_data(self, data, key_value):
         """
@@ -85,22 +81,22 @@ class DBHandler(object):
         :key_value: The name of the primary key param
         :key: The key value of the data to edit
         """
-        return self.db.replace_data(
-                self.table_name, data, key_value)
+        return self.database.replace_data(
+            self.table_name, data, key_value)
 
     def delete_data(self, key_value):
         """
         Delete data from the database
         :key_value: The value of the primary key to delete
         """
-        self.db.delete_data(self.table_name, key_value)
+        self.database.delete_data(self.table_name, key_value)
 
-    def filter_data(self, filter):
+    def filter_data(self, filter_params):
         """
         Filters data from the database
         :filter: Object with the filter to use in the database
         """
-        data = self.db.filter_data(self.table_name, filter)
+        data = self.database.filter_data(self.table_name, filter_params)
         data_list = []
         for entry in data:
             data_list.append(entry)
@@ -116,8 +112,4 @@ class DBHandler(object):
         :key2: Foering key for the right table
         """
 
-        return self.db.join_tables(table1, table2, table3, key1, key2)
-
-    def table_join_streaming(self, table1, table2, table3, key1, key2):
-        return self.db_realtime.table_join_streaming(
-            table1, table2, table3, key1, key2)
+        return self.database.join_tables(table1, table2, table3, key1, key2)

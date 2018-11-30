@@ -1,14 +1,10 @@
 """
 Main file program.
 """
-# To run a sample database: 
+# To run a sample database:
 # sudo docker run --memory=4G --memory-swap=0 rethinkdb
 
 import sys
-import json
-import os.path
-import time
-
 import errors
 import settings as st
 
@@ -17,6 +13,9 @@ from api.api import ApiHandler
 
 
 def main():
+    """
+    Main program file
+    """
 
     st.logger.info('Starting notifyme...')
 

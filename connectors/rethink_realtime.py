@@ -2,10 +2,14 @@
 """"
 Data streaming from the DB.
 """
+from exceptions.db_exceptions import ReadError
 import rethinkdb as r
 
 
-class BDRealtime(object):
+class BDRealtime():
+    """
+    Handles realtime conneciton with a table
+    """
     def __init__(self, server, port, db_name):
         self.db_name = db_name
         self.con = r.connect(host=server, port=port,
@@ -19,10 +23,4 @@ class BDRealtime(object):
         try:
             return r.table(table_name).changes().run(con)
         except BaseException:
-            'Error reading database'
-
-    def table_join_streaming(self, table1, table2, table3, key1, key2):
-        con = self.con
-        return r.table(table1).changes().eq_join(
-            key1, r.table(table2)).zip().eq_join(
-            key2, r.table(table3)).zip().run(con)
+            raise ReadError()

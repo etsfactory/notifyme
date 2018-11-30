@@ -1,13 +1,11 @@
 """
 Bus connection handler
 """
-import json
 import queue
-import settings as st
 from jinja2 import Template
-
 from raccoon import Consumer
-import errors
+
+import settings as st
 
 from connectors.smtp import SMTPHandler
 
@@ -16,10 +14,8 @@ from bussiness.bus_filters import BusFiltersHandler
 from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.templates import TemplatesHandler
 
-import utils.json_parser as json_parser
 
-
-class BusConnectionHandler(object):
+class BusConnectionHandler():
     """
     Bus connection class
     """
@@ -31,14 +27,14 @@ class BusConnectionHandler(object):
         self.subscriptions_handler = SubscriptionsHandler()
         self.users_handler = UsersHandler()
         self.templates_handler = TemplatesHandler()
-        # self.smtp = SMTPHandler(
-        #     st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+        self.smtp = SMTPHandler(
+            st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
 
     def start(self):
         """
         Starts the thread
         """
-        if (len(self.subscriptions) > 0):
+        if not self.subscriptions:
             error = queue.Queue()
             self.bus_thread = Consumer(
                 self.on_message,
@@ -80,18 +76,24 @@ class BusConnectionHandler(object):
             for sub in self.subscriptions_handler.get_by_filter(bus_filter):
                 user = self.users_handler.get(sub['user_id'])
                 template = self.templates_handler.get(sub['template_id'])
-                st.logger.info('Notification to: %r' % (user['email']))
-                
+                st.logger.info('Notification to: %r', user['email'])
+
                 subject_t = Template(template.get('subject'))
                 text_t = Template(template.get('text'))
 
                 subject = subject_t.render(message)
                 text = text_t.render(message)
 
-        #        self.smtp.send(user['email'], subject, text)
+                self.smtp.send(user['email'], subject, text)
 
     def set_subscriptions(self, subscriptions):
+        """
+        Change subscriptions
+        """
         self.subscriptions = subscriptions
-    
+
     def unbind(self, exchange, key):
+        """
+        Unbind the queue from exchange and key
+        """
         self.bus_thread.unbind_queue(exchange, key)
