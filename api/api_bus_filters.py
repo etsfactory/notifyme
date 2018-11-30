@@ -32,7 +32,7 @@ class BusFiltersView(Resource):
 
     def post(self):
         """
-        Create user and stores in the db
+        Create bus filter and store in the db
         """
         json_data = request.get_json(force=True)
         bus_filter_list = []
@@ -150,7 +150,7 @@ class BusFilterTemplateView(Resource):
     @staticmethod
     def post(bus_filter_id):
         """
-        Creates template for the bus_filter
+        Creates template for the bus filter passing his id
         """
         json_data = request.get_json(force=True)
 
