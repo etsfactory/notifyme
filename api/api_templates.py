@@ -1,12 +1,13 @@
-from flask import Flask, Response
+"""
+API notification templates handler
+"""
+
 from flask_restful import Resource, request
 
 from bussiness.users import UsersHandler
 from bussiness.bus_filters import BusFiltersHandler
-from bussiness.subscriptions import SubscriptionsHandler, SubscriptionSchema
+from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.templates import TemplatesHandler, TemplateSchema
-
-import utils.json_parser as json_parser
 
 users = UsersHandler()
 filters = BusFiltersHandler()
@@ -20,14 +21,16 @@ class TemplatesView(Resource):
     Templates endpoints /templates/
     """
 
-    def get(self):
+    @staticmethod
+    def get():
         """
         Get templates from the db
         """
-        response = json_parser.to_json_list(templates.get())
+        response = templates.get()
         return response
 
-    def post(self):
+    @staticmethod
+    def post():
         """
         Create template
         """
@@ -47,7 +50,8 @@ class TemplateView(Resource):
     Template endpoints /templates/id
     """
 
-    def get(self, template_id):
+    @staticmethod
+    def get(template_id):
         """
         Get specific template
         """
@@ -55,10 +59,11 @@ class TemplateView(Resource):
 
         if response:
             return response
-        else:
-            return {'message': 'Template not found'}, 404
 
-    def put(self, template_id):
+        return {'message': 'Template not found'}, 404
+
+    @staticmethod
+    def put(template_id):
         """
         Update template passing his id
         """
@@ -73,10 +78,10 @@ class TemplateView(Resource):
         if template:
             templates.edit(result, template_id)
             return result
-        else:
-            return {'message': 'Template not found'}, 404
+        return {'message': 'Template not found'}, 404
 
-    def delete(self, template_id):
+    @staticmethod
+    def delete(template_id):
         """
         Delete template by his id
         """
@@ -85,5 +90,4 @@ class TemplateView(Resource):
             templates.delete(template_id)
             response = {'deleted': True}
             return response
-        else:
-            return {'message': 'Template not found'}, 404
+        return {'message': 'Template not found'}, 404
