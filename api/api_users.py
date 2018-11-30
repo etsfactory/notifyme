@@ -157,6 +157,8 @@ class UserFiltersView(Resource):
             return sub_list, 201
 
         response, error = self.check_filter(json_data, user_id)
+        if error:
+            return response, error
         subscriptions.insert(response)
         return response, error
 
@@ -178,7 +180,7 @@ class UserFiltersView(Resource):
                 result['exchange'], key)
 
             if not bus_filter_id:
-                bus_filter_id = filters.insert(result)
+                bus_filter_id = filters.insert(result)[0]
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
             return subscription, None

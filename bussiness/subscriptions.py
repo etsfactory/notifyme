@@ -129,6 +129,7 @@ class SubscriptionsHandler():
         else:
             if not subscriptions.get('template_id'):
                 subscriptions = self.set_subscription_template(subscriptions)
+                print(subscriptions)
         return self.db_handler.insert_data(subscriptions)
 
     def set_subscription_template(self, subscription):
@@ -139,12 +140,14 @@ class SubscriptionsHandler():
         :subscription: Subscription to add template
         """
         bus_filter = self.filters.get(subscription.get('filter_id'))
-        if isinstance(bus_filter, list):
-            bus_filter = bus_filter[0]
-        template_id = bus_filter.get('template_id')
+        template_id = ''
+        if bus_filter:
+            if isinstance(bus_filter, list):
+                bus_filter = bus_filter[0]
+            template_id = bus_filter.get('template_id')
         if not hasattr(
                 subscription,
-                'template_id') and template_id:
+                'template_id') and template_id and bus_filter:
             subscription['template_id'] = bus_filter['template_id']
         else:
             subscription['template_id'] = self.templates.get_default_template()
