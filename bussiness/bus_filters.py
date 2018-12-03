@@ -98,7 +98,7 @@ class BusFiltersHandler():
 
     def delete_template(self, template_id):
         """
-        Delete bus filter template and edit in the database
+        Delete bus filter template and replace in the database
         """
         bus_filters = self.db_handler.filter_data({'template_id': template_id})
         if bus_filters:

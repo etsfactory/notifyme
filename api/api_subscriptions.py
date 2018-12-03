@@ -66,9 +66,7 @@ class SubscriptionsView(Resource):
         user_exits = users.get(result['user_id'])
 
         if (bus_filter_exits and user_exits):
-            subscription = {
-                'user_id': result['user_id'], 'filter_id': result['filter_id']}
-            subscriptions.insert(subscription)
+            subscriptions.insert(result)
         return {
             'message': 'Bus filter id or user id does not exits'}, 422
 
@@ -105,13 +103,9 @@ class SubscriptionView(Resource):
 
         subscription = subscriptions.get(subscription_id)
         if subscription:
-            subscription = {
-                'user_id': result['user_id'],
-                'filter_id': result['filter_id'],
-                'template_id': result['template_id']}
-            subscriptions.edit(subscription, subscription_id)
+            subscriptions.edit(result, subscription_id)
             return subscription
-   
+
         return {'message': 'Subscription not found'}, 404
 
     @staticmethod

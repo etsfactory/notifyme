@@ -36,6 +36,7 @@ class UsersView(Resource):
         users_list = []
         if not json_data:
             return {'message': 'No input data provided'}, 400
+
         if isinstance(json_data, list):
 
             for user in json_data:
@@ -56,12 +57,12 @@ class UsersView(Resource):
         return response, 201
 
     @staticmethod
-    def check_user(data):
+    def check_user(user):
         """"
         Compare user with his schema, 
         return result or errors with http code
         """
-        result, errors = user_schema.load(data)
+        result, errors = user_schema.load(user)
         if errors:
             return errors, 422
 
@@ -176,11 +177,13 @@ class UserFiltersView(Resource):
         user = users.get(user_id)
         if user:
             key = result.get('key')
-            bus_filter_id = filters.get_by_exchange_key(
+            searched_bus_filter = filters.get_by_exchange_key(
                 result['exchange'], key)
 
-            if not bus_filter_id:
+            if not searched_bus_filter:
                 bus_filter_id = filters.insert(result)[0]
+            else:
+                bus_filter_id = searched_bus_filter['id']
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
             return subscription, None

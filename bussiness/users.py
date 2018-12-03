@@ -9,7 +9,7 @@ from bussiness.db_handler import DBHandler
 
 class UserSchema(Schema):
     """
-    User s
+    User schema to validate users
     """
     id = fields.Str()
     name = fields.Str()

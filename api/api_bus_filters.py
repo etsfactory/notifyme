@@ -163,16 +163,12 @@ class BusFilterTemplateView(Resource):
 
         bus_filter = filters.get(bus_filter_id)
         if bus_filter:
-            template = {
-                'name': result['name'],
-                'text': result['text'],
-                'subject': result['subject']}
-            template_id = templates.insert(template)[0]
+            template_id = templates.insert(result)[0]
 
             bus_filter['template_id'] = template_id
             filters.edit(bus_filter, bus_filter_id)
 
-            return template
+            return result
 
         return {'message': 'Bus filter not found'}, 404
 
@@ -207,7 +203,7 @@ class BusFilterUsersView(Resource):
         if isinstance(json_data, list):
             sub_list = []
             for user in json_data:
-                response, error = self.check_user_insert_subscription(
+                response, error = self.check_user(
                     user, bus_filter_id)
                 if error:
                     return response, error
@@ -215,13 +211,13 @@ class BusFilterUsersView(Resource):
             subscriptions.insert(sub_list)
             return sub_list, 201
 
-        response, error = self.check_user_insert_subscription(
+        response, error = self.check_user(
             json_data, bus_filter_id)
         subscriptions.insert(response)
         return response, error
 
     @staticmethod
-    def check_user_insert_subscription(user, bus_filter_id):
+    def check_user(user, bus_filter_id):
         """
         Check user provided with his schema. If no errors
         check if bus filter exits and insert new subscription.
@@ -235,9 +231,11 @@ class BusFilterUsersView(Resource):
 
         bus_filter = filters.get(bus_filter_id)
         if bus_filter:
-            user_id = users.search(result)
-            if not user_id:
+            user_searched_id = users.search(result)
+            if not user_searched_id:
                 user_id = users.insert(result)[0]
+            else:
+                user_id = user_searched_id
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
             return subscription, 201

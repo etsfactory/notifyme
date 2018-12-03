@@ -73,7 +73,7 @@ class SubscriptionsHandler():
         users = []
         subscriptions = self.get_by_filter(bus_filter)
         for subscription in subscriptions:
-            user = (self.users.get(subscription['user_id']))
+            user = self.users.get(subscription['user_id'])
             users.append(user)
         return users
 
@@ -129,7 +129,6 @@ class SubscriptionsHandler():
         else:
             if not subscriptions.get('template_id'):
                 subscriptions = self.set_subscription_template(subscriptions)
-                print(subscriptions)
         return self.db_handler.insert_data(subscriptions)
 
     def set_subscription_template(self, subscription):
@@ -141,6 +140,7 @@ class SubscriptionsHandler():
         """
         bus_filter = self.filters.get(subscription.get('filter_id'))
         template_id = ''
+        print(bus_filter)
         if bus_filter:
             if isinstance(bus_filter, list):
                 bus_filter = bus_filter[0]
@@ -150,6 +150,7 @@ class SubscriptionsHandler():
                 'template_id') and template_id and bus_filter:
             subscription['template_id'] = bus_filter['template_id']
         else:
+            print(subscription)
             subscription['template_id'] = self.templates.get_default_template()
         return subscription
 
@@ -176,9 +177,10 @@ class SubscriptionsHandler():
         Delete subscriptions associated with the bus filter
         :bus_filter_id: filter id to search for
         """
-        subscription = self.db_handler.filter_data(
+        subscriptions = self.db_handler.filter_data(
             {'filter_id': bus_filter['id']})
-        self.delete(subscription['id'])
+        for sub in subscriptions:
+            self.delete(sub['id'])
 
     def subscriptions_template(self, template_id):
         """

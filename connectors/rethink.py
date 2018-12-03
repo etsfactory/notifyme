@@ -97,8 +97,8 @@ class RethinkHandler():
         """
         con = self.con
         try:
-            return r.table(table_name).get(
-                primary_key).replace(new_data).run(con)
+            return (r.table(table_name).get(
+                primary_key).replace(new_data).run(con))
 
         except BaseException:
             raise WriteError()
