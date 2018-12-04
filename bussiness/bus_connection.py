@@ -27,8 +27,8 @@ class BusConnectionHandler():
         self.subscriptions_handler = SubscriptionsHandler()
         self.users_handler = UsersHandler()
         self.templates_handler = TemplatesHandler()
-        # self.smtp = SMTPHandler(
-        #    st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+        self.smtp = SMTPHandler(
+            st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
 
     def start(self):
         """
@@ -64,15 +64,16 @@ class BusConnectionHandler():
             for sub in self.subscriptions_handler.get_by_filter(bus_filter):
                 user = self.users_handler.get(sub['user_id'])
                 template = self.templates_handler.get(sub['template_id'])
-                st.logger.info('Notification to: %r', user['email'])
+                if template:
+                    st.logger.info('Notification to: %r', user['email'])
 
-                subject_t = Template(template.get('subject'))
-                text_t = Template(template.get('text'))
+                    subject_t = Template(template.get('subject'))
+                    text_t = Template(template.get('text'))
 
-                subject = subject_t.render(message)
-                text = text_t.render(message)
+                    subject = subject_t.render(message)
+                    text = text_t.render(message)
 
-                # self.smtp.send(user['email'], subject, text)
+                    self.smtp.send(user['email'], subject, text)
 
     def set_subscriptions(self, subscriptions):
         """
