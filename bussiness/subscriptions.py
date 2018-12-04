@@ -140,7 +140,6 @@ class SubscriptionsHandler():
         """
         bus_filter = self.filters.get(subscription.get('filter_id'))
         template_id = ''
-        print(bus_filter)
         if bus_filter:
             if isinstance(bus_filter, list):
                 bus_filter = bus_filter[0]
@@ -150,7 +149,6 @@ class SubscriptionsHandler():
                 'template_id') and template_id and bus_filter:
             subscription['template_id'] = bus_filter['template_id']
         else:
-            print(subscription)
             subscription['template_id'] = self.templates.get_default_template()
         return subscription
 

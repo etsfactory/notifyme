@@ -57,9 +57,6 @@ class Realtime():
                 if bus_filter['old_val'] and not bus_filter['new_val']:
                     # When a bus filter is deleted
                     self.on_bus_filter_delete(bus_filter['old_val'])
-               # if bus_filter['new_val'] and bus_filter['old_val']:
-                    # When a bus filter is edited
-               #     self.start_connection()
         except BaseException:
             raise ConnectionLost()
 
@@ -76,11 +73,9 @@ class Realtime():
                     self.filters.delete_template(template_id)
                     subscriptions = self.subscriptions.subscriptions_template(template_id)
                     for subscription in subscriptions:
-                        del subscription['template_id']
-                        edited_subscription = self.subscriptions.set_subscription_template(
-                            subscription)
+                        subscription['template_id'] = self.templates.get_default_template()
                         self.subscriptions.edit(
-                            edited_subscription, edited_subscription['id'])
+                            subscription, subscription['id'])
 
         except BaseException:
             raise ConnectionLost()
