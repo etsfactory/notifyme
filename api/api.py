@@ -33,8 +33,8 @@ class ApiHandler(threading.Thread):
         Thread running. API initialization
         """
         app = Flask(__name__)
-        CORS(app)
         api = Api(app)
+        CORS(app)
 
         api.add_resource(UsersView, '/users')
         api.add_resource(UserView, '/users/<string:user_id>')
