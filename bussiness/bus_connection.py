@@ -54,12 +54,12 @@ class BusConnectionHandler():
         self.bus_thread.stop()
         self.bus_thread.join()
 
-    def on_message(self, method, properties, message):
+    def on_message(self, message):
         """"
         When a message is received
         """
-        bus_filter = self.filters_handler.get_by_exchange_key(
-            method.exchange, method.routing_key)
+        bus_filter = self.filters_handler.get_by_exchange_key(message.get(
+            'metadata').get('exchange'), message.get('metadata').get('routing_key', ''))
         if bus_filter:
             for sub in self.subscriptions_handler.get_by_filter(bus_filter):
                 user = self.users_handler.get(sub['user_id'])
