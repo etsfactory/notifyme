@@ -4,6 +4,7 @@ APi handler
 import threading
 
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Api
 
 import settings as st
@@ -32,6 +33,7 @@ class ApiHandler(threading.Thread):
         Thread running. API initialization
         """
         app = Flask(__name__)
+        CORS(app)
         api = Api(app)
 
         api.add_resource(UsersView, '/users')
