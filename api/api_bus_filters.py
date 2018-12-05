@@ -1,4 +1,6 @@
-from flask import Flask, Response
+"""
+APi bus filters handler
+"""
 from flask_restful import Resource, request
 
 from bussiness.bus_filters import BusFiltersHandler, BusFilterSchema
@@ -20,7 +22,8 @@ class BusFiltersView(Resource):
     Bus filters endpoint /bus_filters/
     """
 
-    def get(self):
+    @staticmethod
+    def get():
         """
         Get bus filters from the db
         """
@@ -29,35 +32,40 @@ class BusFiltersView(Resource):
 
     def post(self):
         """
-        Create user and stores in the db
+        Create bus filter and store in the db
         """
         json_data = request.get_json(force=True)
         bus_filter_list = []
         if not json_data:
             return {'message': 'No input data provided'}, 400
+
         if isinstance(json_data, list):
 
             for bus_filter in json_data:
                 response, http_code = self.check_bus_filter(bus_filter)
 
-                if (http_code != 201):
+                if http_code != 201:
                     return response, http_code
 
                 bus_filter_list.append(response)
             filters.insert(bus_filter_list)
             return bus_filter_list, 201
 
-        else:
-            response, http_code = self.check_bus_filter(json_data)
-            if (http_code != 201):
-                return response, http_code
+        response, http_code = self.check_bus_filter(json_data)
+        if http_code != 201:
+            return response, http_code
 
-            filters.insert(response)
-            return response, 201
+        filters.insert(response)
+        return response, 201
 
-    def check_bus_filter(self, data):
-
-        result, errors = bus_filter_schema.load(data)
+    @staticmethod
+    def check_bus_filter(bus_filter):
+        """
+        Check new bus filter with his schema.
+        It returns result or error with his http code
+        :bus_filter: Bus filter to check
+        """
+        result, errors = bus_filter_schema.load(bus_filter)
         if errors:
             return errors, 422
 
@@ -69,7 +77,8 @@ class BusFilterView(Resource):
     Specific bus filter endpoints /bus_filter/id
     """
 
-    def get(self, bus_filter_id):
+    @staticmethod
+    def get(bus_filter_id):
         """
         Get specific bus filter by his id
         """
@@ -77,10 +86,11 @@ class BusFilterView(Resource):
 
         if response:
             return response
-        else:
-            return {'message': 'Bus filter not found'}, 404
 
-    def put(self, bus_filter_id):
+        return {'message': 'Bus filter not found'}, 404
+
+    @staticmethod
+    def put(bus_filter_id):
         """
         Update bus filter passing his id
         """
@@ -97,10 +107,11 @@ class BusFilterView(Resource):
         if bus_filter:
             filters.edit(result, bus_filter_id)
             return result
-        else:
-            return {'message': 'Bus filter not found'}, 404
 
-    def delete(self, bus_filter_id):
+        return {'message': 'Bus filter not found'}, 404
+
+    @staticmethod
+    def delete(bus_filter_id):
         """
         Delete bus filter by his id
         """
@@ -108,11 +119,10 @@ class BusFilterView(Resource):
 
         if bus_filter:
             filters.delete(bus_filter_id)
-            subscriptions.delete_bus_filter(bus_filter_id)
             response = {'deleted': True}
             return response
-        else:
-            return {'message': 'Bus filter not found'}, 404
+
+        return {'message': 'Bus filter not found'}, 404
 
 
 class BusFilterTemplateView(Resource):
@@ -120,7 +130,8 @@ class BusFilterTemplateView(Resource):
     Specific bus filter templates endpoints /bus_filter/id/templates
     """
 
-    def get(self, bus_filter_id):
+    @staticmethod
+    def get(bus_filter_id):
         """
         Get template from bus filter
         """
@@ -131,14 +142,15 @@ class BusFilterTemplateView(Resource):
                 template = templates.get(bus_filter['template_id'])
                 if template:
                     return template
-            else:
-                return []
-        else:
-            return {'message': 'Bus filter not found'}, 404
 
-    def post(self, bus_filter_id):
+            return []
+
+        return {'message': 'Bus filter not found'}, 404
+
+    @staticmethod
+    def post(bus_filter_id):
         """
-        Creates template for the bus_filter
+        Creates template for the bus filter passing his id
         """
         json_data = request.get_json(force=True)
 
@@ -151,15 +163,14 @@ class BusFilterTemplateView(Resource):
 
         bus_filter = filters.get(bus_filter_id)
         if bus_filter:
-            template = {'name': result['name'], 'text': result['text'], 'subject': result['subject']}
-            template_id = templates.insert(template)[0]
+            template_id = templates.insert(result)[0]
 
             bus_filter['template_id'] = template_id
             filters.edit(bus_filter, bus_filter_id)
 
-            return template
-        else:
-            return {'message': 'Bus filter not found'}, 404
+            return result
+
+        return {'message': 'Bus filter not found'}, 404
 
 
 class BusFilterUsersView(Resource):
@@ -167,7 +178,8 @@ class BusFilterUsersView(Resource):
     Specific bus filter users endpoints /bus_filter/id/users
     """
 
-    def get(self, bus_filter_id):
+    @staticmethod
+    def get(bus_filter_id):
         """
         Get users from bus filter id
         """
@@ -176,8 +188,8 @@ class BusFilterUsersView(Resource):
         if bus_filter:
             subs = subscriptions.get_users_by_filter(bus_filter)
             return subs
-        else:
-            return {'message': 'Bus filter not found'}, 404
+
+        return {'message': 'Bus filter not found'}, 404
 
     def post(self, bus_filter_id):
         """
@@ -191,34 +203,41 @@ class BusFilterUsersView(Resource):
         if isinstance(json_data, list):
             sub_list = []
             for user in json_data:
-                response, error = self.check_user_insert_subscription(
+                response, error = self.check_user(
                     user, bus_filter_id)
                 if error:
                     return response, error
                 sub_list.append(response)
             subscriptions.insert(sub_list)
             return sub_list, 201
-        else:
-            response, error = self.check_user_insert_subscription(
-                json_data, bus_filter_id)
-            subscriptions.insert(response)
-            return response, error
 
-    def check_user_insert_subscription(self, user, bus_filter_id):
+        response, error = self.check_user(
+            json_data, bus_filter_id)
+        subscriptions.insert(response)
+        return response, error
 
+    @staticmethod
+    def check_user(user, bus_filter_id):
+        """
+        Check user provided with his schema. If no errors
+        check if bus filter exits and insert new subscription.
+        Returns the subscription created or the errors with the http code
+        :user: Created user
+        :bus_filter_id: Bus filter id to associate with the user
+        """
         result, errors = user_schema.load(user)
         if errors:
             return errors, 422
 
         bus_filter = filters.get(bus_filter_id)
         if bus_filter:
-            user_id = users.search(result)
-            if not user_id:
-                user_id = users.insert(result)['generated_keys'][0]
+            user_searched_id = users.search(result)
+            if not user_searched_id:
+                user_id = users.insert(result)[0]
+            else:
+                user_id = user_searched_id
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
-            return subscription, None
+            return subscription, 201
 
-            return result, 201
-        else:
-            return {'message': 'User not found'}, 404
+        return {'message': 'User not found'}, 404

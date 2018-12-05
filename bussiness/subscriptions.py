@@ -2,24 +2,25 @@
 """
 Users handler
 """
-import settings as st
+from marshmallow import Schema, fields
 
 from bussiness.db_handler import DBHandler
 from bussiness.users import UsersHandler
 from bussiness.bus_filters import BusFiltersHandler
 from bussiness.templates import TemplatesHandler
 
-from marshmallow import Schema, fields
-
 
 class SubscriptionSchema(Schema):
+    """
+    Subscription schema to validate subscriptions
+    """
     id = fields.Str()
     user_id = fields.Str(required=True)
     filter_id = fields.Str(required=True)
     template_id = fields.Str()
 
 
-class SubscriptionsHandler(object):
+class SubscriptionsHandler():
     """
     Subscription type handlers class to get, edit, and streaming
     subscriptions from the database
@@ -72,7 +73,7 @@ class SubscriptionsHandler(object):
         users = []
         subscriptions = self.get_by_filter(bus_filter)
         for subscription in subscriptions:
-            user = (self.users.get(subscription['user_id']))
+            user = self.users.get(subscription['user_id'])
             users.append(user)
         return users
 
@@ -121,11 +122,13 @@ class SubscriptionsHandler(object):
         Insert subscriptions to the database
         :subscriptions: Subscription or bus subscriptions to insert
         """
-        if (isinstance(subscriptions, list)):
+        if isinstance(subscriptions, list):
             for sub in subscriptions:
-                sub = self.set_subscription_template(sub)
+                if not sub.get('template_id'):
+                    sub = self.set_subscription_template(sub)
         else:
-            subscriptions = self.set_subscription_template(subscriptions)
+            if not subscriptions.get('template_id'):
+                subscriptions = self.set_subscription_template(subscriptions)
         return self.db_handler.insert_data(subscriptions)
 
     def set_subscription_template(self, subscription):
@@ -135,16 +138,19 @@ class SubscriptionsHandler(object):
         has template uses it. If not create default one
         :subscription: Subscription to add template
         """
-        bus_filter = self.filters.get(subscription['filter_id'])
-        template_id = bus_filter.get('template_id')
+        bus_filter = self.filters.get(subscription.get('filter_id'))
+        template_id = ''
+        if bus_filter:
+            if isinstance(bus_filter, list):
+                bus_filter = bus_filter[0]
+            template_id = bus_filter.get('template_id')
         if not hasattr(
                 subscription,
-                'template_id') and template_id:
+                'template_id') and template_id and bus_filter:
             subscription['template_id'] = bus_filter['template_id']
         else:
             subscription['template_id'] = self.templates.get_default_template()
         return subscription
-
 
     def edit(self, subscription, subscription_id):
         """
@@ -152,7 +158,7 @@ class SubscriptionsHandler(object):
         :subscription: Modified subscription
         :subscription_id: Id of the subscription to edit
         """
-        self.db_handler.edit_data(subscription, subscription_id, 'id')
+        self.db_handler.edit_data(subscription, subscription_id)
 
     def delete_user(self, user_id):
         """
@@ -164,15 +170,21 @@ class SubscriptionsHandler(object):
             if sub['user_id'] == user_id:
                 self.delete(sub['id'])
 
-    def delete_bus_filter(self, bus_filter_id):
+    def delete_bus_filter(self, bus_filter):
         """
         Delete subscriptions associated with the bus filter
         :bus_filter_id: filter id to search for
         """
-        subscriptions = self.get()
+        subscriptions = self.db_handler.filter_data(
+            {'filter_id': bus_filter['id']})
         for sub in subscriptions:
-            if sub['filter_id'] == bus_filter_id:
-                self.delete(sub['id'])
+            self.delete(sub['id'])
+
+    def subscriptions_template(self, template_id):
+        """
+        Return subscriptions with specific template id
+        """
+        return self.db_handler.filter_data({'template_id': template_id})
 
     def delete(self, subscription_id):
         """

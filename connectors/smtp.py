@@ -3,12 +3,14 @@ SMTP Handler
 """
 import smtplib
 import email.message
-import settings as st
 
-from exceptions.smtp_exceptions import SMTPAuthenticationError, SMTPSendEmailError
+from exceptions.smtp_exceptions import (
+    SMTPAuthenticationError,
+    SMTPSendEmailError
+)
 
 
-class SMTPHandler(object):
+class SMTPHandler():
     """
     SMTPHandler class to send emails
     """
@@ -18,14 +20,20 @@ class SMTPHandler(object):
         Initializes the connection with SMTP server and credentials provided
         """
         self.username = username
-        self.passwod = password
+        self.password = password
         self.host = host
         self.port = port
         self.server = smtplib.SMTP(host, port)
         self.server.ehlo()
-        if (username and password):
+        self.login()
+
+    def login(self):
+        """
+        Login into smtp server
+        """
+        if (self.username and self.password):
             try:
-                self.server.login(username, password)
+                self.server.login(self.username, self.password)
             except BaseException:
                 raise SMTPAuthenticationError()
 

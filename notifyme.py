@@ -1,28 +1,25 @@
 """
 Main file program.
 """
-# To run a sample database: sudo docker run --memory=4G --memory-swap=0 rethinkdb
+# To run a sample database:
+# sudo docker run --memory=4G --memory-swap=0 rethinkdb
 
 import sys
-import json
-import os.path
-import time
-
 import errors
 import settings as st
-
-from bussiness.users import UsersHandler
-from bussiness.bus_filters import BusFiltersHandler
-from bussiness.subscriptions import SubscriptionsHandler
 
 from bussiness.realtime import Realtime
 from api.api import ApiHandler
 
+
 def main():
+    """
+    Main program file
+    """
 
     st.logger.info('Starting notifyme...')
 
-    # Realtime()
+    Realtime()
 
     api = ApiHandler()
     api.start()

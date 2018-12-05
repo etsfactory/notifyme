@@ -6,7 +6,7 @@ import rethinkdb as r
 from exceptions.db_exceptions import WriteError, ReadError, ConnectionLost
 
 
-class RethinkHandler(object):
+class RethinkHandler():
     """
     Rethink handler to handle connection with database
     """
@@ -91,6 +91,18 @@ class RethinkHandler(object):
         except BaseException:
             raise WriteError()
 
+    def replace_data(self, table_name, new_data, primary_key):
+        """
+        Edit document from database with a primary key
+        """
+        con = self.con
+        try:
+            return (r.table(table_name).get(
+                primary_key).replace(new_data).run(con))
+
+        except BaseException:
+            raise WriteError()
+
     def filter_data(self, table_name, filter_data):
         """
         Returns filtered documents from database.
@@ -109,15 +121,25 @@ class RethinkHandler(object):
         """
         con = self.con
         try:
-            return (r.table(table_name).get(data_to_delete).delete().run(con))
+            return r.table(table_name).get(data_to_delete).delete().run(con)
         except BaseException:
             raise ReadError()
 
     def join_tables(self, table1, table2, table3, key1, key2):
+        """
+        Merge two tables
+        :table1: Table in which the other tables are to be combined
+        :table2: First table to merge (left table)
+        :table3: Second table to merge (right table)
+        :key1: Key to search in the left table 
+        :key2: KEy to search in the right table
+        """
         con = self.con
         try:
-            return r.table(table1).eq_join(key1, r.table(table2)).without({"right": {"id": True}}).zip(
-            ).eq_join(key2, r.table(table3)).without({"right": {"id": True}}).zip().run(con)
+            return r.table(table1).eq_join(key1, r.table(table2)).without(
+                {"right": {"id": True}}).zip().eq_join(
+                    key2, r.table(table3)).without(
+                        {"right": {"id": True}}).zip().run(con)
 
         except BaseException:
             raise ReadError()

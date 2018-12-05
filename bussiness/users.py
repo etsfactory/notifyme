@@ -2,21 +2,23 @@
 """
 Users handler
 """
-import settings as st
+from marshmallow import Schema, fields
 
 from bussiness.db_handler import DBHandler
-from marshmallow import Schema, fields
 
 
 class UserSchema(Schema):
+    """
+    User schema to validate users
+    """
     id = fields.Str()
     name = fields.Str()
     email = fields.Email()
 
 
-class UsersHandler(object):
+class UsersHandler():
     """
-    Users handlers class to get, edit, and streaming 
+    Users handlers class to get, edit, and streaming
     users from the database
     """
 
@@ -53,9 +55,12 @@ class UsersHandler(object):
         :user: User modified
         :user_id: User id to search for
         """
-        self.db_handler.edit_data(user, user_id, 'id')
+        self.db_handler.edit_data(user, user_id)
 
     def delete(self, user_id):
+        """
+        Delete user from the database
+        """
         self.db_handler.delete_data(user_id)
 
     def get_by_email(self, email):
@@ -64,10 +69,9 @@ class UsersHandler(object):
         :email: Email to search for
         """
         users = self.db_handler.filter_data({'email': email})
-        if len(users) > 0:
+        if users:
             return users[0]
-        else:
-            return None
+        return None
 
     def search(self, user):
         """
@@ -76,7 +80,6 @@ class UsersHandler(object):
         """
         users = self.db_handler.filter_data(
             {'email': user['email'], 'name': user['name']})
-        if len(users) > 0:
+        if users:
             return users[0]['id']
-        else:
-            return None
+        return None
