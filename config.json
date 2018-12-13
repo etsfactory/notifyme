@@ -24,7 +24,7 @@
   },
   "api": {
     "server": "0.0.0.0",
-    "port": "8003"
+    "port": 8003
   },
   "default_template": {
     "text": "Ha llegado un mensaje desde el bus",

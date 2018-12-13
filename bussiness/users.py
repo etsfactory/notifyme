@@ -73,6 +73,16 @@ class UsersHandler():
             return users[0]
         return None
 
+    def get_by_name(self, name):
+        """
+        Get user by his email
+        :email: Email to search for
+        """
+        users = self.db_handler.filter_data({'name': name})
+        if users:
+            return users[0]
+        return None
+
     def search(self, user):
         """
         Search user with user provided. Return his id

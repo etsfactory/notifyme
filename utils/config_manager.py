@@ -1,6 +1,7 @@
 import os
 import json
-import re, urllib
+import re
+import urllib
 from configparser import ConfigParser
 from pathlib import Path
 
@@ -27,7 +28,7 @@ class ConfigManager():
         if config_var:
             return config_var
         else:
-            config =  self.from_config_json(
+            config = self.from_config_json(
                 self.config_json, variable, section)
             ini_file = self.check_if_path(config)
             if (ini_file):
@@ -35,7 +36,7 @@ class ConfigManager():
                 section, option = self.parse_path(config)
                 config = self.from_config_ini(self.config_ini, section, option)
             return config
-            
+
         return None
 
     def from_env_vars(self, var):
@@ -49,7 +50,7 @@ class ConfigManager():
         Returns variable from config.ini file
         """
         try:
-            value = config.get(section, option)            
+            value = config.get(section, option)
             if value != 'true' and value != 'false':
                 return value
             return value == 'true'
@@ -58,7 +59,7 @@ class ConfigManager():
 
     def check_if_path(self, file):
         if (isinstance(file, str)):
-            path = file.rsplit('/',2)
+            path = file.rsplit('/', 2)
             file = Path(path[0])
             if file.is_file():
                 return path[0]
@@ -66,9 +67,9 @@ class ConfigManager():
                 return None
         else:
             return None
-    
+
     def parse_path(self, file):
-        path = file.rsplit('/',2)
+        path = file.rsplit('/', 2)
         section = path[1]
         option = path[2]
         return section, option

@@ -14,10 +14,17 @@ import settings as st
 # {tb}  will be replaced by the execution traceback
 ERROR_FORMAT = 'Unhandled {t}: {m}\nTraceback:\n{tb}'
 
-def log_unhandled_exception(exc_type, exc_value, exc_tb):
-        process_exception(exc_value, exc_tb=exc_tb)
 
-def process_exception(exception, excepcion_type=None, msg=None, exc_tb=None, body=None):
+def log_unhandled_exception(exc_type, exc_value, exc_tb):
+    process_exception(exc_value, exc_tb=exc_tb)
+
+
+def process_exception(
+        exception,
+        excepcion_type=None,
+        msg=None,
+        exc_tb=None,
+        body=None):
     try:
         if not excepcion_type:
             exc_type = type(exception).__name__
@@ -48,14 +55,14 @@ def process_exception(exception, excepcion_type=None, msg=None, exc_tb=None, bod
         if body:
             msg.update({
                 "tag": 'Message received involved in the error: ' + str(body),
-        })
-        
+            })
+
         with Publisher(st.RABBITMQ_SERVER, st.RABBITMQ_USER, st.RABBITMQ_PASSWORD, 'nerrors', exchange_type='direct') as bus:
             bus.publish_msg(msg)
-            
 
-    except:
+    except BaseException:
         st.logger.error('Error while processing another error')
+
 
 def log_exception(exc_type, exc_value, exc_tb, body=None):
 
@@ -69,6 +76,6 @@ def log_exception(exc_type, exc_value, exc_tb, body=None):
         msg = msg.replace('{tb}', exc_tb)
 
         st.logger.error(msg)
-    
-    except:
+
+    except BaseException:
         st.logger.error('Error while loggin another error')

@@ -10,6 +10,7 @@ class BDRealtime():
     """
     Handles realtime conneciton with a table
     """
+
     def __init__(self, server, port, db_name):
         self.db_name = db_name
         self.con = r.connect(host=server, port=port,
