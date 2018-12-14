@@ -1,11 +1,33 @@
 {
-  "rabbitmq": {
-    "server": "localhost"
+  "bus": {
+    "host": "/ETS/configs/config.ini/bus/host",
+    "user": "/ETS/configs/config.ini/bus/user",
+    "password": "/ETS/configs/config.ini/bus/password",
+    "queue_name": "notifyme",
+    "error_exchange": "notifyme.error"
   },
-  "email": {
-    "smtp_host": "smtp.gmail.com", 
-    "smtp_port": 465, 
-    "username": "#YOUR_EMAIL#",
-    "password": "#YOUR_PASSWORD#"
+  "smtp": {
+    "server": "/ETS/configs/config.ini/smtp/server",
+    "port": "/ETS/configs/config.ini/smtp/port",
+    "email": "/ETS/configs/config.ini/smtp/email",
+    "password": ""
+  },
+  "logging": {
+    "root_path": "/ETS/configs/config.ini/logging/root_path"
+  },
+  "db": {
+    "server":"localhost",
+    "port": "28015",
+    "refresh_database": false,
+    "user": "admin",
+    "password": ""
+  },
+  "api": {
+    "server": "0.0.0.0",
+    "port": 8003
+  },
+  "default_template": {
+    "text": "Ha llegado un mensaje desde el bus",
+    "subject": "Nueva notificación"
   }
 }

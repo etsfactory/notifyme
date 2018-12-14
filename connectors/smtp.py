@@ -2,46 +2,55 @@
 SMTP Handler
 """
 import smtplib
+import email.message
 
-class SMTPAuthenticationError(Exception):
-    """
-    SMTP Auth error
-    """
+from exceptions.smtp_exceptions import (
+    SMTPAuthenticationError,
+    SMTPSendEmailError
+)
 
-class SMTPSendEmailError(Exception):
-    """
-    SMTP Error sending email
-    """
 
-class SMTPHandler(object):
+class SMTPHandler():
     """
     SMTPHandler class to send emails
     """
+
     def __init__(self, username, password, host, port):
         """
-        Initializes the connection with SMTP server provided and login with username and password
+        Initializes the connection with SMTP server and credentials provided
         """
         self.username = username
-        self.passwod = password
+        self.password = password
         self.host = host
         self.port = port
-        try:
-            self.server = smtplib.SMTP_SSL(host, port)
-            self.server.ehlo()
-            self.server.login(username, password)
-        except SMTPAuthenticationError:
-            print 'Error login with username: ', username, 'and password: ', password
+        self.server = smtplib.SMTP(host, port)
+        self.server.ehlo()
+        self.login()
 
-    def send_email(self, send_to, subject, body):
+    def login(self):
+        """
+        Login into smtp server
+        """
+        if (self.username and self.password):
+            try:
+                self.server.login(self.username, self.password)
+            except BaseException:
+                raise SMTPAuthenticationError()
+
+    def send(self, send_to, subject, body):
         """
         Send temail trough SMTP from account to a list of emails with a message
         :send_to: List of emails to send email
         :subject: The subject of the email
-        :body: The body of the email
+        :body: The body of the email. HTML supported
         """
         try:
-            message = 'Subject: {}\n\n{}'.format(subject, body)
-            self.server.sendmail(self.username, send_to, message)
-            print 'Email sent to ', send_to
-        except SMTPSendEmailError:
-            print 'Error sending email'
+            msg = email.message.Message()
+            msg['Subject'] = subject
+            msg['From'] = self.username
+            msg['To'] = send_to
+            msg.add_header('Content-Type', 'text/html')
+            msg.set_payload(body)
+            self.server.sendmail(msg['From'], [msg['To']], msg.as_string())
+        except BaseException:
+            raise SMTPSendEmailError()
