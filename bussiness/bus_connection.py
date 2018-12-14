@@ -85,7 +85,7 @@ class BusConnectionHandler():
                             user_name)
                         if user_searched:
                             st.logger.info(
-                                'Notification to: %r', user['email'])
+                                'Notification to: %r', user_searched['email'])
                             self.smtp.send(
                                 user_searched['email'], subject, text)
                     else:

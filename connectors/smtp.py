@@ -23,13 +23,19 @@ class SMTPHandler():
         self.password = password
         self.host = host
         self.port = port
-        try:
-            self.server = smtplib.SMTP_SSL(host, port)
-            self.server.ehlo()
-            if self.username and self.password:
-                self.server.login(username, password)
-        except BaseException:
-            raise SMTPAuthenticationError()
+        self.server = smtplib.SMTP(host, port)
+        self.server.ehlo()
+        self.login()
+
+    def login(self):
+        """
+        Login into smtp server
+        """
+        if (self.username and self.password):
+            try:
+                self.server.login(self.username, self.password)
+            except BaseException:
+                raise SMTPAuthenticationError()
 
     def send(self, send_to, subject, body):
         """
