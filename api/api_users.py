@@ -59,7 +59,7 @@ class UsersView(Resource):
     @staticmethod
     def check_user(user):
         """"
-        Compare user with his schema, 
+        Compare user with his schema,
         return result or errors with http code
         """
         result, errors = user_schema.load(user)

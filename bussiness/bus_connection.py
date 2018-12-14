@@ -2,7 +2,7 @@
 Bus connection handler
 """
 import queue
-from jinja2 import Template
+from jinja2 import Template, Undefined
 from raccoon import Consumer
 
 import settings as st
@@ -34,7 +34,7 @@ class BusConnectionHandler():
         """
         Starts the thread
         """
-        if not self.subscriptions:
+        if self.subscriptions:
             error = queue.Queue()
             self.bus_thread = Consumer(
                 self.on_message,
@@ -64,16 +64,33 @@ class BusConnectionHandler():
             for sub in self.subscriptions_handler.get_by_filter(bus_filter):
                 user = self.users_handler.get(sub['user_id'])
                 template = self.templates_handler.get(sub['template_id'])
+
                 if template:
-                    st.logger.info('Notification to: %r', user['email'])
+                    if not template.get('subject'):
+                        subject = ''
+                    else:
+                        subject_t = Template(
+                            template.get('subject'), undefined=SilentUndefined)
+                        subject = subject_t.render(message)
 
-                    subject_t = Template(template.get('subject'))
-                    text_t = Template(template.get('text'))
-
-                    subject = subject_t.render(message)
+                    text_t = Template(
+                        template.get('text'),
+                        undefined=SilentUndefined)
                     text = text_t.render(message)
 
-                    self.smtp.send(user['email'], subject, text)
+                    user_filter = template.get('user_filter')
+                    if user_filter:
+                        user_name = message.get(user_filter)
+                        user_searched = self.users_handler.get_by_name(
+                            user_name)
+                        if user_searched:
+                            st.logger.info(
+                                'Notification to: %r', user_searched['email'])
+                            self.smtp.send(
+                                user_searched['email'], subject, text)
+                    else:
+                        st.logger.info('Notification to: %r', user['email'])
+                        self.smtp.send(user['email'], subject, text)
 
     def set_subscriptions(self, subscriptions):
         """
@@ -86,3 +103,21 @@ class BusConnectionHandler():
         Unbind the queue from exchange and key
         """
         self.bus_thread.unbind_queue(exchange, key)
+
+
+class SilentUndefined(Undefined):
+    """
+    Sorry about that. This class is created becasuse Jinja2 templates
+    raises error on undefined variables. This is a little hack to replace
+    undefined values with empty string
+    """
+
+    def _fail_with_undefined_error(self, *args, **kwargs):
+        return ''
+
+    __add__ = __radd__ = __mul__ = __rmul__ = __div__ = __rdiv__ = \
+        __truediv__ = __rtruediv__ = __floordiv__ = __rfloordiv__ = \
+        __mod__ = __rmod__ = __pos__ = __neg__ = __call__ = \
+        __getitem__ = __lt__ = __le__ = __gt__ = __ge__ = __int__ = \
+        __float__ = __complex__ = __pow__ = __rpow__ = \
+        _fail_with_undefined_error

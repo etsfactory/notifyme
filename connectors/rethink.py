@@ -131,7 +131,7 @@ class RethinkHandler():
         :table1: Table in which the other tables are to be combined
         :table2: First table to merge (left table)
         :table3: Second table to merge (right table)
-        :key1: Key to search in the left table 
+        :key1: Key to search in the left table
         :key2: KEy to search in the right table
         """
         con = self.con

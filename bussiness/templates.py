@@ -19,11 +19,14 @@ class TemplateSchema(Schema):
     name = fields.Str(required=True)
     text = fields.Str(required=True)
     subject = fields.Str()
+    user_filter = fields.Str()
+    # The user filter is the name of the param
+    # of the message to use to filter by user name
 
 
 class TemplatesHandler():
     """
-    Templates handlers class to get, edit, 
+    Templates handlers class to get, edit,
     and streaming users from the database
     """
 
@@ -44,7 +47,7 @@ class TemplatesHandler():
         """
         Get all templates from the database in realtime.
         If template is added or modified in the db it returns the change.
-        This method blocks the current thread so use this method in a 
+        This method blocks the current thread so use this method in a
         separated thread
         """
         return self.db_handler.get_data_streaming()

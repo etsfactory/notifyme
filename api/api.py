@@ -24,6 +24,7 @@ class ApiHandler(threading.Thread):
     """
     Handles API calls and endpoints in a thread
     """
+
     def __init__(self):
         st.logger.info('Staring API...')
         super(ApiHandler, self).__init__()
