@@ -238,6 +238,6 @@ class BusFilterUsersView(Resource):
                 user_id = user_searched_id
 
             subscription = {'user_id': user_id, 'filter_id': bus_filter_id}
-            return subscription, 201
+            return subscription, None
 
         return {'message': 'User not found'}, 404
