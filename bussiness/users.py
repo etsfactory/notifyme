@@ -88,9 +88,13 @@ class UsersHandler():
         Search user with user provided. Return his id
         :user: User to search for without id
         """
-        id = user.get('email')
+        id = user.get('id')
         if id:
-            return self.get(id).get('id')
+            user = self.get(id)
+            if user:
+                return user.get('id')
+            else:
+                return None
         else:
             email = user.get('email')
             name = user.get('name')
