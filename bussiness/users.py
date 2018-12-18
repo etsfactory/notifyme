@@ -88,8 +88,14 @@ class UsersHandler():
         Search user with user provided. Return his id
         :user: User to search for without id
         """
-        users = self.db_handler.filter_data(
-            {'email': user['email'], 'name': user['name']})
-        if users:
-            return users[0]['id']
-        return None
+        id = user.get('email')
+        if id:
+            return self.get(id).get('id')
+        else:
+            email = user.get('email')
+            name = user.get('name')
+            users = self.db_handler.filter_data(
+                {'email': email, 'name': name})
+            if users:
+                return users[0]['id']
+            return None
