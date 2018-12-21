@@ -27,8 +27,8 @@ class BusConnectionHandler():
         self.subscriptions_handler = SubscriptionsHandler()
         self.users_handler = UsersHandler()
         self.templates_handler = TemplatesHandler()
-        # self.smtp = SMTPHandler(
-        #    st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+        self.smtp = SMTPHandler(
+            st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
 
     def start(self):
         """
@@ -62,7 +62,8 @@ class BusConnectionHandler():
             bus_filter = self.filters_handler.get_by_exchange_key(message.get(
                 'metadata').get('exchange'), message.get('metadata').get('routing_key', ''))
             if bus_filter:
-                for sub in self.subscriptions_handler.get_by_filter(bus_filter):
+                for sub in self.subscriptions_handler.get_by_filter(
+                        bus_filter):
                     user = self.users_handler.get(sub['user_id'])
                     template = self.templates_handler.get(sub['template_id'])
 
@@ -82,16 +83,17 @@ class BusConnectionHandler():
                         user_filter = template.get('user_filter')
                         if user_filter:
                             user_name = message.get(user_filter)
-                            user_searched = self.users_handler.get_by_name(
+                            user_searched = self.users_handler.get(
                                 user_name)
                             if user_searched:
                                 st.logger.info(
                                     'Notification to: %r', user_searched['email'])
-                             #   self.smtp.send(
-                              #      user_searched['email'], subject, text)
+                                self.smtp.send(
+                                    user_searched['email'], subject, text)
                         else:
-                            st.logger.info('Notification to: %r', user['email'])
-                            # self.smtp.send(user['email'], subject, text)
+                            st.logger.info(
+                                'Notification to: %r', user['email'])
+                            self.smtp.send(user['email'], subject, text)
 
     def set_subscriptions(self, subscriptions):
         """
