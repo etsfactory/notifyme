@@ -27,6 +27,7 @@ SMTP_EMAIL = config.load('SMTP_EMAIL', 'smtp', 'email')
 SMTP_HOST = config.load('SMTP_HOST', 'smtp', 'server')
 SMTP_PORT = config.load('SMTP_PORT', 'smtp', 'port')
 SMTP_PASS = config.load('SMTP_PASS', 'smtp', 'password')
+SEND_EMAILS = config.load('SMTP_SEND', 'smtp', 'send_emails')
 
 DB_SERVER = config.load('DB_SERVER', 'db', 'server')
 DB_PORT = config.load('DB_SERVER', 'db', 'port')
