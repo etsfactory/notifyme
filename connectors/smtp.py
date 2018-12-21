@@ -25,6 +25,7 @@ class SMTPHandler():
         self.port = port
         self.server = smtplib.SMTP(host, port)
         self.server.set_debuglevel(1)
+        self.server.ehlo()
         self.server.starttls()
         self.login()
 
