@@ -25,7 +25,6 @@ class SMTPHandler():
         self.port = port
         self.server = smtplib.SMTP(host, port)
         self.server.set_debuglevel(1)
-        self.server.ehlo()
         self.server.starttls()
         self.login()
 
@@ -53,6 +52,8 @@ class SMTPHandler():
             msg['To'] = send_to
             msg.add_header('Content-Type', 'text/html')
             msg.set_payload(body)
-            self.server.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+            self.server.sendmail(
+                msg['From'], [
+                    msg['To']], msg.as_string().encode('utf-8'))
         except BaseException:
             raise SMTPSendEmailError()

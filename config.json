@@ -4,13 +4,14 @@
     "user": "/ETS/configs/config.ini/bus/user",
     "password": "/ETS/configs/config.ini/bus/password",
     "queue_name": "notifyme",
-    "error_exchange": "notifyme.error"
+    "error_exchange": "notifymeError"
   },
   "smtp": {
     "server": "/ETS/configs/config.ini/smtp/server",
     "port": "/ETS/configs/config.ini/smtp/port",
     "email": "/ETS/configs/config.ini/smtp/email",
-    "password": ""
+    "password": "",
+    "send_emails": "/ETS/configs/config.ini/notifications/notifyme"
   },
   "logging": {
     "root_path": "/ETS/configs/config.ini/logging/root_path"

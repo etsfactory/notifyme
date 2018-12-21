@@ -9,7 +9,7 @@ from flask_restful import Api
 
 import settings as st
 
-from api.api_users import UsersView, UserView, UserFiltersView
+from api.api_users import UsersView, UserView, UserFiltersView, UserFilterView
 from api.api_bus_filters import (
     BusFiltersView,
     BusFilterView,
@@ -41,6 +41,9 @@ class ApiHandler(threading.Thread):
         api.add_resource(UserView, '/users/<string:user_id>')
         api.add_resource(
             UserFiltersView, '/users/<string:user_id>/bus_filters')
+        api.add_resource(
+            UserFilterView,
+            '/users/<string:user_id>/bus_filters/<string:bus_filter_id>')
 
         api.add_resource(BusFiltersView, '/bus_filters')
         api.add_resource(BusFilterView, '/bus_filters/<string:bus_filter_id>')
