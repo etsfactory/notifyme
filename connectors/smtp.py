@@ -30,7 +30,6 @@ class SMTPHandler():
         """
         if (self.username and self.password):
             try:
-                print(self.username)
                 self.server.login(self.username, self.password)
             except BaseException:
                 raise SMTPAuthenticationError()
@@ -40,7 +39,6 @@ class SMTPHandler():
             status = self.server.noop()[0]
         except:  # smtplib.SMTPServerDisconnected
             status = -1
-        print(status)
         return True if status == 250 else False
 
     def send(self, send_to, subject, body):
@@ -51,7 +49,7 @@ class SMTPHandler():
         :body: The body of the email. HTML supported
         """
         self.server = smtplib.SMTP(self.host, self.port)
-        self.server.set_debuglevel(1)
+        # self.server.set_debuglevel(1)
         self.server.ehlo()
         self.server.starttls()
         
@@ -62,7 +60,7 @@ class SMTPHandler():
             msg = email.message.Message()
             msg['Subject'] = subject
             msg['From'] = self.username
-            msg['To'] = send_to
+            msg['To'] = ", ".join(send_to)
             msg.add_header('Content-Type', 'text/html')
             msg.set_payload(body)
             self.server.sendmail(

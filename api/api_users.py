@@ -199,7 +199,6 @@ class UserFilterView(Resource):
         user = users.get(user_id)
         if user:
             sub_list = subscriptions.get()
-            print(sub_list)
             sub = [
                 x for x in sub_list if (
                     x.get('user_id') == user_id and x.get('filter_id') == bus_filter_id)]
