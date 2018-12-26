@@ -58,9 +58,12 @@ class BusConnectionHandler():
         """"
         When a message is received
         """
+        user_emails = []
         if st.SEND_EMAILS:
-            bus_filter = self.filters_handler.get_by_exchange_key(message.get(
-                'metadata').get('exchange'), message.get('metadata').get('routing_key', ''))
+            exchange = message.get('metadata').get('exchange')
+            routing_key = message.get('metadata').get('routing_key', '')
+            bus_filter = self.filters_handler.get_by_exchange_key(
+                exchange, routing_key)
             if bus_filter:
                 for sub in self.subscriptions_handler.get_by_filter(
                         bus_filter):
@@ -68,18 +71,7 @@ class BusConnectionHandler():
                     template = self.templates_handler.get(sub['template_id'])
 
                     if template:
-                        if not template.get('subject'):
-                            subject = ''
-                        else:
-                            subject_t = Template(
-                                template.get('subject'), undefined=SilentUndefined)
-                            subject = subject_t.render(message)
-
-                        text_t = Template(
-                            template.get('text'),
-                            undefined=SilentUndefined)
-                        text = text_t.render(message)
-
+                        subject, text = self.create_email(template, message)
                         user_filter = template.get('user_filter')
                         if user_filter:
                             user_name = message.get(user_filter)
@@ -88,12 +80,30 @@ class BusConnectionHandler():
                             if user_searched:
                                 st.logger.info(
                                     'Notification to: %r', user_searched['email'])
-                                self.smtp.send(
-                                    user_searched['email'], subject, text)
+                                user_emails.append(user_searched['email'])
+                                
                         else:
                             st.logger.info(
-                                'Notification to: %r', user['email'])
-                            self.smtp.send(user['email'], subject, text)
+                                    'Notification to: %r', user['email'])
+                            user_emails.append(user['email'])
+                        self.smtp.send(user_emails, subject, text)
+
+    def create_email(self, template, message):
+        """
+        Create email from template
+        :return: two params, subject and email text
+        """
+        subject = ''
+        if not template.get('subject'):
+            subject_t = Template(
+                template.get('subject'),
+                undefined=SilentUndefined)
+            subject = subject_t.render(message)
+
+        text_t = Template(template.get('text'), undefined=SilentUndefined)
+        text = text_t.render(message)
+
+        return subject, text
 
     def set_subscriptions(self, subscriptions):
         """

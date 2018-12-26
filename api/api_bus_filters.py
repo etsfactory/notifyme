@@ -1,7 +1,8 @@
 """
 APi bus filters handler
 """
-from flask_restful import Resource, request
+from flask_restful import Resource, request, reqparse
+from itertools import groupby
 
 from bussiness.bus_filters import BusFiltersHandler, BusFilterSchema
 from bussiness.users import UsersHandler, UserSchema
@@ -27,8 +28,23 @@ class BusFiltersView(Resource):
         """
         Get bus filters from the db
         """
-        response = filters.get()
-        return response
+        group_by = request.args.get('group_by')
+            
+        bus_filters = filters.get()
+        if group_by:
+            modified_data = {}
+            for entry in bus_filters:
+                category = entry.get('category')
+                if category:
+                    try:
+                        modified_data[category].append(entry)
+                    except KeyError:
+                        modified_data[category] = [entry]
+                else:
+                    return bus_filters
+            return modified_data
+        else:
+            return bus_filters
 
     def post(self):
         """
@@ -136,13 +152,12 @@ class BusFilterTemplateView(Resource):
         Get template from bus filter
         """
         bus_filter = filters.get(bus_filter_id)
-
         if bus_filter:
-            if hasattr(bus_filter, 'template_id'):
+            template_id = bus_filter.get('template_id')
+            if template_id:
                 template = templates.get(bus_filter['template_id'])
                 if template:
                     return template
-
             return []
 
         return {'message': 'Bus filter not found'}, 404

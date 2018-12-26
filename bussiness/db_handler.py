@@ -61,8 +61,15 @@ class DBHandler():
         Inserts data into the database
         :data: Data to insert, object or array
         """
-        return self.database.insert_data(
-            self.table_name, data).get('generated_keys')
+        result = self.database.insert_data(
+            self.table_name, data)
+        if isinstance(data, list):
+            if data[0].get('id'):
+                return [d['id'] for d in data]
+        else:
+            if data.get('id'):
+                return [data.get('id')]
+        return result.get('generated_keys')
 
     def edit_data(self, data, key_value):
         """
