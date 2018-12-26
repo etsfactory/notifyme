@@ -152,13 +152,12 @@ class BusFilterTemplateView(Resource):
         Get template from bus filter
         """
         bus_filter = filters.get(bus_filter_id)
-
         if bus_filter:
-            if hasattr(bus_filter, 'template_id'):
+            template_id = bus_filter.get('template_id')
+            if template_id:
                 template = templates.get(bus_filter['template_id'])
                 if template:
                     return template
-
             return []
 
         return {'message': 'Bus filter not found'}, 404

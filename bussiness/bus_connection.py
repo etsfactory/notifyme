@@ -72,7 +72,6 @@ class BusConnectionHandler():
 
                     if template:
                         subject, text = self.create_email(template, message)
-
                         user_filter = template.get('user_filter')
                         if user_filter:
                             user_name = message.get(user_filter)
@@ -85,9 +84,9 @@ class BusConnectionHandler():
                                 
                         else:
                             st.logger.info(
-                                'Notification to: %r', user['email'])
+                                    'Notification to: %r', user['email'])
                             user_emails.append(user['email'])
-                self.smtp.send(user_emails, subject, text)
+                        self.smtp.send(user_emails, subject, text)
 
     def create_email(self, template, message):
         """
