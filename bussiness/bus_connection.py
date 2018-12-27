@@ -94,7 +94,7 @@ class BusConnectionHandler():
         :return: two params, subject and email text
         """
         subject = ''
-        if not template.get('subject'):
+        if template.get('subject'):
             subject_t = Template(
                 template.get('subject'),
                 undefined=SilentUndefined)
