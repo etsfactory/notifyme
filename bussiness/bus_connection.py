@@ -81,12 +81,12 @@ class BusConnectionHandler():
                                 st.logger.info(
                                     'Notification to: %r', user_searched['email'])
                                 user_emails.append(user_searched['email'])
-                                
+
                         else:
                             st.logger.info(
-                                    'Notification to: %r', user['email'])
+                                'Notification to: %r', user['email'])
                             user_emails.append(user['email'])
-                        self.smtp.send(user_emails, subject, text)
+                self.smtp.send(user_emails, subject, text)
 
     def create_email(self, template, message):
         """
