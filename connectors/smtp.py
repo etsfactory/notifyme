@@ -64,8 +64,7 @@ class SMTPHandler():
             msg.add_header('Content-Type', 'text/html')
             msg.set_payload(body)
             self.server.sendmail(
-                msg['From'], [
-                    msg['To']], msg.as_string().encode('utf-8'))
+                msg['From'], send_to, msg.as_string().encode('utf-8'))
             self.server.quit()
         except BaseException:
             raise SMTPSendEmailError()
