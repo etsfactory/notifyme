@@ -11,6 +11,7 @@
     "port": "/ETS/configs/config.ini/smtp/port",
     "email": "/ETS/configs/config.ini/smtp/email",
     "password": "",
+    "from_name": "Expert Timing Systems Intl.",
     "send_emails": "/ETS/configs/config.ini/notifications/notifyme"
   },
   "logging": {

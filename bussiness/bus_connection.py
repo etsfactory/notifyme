@@ -28,7 +28,7 @@ class BusConnectionHandler():
         self.users_handler = UsersHandler()
         self.templates_handler = TemplatesHandler()
         self.smtp = SMTPHandler(
-            st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT)
+            st.SMTP_EMAIL, st.SMTP_PASS, st.SMTP_HOST, st.SMTP_PORT, st.SMTP_FROM_NAME)
 
     def start(self):
         """

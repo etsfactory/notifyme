@@ -15,7 +15,7 @@ class SMTPHandler():
     SMTPHandler class to send emails
     """
 
-    def __init__(self, username, password, host, port):
+    def __init__(self, username, password, host, port, from_name):
         """
         Initializes the connection with SMTP server and credentials provided
         """
@@ -23,6 +23,7 @@ class SMTPHandler():
         self.password = password
         self.host = host
         self.port = port
+        self.from_name = from_name
     
     def login(self):
         """
@@ -59,7 +60,7 @@ class SMTPHandler():
         try:
             msg = email.message.Message()
             msg['Subject'] = subject
-            msg['From'] = self.username
+            msg['From'] = self.from_name
             msg['To'] = ", ".join(send_to)
             msg.add_header('Content-Type', 'text/html')
             msg.set_payload(body)
