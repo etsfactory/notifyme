@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44.94 32.12">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+
+      .cls-1 {
+        stroke: #56c2e7;
+      }
+
+      .cls-2 {
+        stroke: #2a1f4e;
+      }
+    </style>
+  </defs>
+  <title>code</title>
+  <g id="Capa_2" data-name="Capa 2">
+    <g id="Capa_1-2" data-name="Capa 1">
+      <line class="cls-1" x1="28.82" y1="16.08" x2="32.42" y2="19.68"/>
+      <line class="cls-1" x1="32.42" y1="19.68" x2="28.82" y2="23.29"/>
+      <line class="cls-1" x1="16.13" y1="23.29" x2="12.52" y2="19.68"/>
+      <line class="cls-1" x1="12.52" y1="19.68" x2="16.13" y2="16.08"/>
+    </g>
+    <g id="Guias">
+      <line class="cls-1" x1="25.84" y1="15.42" x2="19.1" y2="23.94"/>
+      <line class="cls-1" x1="38.57" y1="5.2" x2="39.46" y2="5.2"/>
+      <line class="cls-1" x1="34.38" y1="5.2" x2="35.27" y2="5.2"/>
+      <rect class="cls-2" x="1" y="1" width="42.94" height="30.12"/>
+      <line class="cls-2" x1="1" y1="9.2" x2="43.94" y2="9.2"/>
+    </g>
+  </g>
+</svg>

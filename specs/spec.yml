@@ -1,0 +1,608 @@
+swagger: '2.0'
+info:
+    description: |
+        API para la gestión de notifyme.
+
+        Notifyme es un centro de notificaciones nutrido de los mensajes que llegan del bus rabbitmq
+    version: 1
+    title: Notifyme API
+    # termsOfService: http://urlTermsOfService/
+    # contact:
+    #     name: API Support
+    #     url: http://urlSUpportSiExiste
+    #     email: hello@example.com
+    # license:
+    #     name: Apache 2.0
+    #     url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+basePath: /
+tags:
+  - name: Users
+    description: Usuarios propios de notifyme a los que mandar notificaciones
+  - name: Bus filters
+    description: Los filtros del bus definen a qué exchange y key del bus se conectarse para recibir notificaciones
+  - name: Subscriptions
+    description: Definen la relación entre notifiaciones, usuarios y template. 
+  - name: Templates
+    description: Plantillas de emails. El mensaje y el asunto utiliza jinja2 como sistema de plantillas para poder pasar variables desde el mensaje del bus
+schemes:
+  - http
+paths:
+    /users/:
+      get: 
+        tags: 
+          - Users
+        description: |
+          Para listar todos los usuarios de la base de datos
+        produces:
+          - application/json
+        responses:
+          200:
+            description: Devuelve la lista de usuarios.
+      post:
+        tags:
+          - Users
+        description: |
+          Para crear un usuario en la base de datos
+        produces:
+          - application/json
+        parameters:
+          - name: user
+            in: body
+            description: Usuario a crear en la base de datos
+            schema:
+              $ref: '#/definitions/User'
+        responses:
+            200:
+              description: Devuelve el usuario creado.
+            400:
+              description: Error. No se han introducido datos.
+            422:
+              description: Error. Error al comprobar los datos introducidos.
+
+    /users/{user_id}:
+      put:
+        tags:
+          - Users
+        description: |
+          Para editar un usuario ya creado. A la petición se le pasa el id del usuario que se quiere
+          modificar
+        produces:
+          - application/json
+        parameters:
+          - name: user_id
+            in: path
+            description: Id del usuario a modificar
+            required: true
+            type: string
+          
+          - name: user
+            in: body
+            description: Usuario a modificar en la base de datos. No se puede modificar el id ya que es primary key en la base de datos
+            schema:
+              $ref: '#/definitions/User'
+
+        responses:
+            200:
+              description: Devuelve el usuario modificado.
+            400:
+              description: Error. No se han introducido datos.
+            422:
+              description: Error. Error al comprobar los datos introducidos.
+      delete:
+        tags:
+          - Users
+        description: |
+            Para eliminar un usuario creado pasando su id. Al borrar el usuario también se borran de la base 
+            de datos las subscripciones asociadas a dicho usuario (no se borran los filtros del bus)
+        produces:
+          - application/json
+        parameters:
+          - name: id
+            in: query
+            description: Id del usuario a eliminar
+            required: true
+            type: string
+        responses:
+            200:
+              description: Usuario eliminado
+
+    /users/{user_id}/bus_filters:
+      get: 
+        tags: 
+          - Users
+        description: |
+            Para listar todos las notificaciones a las que un usuario está suscrito 
+        produces:
+          - application/json
+        parameters:
+          - name: user_id
+            in: path
+            description: Id del usuario
+            required: true
+            type: string
+        responses:
+          200:
+            description: Devuelve las notificaciones del usuario.
+      post:
+        tags: 
+          - Users
+        description: |
+            Para susbscribir cierto usuario a una notificación. Antes de crear el filtro del bus,
+            se comprueba si existe y en caso de que no exista, se crea en la base de datos.
+        produces:
+          - application/json
+        parameters:
+          - name: user_id
+            in: path
+            description: Id del usuario
+            required: true
+            type: string
+          - name: bus_filter
+            in: body
+            description: Filtro del bus a crear en la base de datos y añadir al usuario. No se puede modificar el id ya que es primary key en la base de datos
+            schema:
+              $ref: '#/definitions/BusFilter'
+        responses:
+          200:
+            description: Devuelve las subscripción creada.
+          400:
+            description: Error. No se han introducido datos.
+          422:
+            description: Error. Error al comprobar los datos introducidos.
+
+    /users/{user_id}/bus_filters/{filter_id}:
+      delete:
+        tags:
+          - Users
+        description: |
+          Para eliminar un filtro del bus en concreto del usuario, es decir, para desuscribirlo de una
+          notificación en concreto. El filtro del bus no se borra, solo se borra la relación entre usuario
+          y filtro.
+        produces:
+          - application/json
+        parameters:
+          - name: user_id
+            in: path
+            description: Id del usuario
+            required: true
+            type: string
+
+          - name: filter_id
+            in: path
+            description: Id del filtro
+            required: true
+            type: string
+        responses:
+          200:
+            description: OK, subscripción eliminada
+   
+    /bus_filters/:
+      get: 
+        tags: 
+          - Bus filters
+        description: |
+          Para listar todos los filtros del bus
+        produces:
+          - application/json
+        responses:
+          200:
+              description: Devuelve la lista de filtros del bus.
+      post:
+        tags:
+          - Bus filters
+        description: |
+          Para crear un filtro del bus
+        produces:
+          - application/json
+        parameters:
+          - name: bus_filter
+            in: body
+            description: Filtro del bus a crear en la base de datos. No se puede modificar el id ya que es primary key en la base de datos
+            schema:
+              $ref: '#/definitions/BusFilter'
+        responses:
+            200:
+              description: Devuelve el filtro del bus creado.
+            400:
+              description: Error. No se han introducido datos.
+            422:
+              description: Error. Error al comprobar los datos introducidos.
+
+    /bus_filters/{filter_id}/:
+      put:
+        tags:
+          - Bus filters
+        description: |
+            Para modificar un filtro del bus existente
+        produces:
+          - application/json
+        parameters:
+          - name: filter_id
+            in: path
+            description: Id del filtro del bus a modificar
+            required: true
+            type: string
+          - name: bus_filter
+            in: body
+            description: Filtro del bus a modificar en la base de datos. No se puede modificar el id ya que es primary key en la base de datos
+            schema:
+              $ref: '#/definitions/BusFilter'
+        responses:
+            200:
+              description: Devuelve el filtro del bus modificado.
+            400:
+              description: Error. No se han introducido datos.
+            422:
+              description: Error. Error al comprobar los datos introducidos.
+      delete:
+        tags:
+          - Bus filters
+        description: |
+          Para eliminar un filtro del bus creado pasando su id. Cuando se borra un filtro del bus, también
+          se borran todas las subscripciones asociadas al filtro del bus. Además se borra la conexión del bus
+          con ese exchange y key particular para que no sature el bus.
+        produces:
+          - application/json
+        parameters:
+          - name: id
+            in: query
+            description: Id del filtro a eliminar
+            required: true
+            type: string
+        responses:
+            200:
+              description: Filtro eliminado
+
+    /bus_filters/{filter_id}/users:
+      get: 
+        tags: 
+         - Bus filters
+        description: |
+          Para listar todos los usarios de un determinado filtro del bus, es decir, para listar las subscripciones
+          a un determinado tipo de notificación
+        produces:
+          - application/json
+        parameters:
+          - name: filter_id
+            in: path
+            description: Id del filtro
+            required: true
+            type: string
+        responses:
+          200:
+            description: Lista con todos los usuarios 
+      post: 
+        tags: 
+         - Bus filters
+        description: |
+          Para añadir un usuario a un filtro del bus, es decir, crea una subscripción para el usuario con este tipo
+          de notificación. Si el usuario no existe lo crea y lo añade a la base de datos.
+        produces:
+          - application/json
+        parameters:
+          - name: filter_id
+            in: path
+            description: Id del filtro
+            required: true
+            type: string
+          
+          - name: user
+            in: body
+            description: Usuario a añadir en el filtro del bus
+            schema:
+              $ref: '#/definitions/User'
+        responses:
+          200:
+            description: Lista con todos los usuarios 
+          400:
+            description: Error. No se han introducido datos.
+          422:
+            description: Error. Error al comprobar los datos introducidos.
+
+    /bus_filters/{filter_id}/template:
+      get:
+        tags:
+          - Bus filters
+        description: |
+          Para listar el template o templates de un filtro del bus. Si un filtro del bus tiene un template,
+          se enviarán correos a esa notificación con ese template
+        produces:
+          - application/json
+        parameters:
+          - name: filter_id
+            in: path
+            description: Id del filtro
+            required: true
+            type: string
+        responses:
+          200: 
+            description: Devuelve el template asociado
+
+      post: 
+        tags: 
+          - Bus filters
+        description: |
+          Para asociar un template a un filtro del bus, es decir, cuando llegue un mensaje a este tipo de notificación, 
+          se enviará la notificación con el template asociado.
+        produces:
+         - application/json
+        parameters:
+          - name: filter_id
+            in: path
+            description: Id del filtro
+            required: true
+            type: string
+
+          - name: template
+            in: body
+            description: Template a añadir
+            schema:
+              $ref: '#definitions/Template'
+        responses:
+          200:
+            description: Se ha añadido correctamente el template asociado al bus
+          400:
+            description: Error. No se han introducido datos.
+          422:
+            description: Error. Error al comprobar los datos introducidos.
+
+    /subscriptions/:
+      get: 
+        tags: 
+          - Subscriptions
+        description: |
+          Para listar todas las subscriciones. Esta petición hace un matcheo de los usarios y los filtros
+          del bus devolviendo en una sola llamada la información de ambas tablas combinadas.
+        produces:
+          - application/json
+        responses:
+          200:
+            description: Devuelve la lista de subscripciones
+      post: 
+        tags: 
+          - Subscriptions
+        description: |
+          Para crear manualmente una subscripción pasando todos los ids 
+        produces:
+          - application/json
+        parameters:
+          - name: filter_id
+            in: body
+            description: Subscripción a crear
+            schema:
+              $ref: '#/definitions/Subscription'
+        responses:
+          200: 
+            description: Subscripción creada y añadida correctamente a la base de datos            
+          400:
+            description: Error. No se han introducido datos.
+          422:
+            description: Error. Error al comprobar los datos introducidos.
+
+    /subscriptions/{sub_id}:
+      delete:
+        tags: 
+          - Subscriptions
+        description: |
+          Para eliminar una determinada subscripción pasando su id
+        parameters:
+          - name: sub_id
+            in: path
+            description: Id de la subscripción a eliminar
+            type: string
+            required: true
+        responses:
+          200: 
+            description: Subscripción eliminada correctamente
+      put: 
+        tags: 
+          - Subscriptions
+        description: |
+          Para crear manualmente una subscripción pasando todos los ids. No se puede modificar el id ya que es primary key en la base de datos
+        produces:
+          - application/json
+        parameters:
+          - name: filter_id
+            in: body
+            description: Subscripción modificada
+            required: true
+            schema:
+              $ref: '#/definitions/Subscription'
+        responses:
+          200: 
+            description: Subscripción modificada correctamente a la base de datos            
+          400:
+            description: Error. No se han introducido datos.
+          422:
+            description: Error. Error al comprobar los datos introducidos.
+
+    /templates/:
+      get:
+        tags: 
+          - Templates
+        description: |
+         Para listar todas las plantillas de las notificaciones de la base de datos
+        produces:
+          - application/json
+        responses:
+          200: 
+            description: Lista de todos los templates 
+      post: 
+        tags: 
+          - Templates
+        description: |
+          Para crear un template en la base de datos
+        produces:
+          - application/json
+        parameters:
+          - name: template
+            in: body
+            description: Template a crear en la base de datos
+            schema:
+              $ref: '#/definitions/Template'
+        responses:
+          200: 
+            description: Template creado correctamente
+          400:
+            description: Error. No se han introducido datos.
+          422:
+            description: Error. Error al comprobar los datos introducidos.
+
+    /templates/{template_id}:
+      delete: 
+        tags:
+          - Templates
+        description: |
+          Para borrar determinado template de la base de datos pasando su template id
+        produces:
+          - application/json
+        parameters:
+          - name: template_id
+            in: path
+            description: Id del template a eliminar de la base de datos
+            type: string
+            required: true
+        responses:
+          - 200: 
+              description: Template eliminado correctamente de la base de datos
+      put:
+        tags:
+          - Templates
+        description: |
+          Para editar un template de la base de datos. No se puede modificar el id ya que es primary key en la base de datos
+        parameters:
+          - name: template_id
+            in: path
+            description: Id del template a editar en la base de datos
+            type: string
+            required: true
+
+          - name: template
+            in: body
+            description: Template a editar en la base de datos
+            schema:
+              $ref: '#/definitions/Template'
+        responses:
+          200:
+            description: Template editado correctamente
+          400:
+            description: Error. No se han introducido datos.
+          422:
+            description: Error. Error al comprobar los datos introducidos.
+
+definitions:
+    User:
+        type: object
+        description: Usuario al que enviar notificaciones
+        required:
+          - email
+        properties:
+            id:
+                type: string
+                description: id del usuario en la base de datos, si no se pasa id se genera automáticamente
+                example: dlopez
+            name:
+                type: string
+                description: Nombre para identificar mejor al usuario
+                example: Diego López
+            email:
+                type: string
+                description: Email del usuario para que reciba notificaciones
+                example: example@email.com
+    BusFilter:
+        type: object
+        description: Define a que exchange y key conectarse del bus para recibir mensajes
+        required:
+          - exchange
+          - exchange_type
+          - durable
+        properties:
+            id: 
+              type: string
+              description: id del filtro del bus en la base de datos, si no se pasa id se genera automáticamente
+              example: 2
+            
+            exchange: 
+              type: string
+              description: Echange al que conectarse del bus
+              example: logs
+            
+            key: 
+              type: string
+              description: Key del exchange al que conectarse del bus
+              example: info
+            
+            exchange_type:
+              type: string
+              description: Tipo de exchange del bus al que conectarse (fanout, direct)
+              example: fanout
+            
+            durable:
+              type: boolean
+              description: Si es o no durable el exchange al que conectarse
+              example: true
+            
+            description:
+              type: string
+              description: Breve descripción de las notificaciones que llegan a traves de este filtro del bus
+              example: Notificaciones de información de los logs
+
+            category:
+              type: string
+              description: Para identificar la categoría del filtro del bus y poder agruparlos
+              example: logs
+            
+            template_id:
+              type: string
+              description: Id de la primary key del template para asociarlo con un template para los emails
+              example: 45h23k45-23hda
+             
+    Template: 
+      type: object
+      description: Plantilla con el que se envían las notificaciones
+      required:
+        - name
+        - text
+      properties:
+        id: 
+          type: string
+          description: Id del template en la base de datos, si no se pasa id se genera automáticamente
+          example: notifcation2
+        name: 
+          type: string
+          description: Nombre para identificar mejor los templates, 
+          example: Notificación de información de los logs
+        text:
+          type: string
+          description: Texto de la notificación a enviar, utiliza un sistema de templates llamado jinja2 para incluir variables que puedan venir del bus
+          example: Texto de ejemplo con una del bus {{ variable }} 
+        subject: 
+          type: string
+          description: Texto para enviar en la cabecera de los emails. Utiliza el mismo sistema de plantillas del texto
+          example: Texto del asunto del correo con una variable {{ variable }}
+
+    Subscription:
+      type: object
+      description: Relación entre usuario, filtro del bus y plantilla para enviar la notificación
+      required: 
+        - filter_id
+        - user_id
+        - template_id
+      properties:
+        id:
+          type: string
+          description: Id de la subscripción en la base de datos, si no se pasa id se genera automáticamente
+          example: notificacion21
+        user_id: 
+          type: string
+          description: Id del usuario en la base de datos
+          example: dlopez
+        filter_id:
+          type: string
+          description: Id del fitro del bus en la base de datos
+          example: filtro2
+        template_id: 
+          type: string
+          description: Id del template en la base de datos
+          example: template_info
