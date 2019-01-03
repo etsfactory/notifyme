@@ -25,7 +25,7 @@ class SMTPHandler():
         self.port = port
         self.from_name = from_name
         self.ttls = ttls
-    
+
     def login(self):
         """
         Login into smtp server
@@ -39,7 +39,7 @@ class SMTPHandler():
     def is_connected(self):
         try:
             status = self.server.noop()[0]
-        except:  # smtplib.SMTPServerDisconnected
+        except BaseException:  # smtplib.SMTPServerDisconnected
             status = -1
         return True if status == 250 else False
 
@@ -55,7 +55,7 @@ class SMTPHandler():
         self.server.ehlo()
         if self.ttls:
             self.server.starttls()
-        
+
         if not self.is_connected():
             self.login()
 

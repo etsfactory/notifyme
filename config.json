@@ -12,7 +12,8 @@
     "email": "/ETS/configs/config.ini/smtp/email",
     "password": "",
     "name": "Expert Timing Systems Intl.",
-    "send_emails": "/ETS/configs/config.ini/notifications/notifyme"
+    "send_emails": "/ETS/configs/config.ini/notifications/notifyme",
+    "ttls": true
   },
   "logging": {
     "root_path": "/ETS/configs/config.ini/logging/root_path"
