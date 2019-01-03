@@ -26,10 +26,10 @@ RABBIRMQ_EXCHANGE_ERROR = config.load(
 SMTP_EMAIL = config.load('SMTP_EMAIL', 'smtp', 'email')
 SMTP_HOST = config.load('SMTP_HOST', 'smtp', 'server')
 SMTP_PORT = config.load('SMTP_PORT', 'smtp', 'port')
-SMTP_FROM_NAME = config.load('SMTP_FROM_NAME', 'smtp', 'from_name')
-
+SMTP_FROM_NAME = config.load('SMTP_FROM_NAME', 'smtp', 'name')
 SMTP_PASS = config.load('SMTP_PASS', 'smtp', 'password')
-SEND_EMAILS = config.load('SMTP_SEND', 'smtp', 'send_emails')
+SEND_EMAILS = config.load('SMTP_SEND', 'smtp', 'name')
+SMTP_TTLS = config.load('SMTP_TTLS', 'smtp', 'ttls')
 
 DB_SERVER = config.load('DB_SERVER', 'db', 'server')
 DB_PORT = config.load('DB_SERVER', 'db', 'port')

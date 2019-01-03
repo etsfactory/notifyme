@@ -48,7 +48,9 @@ Variables que puedes definir:
     - port: El puerto desl servidor SMTP
     - email: Email del STMP desde el que sen envían los correos
     - password: Contraseña del email para enviar los correos
-    - send_emails: Para bloquear el envío de emails
+    - send_emails: Boolean, para bloquear el envío de emails
+    - name: Nombre para mostrar en el remitente 
+    - ttls: Boolea, para activar la conexión mediante ttls al servidor stmp 
 
 - loggin
     - Dirección en la maquina para escribir los mensajes de log (tiene que existir una carpeta con el nombre notifyme y dentro un archivo notifyme.log)
@@ -80,7 +82,7 @@ Para más información sobre las llamadas de la API que se crean echa un vistazo
 
 ## Contribuciones
 
-Por favor lee: [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) para más detalles y para saber cómo enviar peticiones de cambios.
+Por favor lee: [CONTRIBUTING.md](CONTRIBUTING.md) para más detalles y para saber cómo enviar peticiones de cambios.
 
 ## Autores
 
