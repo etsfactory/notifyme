@@ -78,7 +78,7 @@ python3 notifyme.py
 
 El servicio al arrancar crea las tablas de la base de datos en caso que no existan y configura una API en la dirección especificada en el fichero de configuración.
 
-Para más información sobre las llamadas de la API que se crean echa un vistazo a la [documentación](ets.github.io/notifyme)
+Para más información sobre las llamadas de la API que se crean echa un vistazo a la [documentación](https://etsfactory.github.io/notify.me)
 
 ## Contribuciones
 
@@ -90,4 +90,4 @@ Por favor lee: [CONTRIBUTING.md](CONTRIBUTING.md) para más detalles y para sabe
 
 ## Licencia
 
-Este proyecto tiene una licencia MIT License - echa un vistazo a [LICENSE.md](LICENSE.md) para más detalles.
+Este proyecto tiene una licencia GNU, echa un vistazo a [LICENSE](LICENSE) para más detalles.
