@@ -15,7 +15,7 @@ class SMTPHandler():
     SMTPHandler class to send emails
     """
 
-    def __init__(self, username, password, host, port):
+    def __init__(self, username, password, host, port, from_name, ttls):
         """
         Initializes the connection with SMTP server and credentials provided
         """
@@ -23,7 +23,9 @@ class SMTPHandler():
         self.password = password
         self.host = host
         self.port = port
-    
+        self.from_name = from_name
+        self.ttls = ttls
+
     def login(self):
         """
         Login into smtp server
@@ -37,7 +39,7 @@ class SMTPHandler():
     def is_connected(self):
         try:
             status = self.server.noop()[0]
-        except:  # smtplib.SMTPServerDisconnected
+        except BaseException:  # smtplib.SMTPServerDisconnected
             status = -1
         return True if status == 250 else False
 
@@ -51,16 +53,16 @@ class SMTPHandler():
         self.server = smtplib.SMTP(self.host, self.port)
         # self.server.set_debuglevel(1)
         self.server.ehlo()
-        self.server.starttls()
-        
+        if self.ttls:
+            self.server.starttls()
+
         if not self.is_connected():
             self.login()
 
         try:
             msg = email.message.Message()
             msg['Subject'] = subject
-            msg['From'] = self.username
-            msg['To'] = ", ".join(send_to)
+            msg['From'] = self.from_name
             msg.add_header('Content-Type', 'text/html')
             msg.set_payload(body)
             self.server.sendmail(
