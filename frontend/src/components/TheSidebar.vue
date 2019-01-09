@@ -1,22 +1,26 @@
 <template>
   <aside class="sidebar">
     <nav>
-      <a href="#" class="link">Item1</a>
-      <a href="#" class="link">Item2</a>
-      <a href="#" class="link">Item3</a>
+      <ul v-for="(section, i) in sections" :key="i" class="links">
+        <li><router-link class="link" :to="section.url">{{ section.name }}</router-link></li>
+      </ul>
     </nav>
   </aside>
 </template>
 
 <script>
-
 export default {
-  name: 'TheSidebar',
+  name: "TheSidebar",
+  props: {
+    sections: {
+      type: Array,
+      required: true
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
-
 .sidebar {
   position: fixed;
   color: white;
@@ -30,8 +34,11 @@ export default {
   transition: left 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
   overflow-x: hidden;
   &.collapsed {
-    left: - $sidebar-width;
+    left: -$sidebar-width;
   }
+}
+.links {
+  list-style: none;
 }
 .link {
   color: white;

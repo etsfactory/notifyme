@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <button class="button-toggle" @click="toggleSidebar()">&#9776;</button>
-    <h1 class="title">Notify.me</h1>
+    <router-link class="logo" to="/"><h1 class="title">Notify.me</h1></router-link>
   </header>
 </template>
 
@@ -40,5 +40,8 @@ export default {
   margin-left: 1rem;
   display: inline;
   font-size: 1.4rem;
+}
+.logo {
+  color: white;
 }
 </style>

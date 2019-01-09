@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <the-sidebar :class="{ collapsed: sidebarCollapsed}"/>
+    <the-sidebar :sections="sections" :class="{ collapsed: sidebarCollapsed}"/>
     <div :class="{ content: true, collapsed: sidebarCollapsed}">
-      <the-header />
+      <the-header/>
     </div>
   </div>
 </template>
@@ -18,8 +18,14 @@ export default {
     TheHeader,
     TheSidebar
   },
+  data: () => ({
+    sections: [
+      { name: "Users", url: "/users" },
+      { name: "Bus filters", url: "/bus_filters" }
+    ]
+  }),
   computed: {
-    ...mapState(['sidebarCollapsed'])
+    ...mapState(["sidebarCollapsed"])
   }
 };
 </script>
@@ -30,8 +36,8 @@ body {
   color: #000;
   margin: 0;
   font-size: calc(15px + 0.4vmin);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-  "Roboto", "Oxygen", "Ubuntu", "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Helvetica Neue", Arial, sans-serif;
   width: 100%;
   height: 100%;
   background: #f3f3f3;
