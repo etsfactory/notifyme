@@ -65,6 +65,6 @@ class ApiHandler(threading.Thread):
 class Documentation(Resource):
     def get(self):
         directory = '../../specs/'
-        filename = 'spec.yaml'
+        filename = 'spec.yml'
         return send_from_directory(directory, filename, as_attachment=True)
 
