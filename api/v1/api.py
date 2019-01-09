@@ -3,9 +3,9 @@ APi handler
 """
 import threading
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
-from flask_restful import Api
+from flask_restful import Api, Resource
 
 import settings as st
 
@@ -59,4 +59,12 @@ class ApiHandler(threading.Thread):
         api.add_resource(TemplatesView, '/templates')
         api.add_resource(TemplateView, '/templates/<string:template_id>')
 
+        api.add_resource(Documentation, '/spec')
         app.run(host=st.API_SERVER, port=st.API_PORT)
+
+class Documentation(Resource):
+    def get(self):
+        directory = '../../specs/'
+        filename = 'spec.yaml'
+        return send_from_directory(directory, filename, as_attachment=True)
+
