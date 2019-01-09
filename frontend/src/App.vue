@@ -3,6 +3,9 @@
     <the-sidebar :sections="sections" :class="{ collapsed: sidebarCollapsed}"/>
     <div :class="{ content: true, collapsed: sidebarCollapsed}">
       <the-header/>
+      <main class="main-content">
+        <router-view></router-view>
+      </main>
     </div>
   </div>
 </template>
@@ -68,8 +71,14 @@ body {
   left: $sidebar-width;
   transition: left 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
   position: relative;
+  position: fixed;
+  width: 100%;
   &.collapsed {
+    position: relative;
     left: 0;
   }
+}
+.main-content {
+  padding: 1rem 3rem;
 }
 </style>
