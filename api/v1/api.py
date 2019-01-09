@@ -9,15 +9,15 @@ from flask_restful import Api
 
 import settings as st
 
-from api.api_users import UsersView, UserView, UserFiltersView, UserFilterView
-from api.api_bus_filters import (
+from api.v1.api_users import UsersView, UserView, UserFiltersView, UserFilterView
+from api.v1.api_bus_filters import (
     BusFiltersView,
     BusFilterView,
     BusFilterUsersView,
     BusFilterTemplateView
 )
-from api.api_subscriptions import SubscriptionsView, SubscriptionView
-from api.api_templates import TemplatesView, TemplateView
+from api.v1.api_subscriptions import SubscriptionsView, SubscriptionView
+from api.v1.api_templates import TemplatesView, TemplateView
 
 
 class ApiHandler(threading.Thread):
@@ -34,7 +34,7 @@ class ApiHandler(threading.Thread):
         Thread running. API initialization
         """
         app = Flask(__name__)
-        api = Api(app)
+        api = Api(app, prefix='/v1')
         CORS(app)
 
         api.add_resource(UsersView, '/users')
