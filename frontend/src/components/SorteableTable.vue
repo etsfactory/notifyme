@@ -1,5 +1,5 @@
 <template>
-  <table class="list">
+  <table class="sorteable-table">
     <thead class="table-header">
       <slot name="column">
         <th
@@ -147,7 +147,6 @@ export default {
     sortedData() {
       if (this.data) {
         let dataAux = this.data;
-        console.log(this.data);
         dataAux = this.filterData(dataAux);
         if (typeof dataAux !== "undefined" && typeof dataAux === "object") {
           return dataAux.sort((a, b) => {
@@ -175,10 +174,36 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-th {
-  padding-right: 25px !important;
+.sorteable-table {
+  position: relative;
+  margin: 0;
+  width: auto;
+  min-width: 100%;
+  table-layout: fixed;
+  border: 0;
+  border-bottom: 4px solid $color-main;
+  border-spacing: 0;
+  border-collapse: collapse;
+  background: transparent;
+  width: 100%;
+  border-collapse: collapse;
+  tr:nth-child(even) {
+    background: $color-main-light;
+  }
+  tbody tr:hover td {
+    background-color: $color-secondary-light;
+  }
+  tbody th,
+  tbody td {
+    border-right: 3px solid #e7e7e7;
+  }
+  th,
+  td {
+    padding: 0.4rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+  }
 }
-
 .sorteable {
   cursor: pointer;
 }
@@ -187,6 +212,7 @@ th {
   vertical-align: middle;
   position: relative;
   text-align: left;
+  font-weight: bold;
 }
 .headerSortUp::after {
   content: "▼";

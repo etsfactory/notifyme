@@ -38,7 +38,7 @@ html,
 body {
   color: #000;
   margin: 0;
-  font-size: calc(15px + 0.4vmin);
+  font-size: calc(13px + 0.3vmin);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Helvetica Neue", Arial, sans-serif;
   width: 100%;
