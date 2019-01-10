@@ -33,7 +33,6 @@ export default {
   font-size: 1.3rem;
   cursor: pointer;
   margin-left: 1rem;
-  padding-top: 0.25rem;
   display: inline;
 }
 .title {

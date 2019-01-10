@@ -10,7 +10,7 @@
           {{ user.row.email }}
         </td>
         <td class="actions">
-          <i class="far fa-eye icon"></i>
+          <i class="far fa-eye icon" @click="navigateToUser(user.row.id)"></i>
           <i class="far fa-trash-alt icon"></i>
         </td>
       </template>
@@ -34,10 +34,15 @@ export default {
   computed: {
     columns() {
       return [
-        { text: "Id", name: "id", sorteable: true },
-        { text: "Email", name: "email", sorteable: true },
-        { text: "Actions", name: "actions", sorteable: false , class: "actions" }
+        { text: "Id", key: "id", sorteable: true },
+        { text: "Email", key: "email", sorteable: true },
+        { text: "Actions", key: "actions", sorteable: false , class: "actions" }
       ];
+    }
+  },
+  methods: {
+    navigateToUser(user_id) {
+      this.$router.push({ name: 'user', params: { id: user_id }});
     }
   },
   created() {
