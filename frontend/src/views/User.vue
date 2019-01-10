@@ -1,22 +1,11 @@
 <template>
   <div class="user">
     <div v-if="user">
-      <h1>User {{ $route.params.id }}</h1>
+      <h1>User {{nameToDisplay}}</h1>
       <div>Email: {{user.email}}</div>
       <div v-if="notifications">
         <h2>Suscribed to:</h2>
-        <sorteable-table :columns="columns" :data="notifications" class="notifications-table">
-          <template slot="row" slot-scope="notification">
-            <td>{{notification.row.exchange}}</td>
-            <td>{{notification.row.exchange_type}}</td>
-            <td v-if="notification.row.category">{{notification.row.category}}</td>
-            <td v-if="notification.row.description">{{notification.row.description}}</td>
-            <td class="actions">
-              <i class="far fa-eye icon"></i>
-              <i class="far fa-trash-alt icon"></i>
-            </td>
-          </template>
-        </sorteable-table>
+        <bus-filters-table :bus-filters="notifications"/>
       </div>
     </div>
   </div>
@@ -24,12 +13,12 @@
 
 <script>
 import axios from "axios";
-import SorteableTable from "@/components/SorteableTable.vue";
+import BusFiltersTable from "@/components/BusFiltersTable.vue";
 
 export default {
   name: "User",
   components: {
-    SorteableTable
+    BusFiltersTable
   },
   data: () => ({
     user: null,
@@ -41,6 +30,12 @@ export default {
       { text: "Exchange Type", key: "exchange_type", sorteable: false }
     ]
   }),
+  computed: {
+    nameToDisplay() {
+      if ("name" in this.user ) { return this.user.name }
+      return this.user.id
+    }
+  },
   methods: {
     getUser(id) {
       const usersEndpoint =
@@ -64,12 +59,11 @@ export default {
         if ("category" in this.notifications[0]) {
           this.addColumn("Category", "category", true);
         }
-        this.addColumn("Actions", "actions", false);
+        this.addColumn("Actions", "actions", false, "actions" );
       });
     },
-    addColumn(text, key, sorteable) {
-      console.log(text);
-      this.columns.push({ text: text, key: key, sorteable: sorteable });
+    addColumn(text, key, sorteable, class_name) {
+      this.columns.push({ text: text, key: key, sorteable: sorteable, class: class_name });
     }
   },
   created() {

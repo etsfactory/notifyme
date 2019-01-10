@@ -55,7 +55,6 @@ export default {
   }),
   methods: {
     sort(c) {
-      console.log(c);
       let column = this.getColumnKey(c);
       if (column === this.currentSort && this.isSorteable(c)) {
         this.currentSortDir = this.currentSortDir === "asc" ? "desc" : "asc";
@@ -175,11 +174,11 @@ export default {
 </script>
 <style scoped lang="scss">
 .sorteable-table {
+  table-layout: auto;
   position: relative;
   margin: 0;
   width: auto;
   min-width: 100%;
-  table-layout: fixed;
   border: 0;
   border-bottom: 4px solid $color-main;
   border-spacing: 0;
