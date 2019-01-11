@@ -6,7 +6,7 @@
       <td v-if="user.row.name">{{ user.row.name }}</td>
       <td class="actions">
         <i class="far fa-eye icon" @click="navigateToUser(user.row.id)"></i>
-        <i class="far fa-trash-alt icon"></i>
+        <i class="far fa-trash-alt icon" @click="deleteUser(user.row.id)"></i>
       </td>
     </template>
   </sorteable-table>
@@ -37,7 +37,15 @@ export default {
       this.$router.push({ name: "user", params: { id: user_id } });
     },
     addColumn(text, key, sorteable, className) {
-      this.columns.push({ text: text, key: key, sorteable: sorteable, class: className });
+      this.columns.push({
+        text: text,
+        key: key,
+        sorteable: sorteable,
+        class: className
+      });
+    },
+    deleteUser(user_id) {
+      this.$emit("deleted", user_id);
     }
   },
   created() {

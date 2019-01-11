@@ -3,8 +3,8 @@
     <h1>
       <i class="fas fa-filter"></i> Bus filters
     </h1>
-    <bus-filters-table v-if="busFilters" :bus-filters="busFilters" @deleted="deleteBusFilter"/>
-    <confirm-modal :visible.sync="confirmVisible" @close="closeModal"/>
+    <bus-filters-table v-if="busFilters" :bus-filters="busFilters" @deleted="showModal"/>
+    <confirm-modal :visible.sync="openModal" @close="closeModal" @accept="deleteBusFilter"/>
   </div>
 </template>
 
@@ -22,7 +22,8 @@ export default {
   data: () => ({
     busFiltersApi: "/bus_filters",
     busFilters: null,
-    confirmVisible: false
+    openModal: false,
+    selectedBusFilter: null
   }),
   methods: {
     getBusFilters() {
@@ -32,11 +33,23 @@ export default {
         this.busFilters = response.data;
       });
     },
-    deleteBusFilter(bus_filter_id) {
-      this.confirmVisible = true;
+    showModal(bus_filter_id) {
+      this.openModal = true;
+      this.selectedBusFilter = bus_filter_id;
     },
     closeModal() {
-      this.confirmVisible = false;
+      this.openModal = false;
+    },
+    deleteBusFilter() {
+      this.openModal = false;
+      const busFilterEndpoint =
+        process.env.VUE_APP_NOTIFYME_HOST +
+        this.busFiltersApi +
+        "/" +
+        this.selectedBusFilter;
+      axios.delete(busFilterEndpoint).then(() => {
+        this.getBusFilters();
+      });
     }
   },
   created() {

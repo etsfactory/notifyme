@@ -6,7 +6,7 @@
       <h2 class="title">{{ title }}</h2>
       <h3>{{ subtitle }}</h3>
       <div class="buttons-container">
-        <button class="button accept">YES</button>
+        <button class="button accept" @click="accept">YES</button>
         <button class="button exit" @click="close">NO</button>
       </div>
     </div>
