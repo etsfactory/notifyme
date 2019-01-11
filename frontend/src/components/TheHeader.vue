@@ -6,17 +6,16 @@
 </template>
 
 <script>
-
-import { mapMutations } from "vuex"
+import { mapMutations } from "vuex";
 export default {
-  name: 'TheHeader',
+  name: "TheHeader",
   methods: {
-    ...mapMutations(['setSidebarCollapsed']),
+    ...mapMutations(["setSidebarCollapsed"]),
     toggleSidebar() {
       this.setSidebarCollapsed();
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

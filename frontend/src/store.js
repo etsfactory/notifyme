@@ -9,7 +9,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setSidebarCollapsed(state) {
-      state.sidebarCollapsed = !state.sidebarCollapsed
+      state.sidebarCollapsed = !state.sidebarCollapsed;
     }
   },
   actions: {}

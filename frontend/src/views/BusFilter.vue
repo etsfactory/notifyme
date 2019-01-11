@@ -13,7 +13,6 @@
 
 <script>
 import axios from "axios";
-import BusFiltersTable from "@/components/BusFiltersTable.vue";
 import UsersTable from "@/components/UsersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 
@@ -27,15 +26,18 @@ export default {
     busFilter: null,
     notifications: null,
     usersApi: "/users",
-    busFiltersApi: "/bus_filters/",
+    busFiltersApi: "/bus_filters/"
   }),
+  created() {
+    this.getBusFilter(this.$route.params.id);
+  },
   methods: {
     getBusFilter(id) {
       const usersEndpoint =
         process.env.VUE_APP_NOTIFYME_HOST + this.busFiltersApi + id;
       axios.get(usersEndpoint).then(response => {
         this.busFilter = response.data;
-            this.getUserNotifications(this.$route.params.id);
+        this.getUserNotifications(this.$route.params.id);
       });
     },
     getUserNotifications(id) {
@@ -47,10 +49,7 @@ export default {
       axios.get(usersEndpoint).then(response => {
         this.notifications = response.data;
       });
-    },
-  },
-  created() {
-    this.getBusFilter(this.$route.params.id);
+    }
   }
 };
 </script>

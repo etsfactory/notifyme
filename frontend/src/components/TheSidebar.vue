@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex"
+import { mapMutations } from "vuex";
 
 export default {
   name: "TheSidebar",
@@ -20,7 +20,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setSidebarCollapsed']),
+    ...mapMutations(["setSidebarCollapsed"]),
     closeSidebar() {
       this.setSidebarCollapsed();
     }

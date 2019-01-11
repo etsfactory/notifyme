@@ -32,6 +32,12 @@ export default {
       { text: "Email", key: "email", sorteable: true }
     ]
   }),
+  created() {
+    if ("name" in this.users[0]) {
+      this.addColumn("Name", "name", true);
+    }
+    this.addColumn("Actions", "actions", false, "actions");
+  },
   methods: {
     navigateToUser(user_id) {
       this.$router.push({ name: "user", params: { id: user_id } });
@@ -47,12 +53,6 @@ export default {
     deleteUser(user_id) {
       this.$emit("deleted", user_id);
     }
-  },
-  created() {
-    if ("name" in this.users[0]) {
-      this.addColumn("Name", "name", true);
-    }
-    this.addColumn("Actions", "actions", false, "actions");
   }
 };
 </script>

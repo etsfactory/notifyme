@@ -35,6 +35,15 @@ export default {
       { text: "Exchange Type", key: "exchange_type", sorteable: false }
     ]
   }),
+  created() {
+    if ("category" in this.busFilters[0]) {
+      this.addColumn("Category", "category", true);
+    }
+    if ("description" in this.busFilters[0]) {
+      this.addColumn("Description", "description", true, "multiline");
+    }
+    this.addColumn("Actions", "actions", false, "actions");
+  },
   methods: {
     navigateToBusFilter(bus_filter_id) {
       this.$router.push({ name: "bus_filter", params: { id: bus_filter_id } });
@@ -50,15 +59,6 @@ export default {
     deleteBusFilter(bus_filter_id) {
       this.$emit("deleted", bus_filter_id);
     }
-  },
-  created() {
-    if ("category" in this.busFilters[0]) {
-      this.addColumn("Category", "category", true);
-    }
-    if ("description" in this.busFilters[0]) {
-      this.addColumn("Description", "description", true, "multiline");
-    }
-    this.addColumn("Actions", "actions", false, "actions");
   }
 };
 </script>

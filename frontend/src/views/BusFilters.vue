@@ -4,7 +4,7 @@
       <i class="fas fa-filter"></i> Bus filters
     </h1>
     <bus-filters-table v-if="busFilters" :bus-filters="busFilters" @deleted="showModal"/>
-    <confirm-modal :visible.sync="openModal" @close="closeModal" @accept="deleteBusFilter"/>
+    <confirm-modal :visible.sync="openModal" @close="closeModal" @accept="deleteBusFilter" subtitle="CAUTION. If you delete a bus filter, all users suscribed to this bus filter will be unsuscribed. This action can not be undone"/>
   </div>
 </template>
 
@@ -25,6 +25,9 @@ export default {
     openModal: false,
     selectedBusFilter: null
   }),
+  created() {
+    this.getBusFilters();
+  },
   methods: {
     getBusFilters() {
       const busFilterEndpoint =
@@ -51,9 +54,6 @@ export default {
         this.getBusFilters();
       });
     }
-  },
-  created() {
-    this.getBusFilters();
   }
 };
 </script>

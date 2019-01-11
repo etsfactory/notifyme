@@ -45,14 +45,51 @@
 export default {
   name: "SorteableTable",
   props: {
-    columns: Array,
-    data: Array | Number | String,
-    filterKey: String
+    columns: {
+      type: Array,
+      default: null
+    },
+    data: {
+      type: [Array, Number, String],
+      default: null
+    },
+    filterKey: {
+      type: String,
+      default: ""
+    }
   },
   data: () => ({
     currentSort: "",
     currentSortDir: "asc"
   }),
+  computed: {
+    sortedData() {
+      if (this.data) {
+        let dataAux = this.data;
+        dataAux = this.filterData(dataAux);
+        if (typeof dataAux !== "undefined" && typeof dataAux === "object") {
+          return dataAux.sort((a, b) => {
+            let x = a[this.currentSort];
+            let y = b[this.currentSort];
+
+            let modifier = 1;
+            if (this.currentSortDir === "desc") modifier = -1;
+
+            let compare1 = this.formatToCompare(x);
+            let compare2 = this.formatToCompare(y);
+
+            if (compare1 < compare2) return -1 * modifier;
+            if (compare1 > compare2) return 1 * modifier;
+
+            if (compare1 === "-" || !compare1) return -1 * modifier;
+            if (compare2 === "-" || !compare2) return 1 * modifier;
+
+            return 0;
+          });
+        }
+      }
+    }
+  },
   methods: {
     sort(c) {
       let column = this.getColumnKey(c);
@@ -140,34 +177,6 @@ export default {
       }
 
       return data;
-    }
-  },
-  computed: {
-    sortedData() {
-      if (this.data) {
-        let dataAux = this.data;
-        dataAux = this.filterData(dataAux);
-        if (typeof dataAux !== "undefined" && typeof dataAux === "object") {
-          return dataAux.sort((a, b) => {
-            let x = a[this.currentSort];
-            let y = b[this.currentSort];
-
-            let modifier = 1;
-            if (this.currentSortDir === "desc") modifier = -1;
-
-            let compare1 = this.formatToCompare(x);
-            let compare2 = this.formatToCompare(y);
-
-            if (compare1 < compare2) return -1 * modifier;
-            if (compare1 > compare2) return 1 * modifier;
-
-            if (compare1 === "-" || !compare1) return -1 * modifier;
-            if (compare2 === "-" || !compare2) return 1 * modifier;
-
-            return 0;
-          });
-        }
-      }
     }
   }
 };
