@@ -3,6 +3,8 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import Users from "./views/Users.vue";
 import User from "./views/User.vue";
+import BusFilters from "./views/BusFilters.vue";
+import BusFilter from "./views/BusFilter.vue";
 
 Vue.use(Router);
 
@@ -24,6 +26,16 @@ export default new Router({
       path: "/users/:id",
       name: "user",
       component: User
+    },
+    {
+      path: "/bus_filters",
+      name: "bus_filters",
+      component: BusFilters
+    },
+    {
+      path: "/bus_filters/:id",
+      name: "bus_filter",
+      component: BusFilter
     },
     {
       path: "/about",

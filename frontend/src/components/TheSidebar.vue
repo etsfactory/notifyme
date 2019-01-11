@@ -2,19 +2,27 @@
   <aside class="sidebar">
     <nav>
       <ul v-for="(section, i) in sections" :key="i" class="links">
-        <li><router-link class="link" :to="section.url">{{ section.name }}</router-link></li>
+        <li @click="closeSidebar()"><router-link class="link" :to="section.url">{{ section.name }}</router-link></li>
       </ul>
     </nav>
   </aside>
 </template>
 
 <script>
+import { mapMutations } from "vuex"
+
 export default {
   name: "TheSidebar",
   props: {
     sections: {
       type: Array,
       required: true
+    }
+  },
+  methods: {
+    ...mapMutations(['setSidebarCollapsed']),
+    closeSidebar() {
+      this.setSidebarCollapsed();
     }
   }
 };

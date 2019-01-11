@@ -1,6 +1,6 @@
 <template>
   <div class="users">
-    <h1>Users</h1>
+    <h1><i class="fas fa-users"></i> Users</h1>
     <users-table v-if="users" :users="users"/>
   </div>
 </template>

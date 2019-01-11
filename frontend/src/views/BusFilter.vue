@@ -1,11 +1,11 @@
 <template>
   <div class="user">
-    <div v-if="user">
-      <h1><i class="fas fa-user"></i> User</h1>
-      <key-value-table :data="user" class="info"/>
-      <div v-if="notifications" class="notifications">
-        <h2><i class="fas fa-filter"></i> Suscribed to:</h2>
-        <bus-filters-table :bus-filters="notifications"/>
+    <div v-if="busFilter">
+      <h1><i class="fas fa-filter"></i> BusFilter</h1>
+      <key-value-table class="info" :data="busFilter"/>
+      <div v-if="notifications" class="users">
+        <h2><i class="fas fa-users"></i> Users suscribed to:</h2>
+        <users-table :users="notifications"/>
       </div>
     </div>
   </div>
@@ -14,48 +14,43 @@
 <script>
 import axios from "axios";
 import BusFiltersTable from "@/components/BusFiltersTable.vue";
+import UsersTable from "@/components/UsersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 
 export default {
-  name: "User",
+  name: "BusFilter",
   components: {
-    BusFiltersTable,
+    UsersTable,
     KeyValueTable
   },
   data: () => ({
-    user: null,
+    busFilter: null,
     notifications: null,
-    usersApi: "/users/",
-    notificationsApi: "/bus_filters",
+    usersApi: "/users",
+    busFiltersApi: "/bus_filters/",
   }),
-  computed: {
-    nameToDisplay() {
-      if ("name" in this.user ) { return this.user.name }
-      return this.user.id
-    }
-  },
   methods: {
-    getUser(id) {
+    getBusFilter(id) {
       const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST + this.usersApi + id;
+        process.env.VUE_APP_NOTIFYME_HOST + this.busFiltersApi + id;
       axios.get(usersEndpoint).then(response => {
-        this.user = response.data;
-        this.getUserNotifications(this.$route.params.id);
+        this.busFilter = response.data;
+            this.getUserNotifications(this.$route.params.id);
       });
     },
     getUserNotifications(id) {
       const usersEndpoint =
         process.env.VUE_APP_NOTIFYME_HOST +
-        this.usersApi +
+        this.busFiltersApi +
         id +
-        this.notificationsApi;
+        this.usersApi;
       axios.get(usersEndpoint).then(response => {
         this.notifications = response.data;
       });
     },
   },
   created() {
-    this.getUser(this.$route.params.id);
+    this.getBusFilter(this.$route.params.id);
   }
 };
 </script>
@@ -74,7 +69,7 @@ export default {
 .info {
   width: 50%;
 }
-.notifications {
+.users {
   margin-top: 3rem;
 }
 </style>

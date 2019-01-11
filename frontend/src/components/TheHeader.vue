@@ -21,7 +21,7 @@ export default {
 
 <style lang="scss" scoped>
 .header {
-  background: $color-main-dark;
+  background: linear-gradient(to right, $color-main-dark, $color-secondary);
   color: white;
 }
 .button-toggle {

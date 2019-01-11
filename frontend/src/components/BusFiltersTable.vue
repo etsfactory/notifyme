@@ -7,8 +7,8 @@
       <td v-if="busFilter.row.category">{{busFilter.row.category}}</td>
       <td class="multiline" v-if="busFilter.row.description">{{busFilter.row.description}}</td>
       <td class="actions">
-        <i class="far fa-eye icon"></i>
-        <i class="far fa-trash-alt icon"></i>
+        <i class="far fa-eye icon" @click="navigateToBusFilter(busFilter.row.id)"></i>
+        <i class="far fa-trash-alt icon" @click="deleteBusFilter(busFilter.row.id)"></i>
       </td>
     </template>
   </sorteable-table>
@@ -37,7 +37,7 @@ export default {
   }),
   methods: {
     navigateToBusFilter(bus_filter_id) {
-      this.$router.push({ name: "bus_filters", params: { id: bus_filter_id } });
+      this.$router.push({ name: "bus_filter", params: { id: bus_filter_id } });
     },
     addColumn(text, key, sorteable, className) {
       this.columns.push({
@@ -46,6 +46,9 @@ export default {
         sorteable: sorteable,
         class: className
       });
+    },
+    deleteBusFilter(bus_filter_id) {
+      this.$emit("deleted", bus_filter_id);
     }
   },
   created() {
