@@ -2,11 +2,11 @@
   <div class="users">
     <h1>
       <i class="fas fa-users"></i> Users
-      <i class="fas fa-plus-circle add-user" @click="createUser"></i>
+      <i class="fas fa-plus-circle create-icon" @click="createUser"></i>
     </h1>
     <users-table v-if="users" :users="users" @deleted="showModal"/>
     <confirm-modal :visible.sync="showDeleteModal" @close="closeModal" @accept="deleteUser"/>
-    <create-user :visible.sync="showCreateModal"/>
+    <create-user :visible.sync="showCreateModal" @created="getUsers"/>
   </div>
 </template>
 
@@ -69,12 +69,5 @@ export default {
 .users {
   position: relative;
 }
-.add-user {
-  position: absolute;
-  right: 0;
-  &:hover {
-    color: $color-main-dark;
-    cursor: pointer;
-  }
-}
+
 </style>

@@ -4,8 +4,8 @@
       <td>{{busFilter.row.id}}</td>
       <td>{{busFilter.row.exchange}}</td>
       <td>{{busFilter.row.exchange_type}}</td>
-      <td v-if="busFilter.row.category">{{busFilter.row.category}}</td>
-      <td class="multiline" v-if="busFilter.row.description">{{busFilter.row.description}}</td>
+      <td>{{busFilter.row.category}}</td>
+      <td class="multiline">{{busFilter.row.description}}</td>
       <td class="actions">
         <i class="far fa-eye icon" @click="navigateToBusFilter(busFilter.row.id)"></i>
         <i class="far fa-trash-alt icon" @click="deleteBusFilter(busFilter.row.id)"></i>
@@ -32,18 +32,12 @@ export default {
     columns: [
       { text: "Id", key: "id", sorteable: true },
       { text: "Exchange", key: "exchange", sorteable: true },
-      { text: "Exchange Type", key: "exchange_type", sorteable: false }
+      { text: "Exchange Type", key: "exchange_type", sorteable: true },
+      { text: "Category", key: "category", sorteable: true },
+      { text: "Description", key: "description", sorteable: true },
+      { text: "Actions", key: "actions", sorteable: false }
     ]
   }),
-  created() {
-    if ("category" in this.busFilters[0]) {
-      this.addColumn("Category", "category", true);
-    }
-    if ("description" in this.busFilters[0]) {
-      this.addColumn("Description", "description", true, "multiline");
-    }
-    this.addColumn("Actions", "actions", false, "actions");
-  },
   methods: {
     navigateToBusFilter(bus_filter_id) {
       this.$router.push({ name: "bus_filter", params: { id: bus_filter_id } });

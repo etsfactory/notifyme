@@ -89,7 +89,14 @@ input[type="submit"] {
   border-radius: 5px;
   font-weight:bold !important;
 }
-
+.create-icon {
+  position: absolute;
+  right: 0;
+  &:hover {
+    color: $color-main-dark;
+    cursor: pointer;
+  }
+}
 .modal-bg {
   width: 100vw;
   min-height: 100vh;
