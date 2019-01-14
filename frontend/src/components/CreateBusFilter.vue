@@ -48,7 +48,8 @@ export default {
           type: "input",
           inputType: "text",
           label: "ID",
-          model: "id"
+          model: "id",
+          placeholder: "1"
         },
         {
           type: "input",

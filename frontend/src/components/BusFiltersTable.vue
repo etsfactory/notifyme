@@ -42,14 +42,6 @@ export default {
     navigateToBusFilter(bus_filter_id) {
       this.$router.push({ name: "bus_filter", params: { id: bus_filter_id } });
     },
-    addColumn(text, key, sorteable, className) {
-      this.columns.push({
-        text: text,
-        key: key,
-        sorteable: sorteable,
-        class: className
-      });
-    },
     deleteBusFilter(bus_filter_id) {
       this.$emit("deleted", bus_filter_id);
     }

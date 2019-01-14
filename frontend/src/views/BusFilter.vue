@@ -66,7 +66,7 @@ export default {
   }
 }
 .info {
-  width: 50%;
+  width: 40%;
 }
 .users {
   margin-top: 3rem;

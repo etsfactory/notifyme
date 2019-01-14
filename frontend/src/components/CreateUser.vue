@@ -4,7 +4,8 @@
     <div class="modal-inner">
       <a class="modal-close" @click="close">X</a>
       <h2 class="modal-title">
-        <i class="fas fa-user"></i> Create a new user
+        <i class="fas fa-user"></i>
+        {{ text }} user
       </h2>
       <vue-form-generator
         @validated="onValidated"
@@ -28,23 +29,28 @@ export default {
     title: {
       type: String,
       default: "Are you sure?"
+    },
+    edit: Boolean,
+    model: {
+      type: Object,
+      default: {
+        id: "",
+        name: "",
+        email: ""
+      }
     }
   },
   data: () => ({
     usersApi: "/users",
     formValid: false,
-    model: {
-      id: "",
-      name: "",
-      email: ""
-    },
     schema: {
       fields: [
         {
           type: "input",
           inputType: "text",
           label: "ID",
-          model: "id"
+          model: "id",
+          placeholder: "1"
         },
         {
           type: "input",
@@ -52,7 +58,7 @@ export default {
           label: "Name",
           model: "name",
           placeholder: "John Doe",
-          featured: true,
+          featured: true
         },
         {
           type: "input",
@@ -70,6 +76,11 @@ export default {
       validateAsync: true
     }
   }),
+  computed: {
+    text() {
+      return this.edit ? "Edit" : "Create";
+    }
+  },
   methods: {
     close() {
       this.$emit("update:visible", false);
@@ -79,19 +90,30 @@ export default {
       axios.post(usersEndpoint, this.model).then(() => {
         this.$emit("update:visible", false);
         this.$emit("created");
-      })
+      });
+    },
+    editUser() {
+      const usersEndpoint =
+        process.env.VUE_APP_NOTIFYME_HOST + this.usersApi + "/" + this.model.id;
+      axios.put(usersEndpoint, this.model).then(() => {
+        this.$emit("update:visible", false);
+        this.$emit("created");
+      });
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;
     }
   },
   created() {
+    if (this.edit) {
+      this.schema.fields[0].disabled = true;
+    }
     this.schema.fields.push({
       type: "submit",
-      buttonText: "Create",
+      buttonText: this.text,
       validateBeforeSubmit: true,
       styleClasses: "button-submit",
-      onSubmit: () => this.createUser()
+      onSubmit: () => this.edit ? this.editUser() : this.createUser()
     });
   }
 };

@@ -4,13 +4,24 @@
       <h1>
         <i class="fas fa-user"></i> User
       </h1>
-      <key-value-table :data="user" class="info"/>
+      <div class="user-container">
+        <key-value-table :data="user" class="info"/>
+        <div class="buttons">
+          <action-buttons @edit="showEditModal"></action-buttons>
+        </div>
+      </div>
       <div v-if="notifications" class="notifications">
         <h2>
           <i class="fas fa-filter"></i> Suscribed to:
         </h2>
         <bus-filters-table :bus-filters="notifications" @deleted="showModal"/>
-        <confirm-modal :visible.sync="openModal" @close="closeModal" @accept="deleteSubscription" subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"/>
+        <confirm-modal
+          :visible.sync="openModal"
+          @close="closeModal"
+          @accept="deleteSubscription"
+          subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
+        />
+        <create-user :model="user" :visible.sync="showCreateModal" :edit="true" @created="getUser"/>
       </div>
     </div>
   </div>
@@ -21,13 +32,17 @@ import axios from "axios";
 import BusFiltersTable from "@/components/BusFiltersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
+import ActionButtons from "@/components/ActionButtons.vue";
+import CreateUser from "@/components/CreateUser.vue";
 
 export default {
   name: "User",
   components: {
     BusFiltersTable,
     KeyValueTable,
-    ConfirmModal
+    ConfirmModal,
+    ActionButtons,
+    CreateUser
   },
   data: () => ({
     user: null,
@@ -35,7 +50,8 @@ export default {
     usersApi: "/users/",
     notificationsApi: "/bus_filters",
     openModal: false,
-    selectedBusFilter: null
+    selectedBusFilter: null,
+    showCreateModal: false
   }),
   computed: {
     nameToDisplay() {
@@ -49,9 +65,11 @@ export default {
     this.getUser(this.$route.params.id);
   },
   methods: {
-    getUser(id) {
+    getUser() {
       const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST + this.usersApi + id;
+        process.env.VUE_APP_NOTIFYME_HOST +
+        this.usersApi +
+        this.$route.params.id;
       axios.get(usersEndpoint).then(response => {
         this.user = response.data;
         this.getUserNotifications(this.$route.params.id);
@@ -70,6 +88,9 @@ export default {
     showModal(bus_filter_id) {
       this.openModal = true;
       this.selectedBusFilter = bus_filter_id;
+    },
+    showEditModal() {
+      this.showCreateModal = true;
     },
     closeModal() {
       this.openModal = false;
@@ -103,9 +124,16 @@ export default {
   }
 }
 .info {
-  width: 50%;
+  width: 40%;
 }
 .notifications {
   margin-top: 3rem;
+}
+.user-container {
+  display: flex;
+  align-items: center;
+}
+.buttons {
+  width: 35%;
 }
 </style>
