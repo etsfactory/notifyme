@@ -7,7 +7,6 @@
     <bus-filters-table v-if="busFilters" :bus-filters="busFilters" @deleted="showModal"/>
     <confirm-modal :visible.sync="showDeleteModal" @close="closeModal" @accept="deleteBusFilter" subtitle="CAUTION. If you delete a bus filter, all users suscribed to this bus filter will be unsuscribed. This action can not be undone"/>
     <create-bus-filter :visible.sync="showCreateModal" @created="getBusFilters"/>
-
   </div>
 </template>
 
@@ -29,7 +28,7 @@ export default {
     busFilters: null,
     showDeleteModal: false,
     selectedBusFilter: null,
-    showCreateModal: false
+    showCreateModal: false,
   }),
   created() {
     this.getBusFilters();
@@ -46,7 +45,7 @@ export default {
       this.showDeleteModal = true;
       this.selectedBusFilter = bus_filter_id;
     },
-    closeModal() {
+     closeModal() {
       this.showDeleteModal = false;
     },
     deleteBusFilter() {

@@ -67,6 +67,10 @@ body {
     }
   }
 }
+.center {
+  margin: 0px auto;
+  text-align: center;
+}
 .content {
   left: $sidebar-width;
   transition: left 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
@@ -96,6 +100,17 @@ input[type="submit"] {
     color: $color-main-dark;
     cursor: pointer;
   }
+}
+.sub-button {
+ padding: 0.8rem 3rem !important;
+  background: linear-gradient(to right, $color-main-dark, $color-main);
+  border: none !important;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight:bold !important;
+  color: white;
+  margin: 0px auto;
+
 }
 .modal-bg {
   width: 100vw;

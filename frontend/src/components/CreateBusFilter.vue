@@ -4,7 +4,8 @@
     <div class="modal-inner">
       <a class="modal-close" @click="close">X</a>
       <h2 class="modal-title">
-        <i class="fas fa-filter"></i> Create new bus filter
+        <i class="fas fa-filter"></i>
+        {{ text }} bus filter
       </h2>
       <vue-form-generator
         @validated="onValidated"
@@ -28,20 +29,24 @@ export default {
     title: {
       type: String,
       default: "Are you sure?"
+    },
+    edit: Boolean,
+    model: {
+      type: Object,
+      default: () => ({
+        id: "",
+        exchange: "",
+        key: "",
+        exchange_type: "fannout",
+        durable: false,
+        description: "",
+        category: ""
+      })
     }
   },
   data: () => ({
     busFilterApi: "/bus_filters",
     formValid: false,
-    model: {
-      id: "",
-      exchange: "",
-      key: "",
-      exchange_type: "fannout",
-      durable: false,
-      description: "",
-      category: ""
-    },
     schema: {
       fields: [
         {
@@ -102,6 +107,11 @@ export default {
       validateAsync: true
     }
   }),
+  computed: {
+    text() {
+      return this.edit ? "Edit" : "Create";
+    }
+  },
   methods: {
     close() {
       this.$emit("update:visible", false);
@@ -123,17 +133,32 @@ export default {
         this.$emit("created");
       });
     },
+    editBusFilter() {
+      const busFiltersEndpoint =
+        process.env.VUE_APP_NOTIFYME_HOST +
+        this.busFilterApi +
+        "/" +
+        this.model.id;
+      axios.put(busFiltersEndpoint, this.model).then(() => {
+        this.$emit("update:visible", false);
+        this.$emit("created");
+      });
+    },
     onValidated(isValid, errors) {
       this.isValid = isValid;
     }
   },
   created() {
+    if (this.edit) {
+      this.schema.fields[0].disabled = true;
+    }
     this.schema.fields.push({
       type: "submit",
-      buttonText: "Create",
+      buttonText: this.text,
       validateBeforeSubmit: true,
       styleClasses: "button-submit",
-      onSubmit: () => this.createBusFilter()
+      onSubmit: () =>
+        this.edit ? this.editBusFilter() : this.createBusFilter()
     });
   }
 };

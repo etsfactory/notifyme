@@ -33,11 +33,11 @@ export default {
     edit: Boolean,
     model: {
       type: Object,
-      default: {
+      default: () => ({
         id: "",
         name: "",
         email: ""
-      }
+      })
     }
   },
   data: () => ({

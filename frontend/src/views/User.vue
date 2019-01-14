@@ -14,10 +14,10 @@
         <h2>
           <i class="fas fa-filter"></i> Suscribed to:
         </h2>
-        <bus-filters-table :bus-filters="notifications" @deleted="showModal"/>
+        <bus-filters-table :bus-filters="notifications" @deleted="showDeleteModal"/>
         <confirm-modal
-          :visible.sync="openModal"
-          @close="closeModal"
+          :visible.sync="showConfirmModal"
+          @close="closeDeleteModal"
           @accept="deleteSubscription"
           subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
         />
@@ -49,7 +49,7 @@ export default {
     notifications: null,
     usersApi: "/users/",
     notificationsApi: "/bus_filters",
-    openModal: false,
+    showConfirmModal: false,
     selectedBusFilter: null,
     showCreateModal: false
   }),
@@ -85,18 +85,18 @@ export default {
         this.notifications = response.data;
       });
     },
-    showModal(bus_filter_id) {
-      this.openModal = true;
+    showDeleteModal(bus_filter_id) {
+      this.showConfirmModal = true;
       this.selectedBusFilter = bus_filter_id;
     },
     showEditModal() {
       this.showCreateModal = true;
     },
-    closeModal() {
-      this.openModal = false;
+    closeDeleteModal() {
+      this.showConfirmModal = false;
     },
     deleteSubscription() {
-      this.openModal = false;
+      this.showConfirmModal = false;
       const usersEndpoint =
         process.env.VUE_APP_NOTIFYME_HOST +
         this.usersApi +
