@@ -4,6 +4,7 @@
     <div class="modal-inner">
       <a class="modal-close" @click="close">X</a>
       <user-list v-if="users" :subscriptions="subscriptions" :users="users" @click="createUserSubscription"/>
+      <bus-filter-list v-if="busFilters" :subscriptions="subscriptions" :bus-filters="busFilters" @click="createBusFilterSubscription"/>
     </div>
   </div>
 </template>
@@ -11,11 +12,13 @@
 <script>
 import axios from "axios";
 import UserList from "@/components/UserList.vue";
+import BusFilterList from "@/components/BusFilterList.vue";
 
 export default {
   name: "SubscriptionModal",
   components: {
-    UserList
+    UserList,
+    BusFilterList
   },
   props: {
     visible: Boolean,
@@ -29,7 +32,8 @@ export default {
   data: () => ({
     usersApi: "/users",
     busFiltersApi: "/bus_filters",
-    users: null
+    users: null,
+    busFilters: null
   }),
   methods: {
     close() {
@@ -41,6 +45,12 @@ export default {
         this.users = response.data;
       });
     },
+    getBusFilters() {
+      const busFiltersEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.busFiltersApi;
+      axios.get(busFiltersEndpoint).then(response => {
+        this.busFilters = response.data;
+      });
+    },
     createUserSubscription(users) {
       let usersEndpoint =
         process.env.VUE_APP_NOTIFYME_HOST +
@@ -49,6 +59,17 @@ export default {
         this.id +
         this.usersApi;
       axios.post(usersEndpoint, users).then(() => {
+        this.$emit("click");
+      });
+    },
+    createBusFilterSubscription(busFilters) {
+      let busFiltersEndpoint =
+        process.env.VUE_APP_NOTIFYME_HOST +
+        this.usersApi +
+        "/" +
+        this.id +
+        this.busFiltersApi;
+      axios.post(busFiltersEndpoint, busFilters).then(() => {
         this.$emit("click");
       });
     }

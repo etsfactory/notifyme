@@ -86,7 +86,6 @@ export default {
       this.showCreateModal = true;
     },
     showDeleteModal(id) {
-      console.log(id);
       this.showConfirmModal = true;
       this.selectedUser = id;
     },

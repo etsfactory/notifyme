@@ -13,6 +13,7 @@
       <div v-if="notifications" class="notifications">
         <h2>
           <i class="fas fa-filter"></i> Suscribed to:
+          <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
         </h2>
         <bus-filters-table :bus-filters="notifications" @deleted="showDeleteModal"/>
         <confirm-modal
@@ -20,6 +21,13 @@
           @close="closeDeleteModal"
           @accept="deleteSubscription"
           subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
+        />
+        <subscription-modal
+          :visible.sync="showSubscriptionModal"
+          type="busFilters"
+          :id="user.id"
+          :subscriptions="notifications"
+          @click="subscriptionsCreated"
         />
         <create-user :model="user" :visible.sync="showCreateModal" :edit="true" @created="getUser"/>
       </div>
@@ -34,6 +42,7 @@ import KeyValueTable from "@/components/KeyValueTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import CreateUser from "@/components/CreateUser.vue";
+import SubscriptionModal from "@/components/SubscriptionModal.vue";
 
 export default {
   name: "User",
@@ -42,7 +51,8 @@ export default {
     KeyValueTable,
     ConfirmModal,
     ActionButtons,
-    CreateUser
+    CreateUser,
+    SubscriptionModal
   },
   data: () => ({
     user: null,
@@ -51,7 +61,8 @@ export default {
     notificationsApi: "/bus_filters",
     showConfirmModal: false,
     selectedBusFilter: null,
-    showCreateModal: false
+    showCreateModal: false,
+    showSubscriptionModal: false
   }),
   computed: {
     nameToDisplay() {
@@ -107,12 +118,22 @@ export default {
       axios.delete(usersEndpoint).then(() => {
         this.getUserNotifications();
       });
+    },
+    showSubsModal() {
+      this.showSubscriptionModal = true;
+    },
+    subscriptionsCreated() {
+      this.showSubscriptionModal = false;
+      this.getUserNotifications();
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.user {
+  position: relative;
+}
 .notifications-table /deep/.actions {
   text-align: center !important;
 }
