@@ -1,12 +1,14 @@
 <template>
   <div class="keyvalue-table">
     <div v-for="(value, key, i) in data" :key="i" class="table">
-      <div class="column">
-        <div class="column-container key">{{key}}</div>
-      </div>
-      <div class="column">
-        <div class="column-container">{{value}}</div>
-      </div>
+      <span v-if="key !== disable" class="row">
+        <div class="column">
+          <div class="column-container key">{{key}}</div>
+        </div>
+        <div class="column">
+          <div class="column-container">{{value}}</div>
+        </div>
+      </span>
     </div>
   </div>
 </template>
@@ -18,13 +20,14 @@ export default {
     data: {
       type: Object,
       required: true
-    }
+    },
+    disable: String
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.table {
+.row {
   display: grid;
   flex-wrap: wrap;
   grid-template-columns: 1fr 1fr;

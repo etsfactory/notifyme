@@ -1,8 +1,12 @@
 <template>
   <aside class="sidebar">
     <nav>
-      <ul v-for="(section, i) in sections" :key="i" class="links">
-        <li @click="closeSidebar()"><router-link class="link" :to="section.url">{{ section.name }}</router-link></li>
+      <ul>
+      <li v-for="(section, i) in sections" :key="i" class="links">
+        <div @click="closeSidebar()">
+          <router-link class="link" :to="section.url">{{ section.name }}</router-link>
+        </div>
+      </li>
       </ul>
     </nav>
   </aside>
@@ -47,8 +51,13 @@ export default {
 }
 .links {
   list-style: none;
+  margin-top: 2rem;
+  margin: 2rem 0.5rem;
 }
 .link {
   color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 </style>

@@ -24,7 +24,8 @@ export default {
   data: () => ({
     sections: [
       { name: "Users", url: "/users" },
-      { name: "Bus filters", url: "/bus_filters" }
+      { name: "Bus filters", url: "/bus_filters" },
+      { name: "Templates", url: "/templates" }
     ]
   }),
   computed: {
@@ -209,5 +210,19 @@ input[type="submit"] {
   &:hover {
     background: #a0aabe;
   }
+}
+pre, code {
+  font-family: monospace, monospace;
+}
+pre {
+  overflow: auto;
+}
+pre > code {
+  display: block;
+  padding: 1rem;
+  word-wrap: normal;
+}
+.hljs {
+  background: transparent;
 }
 </style>
