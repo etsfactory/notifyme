@@ -4,6 +4,11 @@ SMTP Handler
 import smtplib
 import email.message
 
+from email.header import Header
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.utils import formataddr
+
 from exceptions.smtp_exceptions import (
     SMTPAuthenticationError,
     SMTPSendEmailError
@@ -60,13 +65,15 @@ class SMTPHandler():
             self.login()
 
         try:
-            msg = email.message.Message()
+            msg = MIMEMultipart('alternative')
             msg['Subject'] = subject
-            msg['From'] = self.from_name
-            msg.add_header('Content-Type', 'text/html')
-            msg.set_payload(body)
+            author = formataddr((str(Header(self.from_name, 'utf-8')), self.username))
+            msg['From'] = author
+            part = MIMEText(body, 'html')
+            msg.attach(part)
             self.server.sendmail(
                 msg['From'], send_to, msg.as_string().encode('utf-8'))
             self.server.quit()
+
         except BaseException:
             raise SMTPSendEmailError()

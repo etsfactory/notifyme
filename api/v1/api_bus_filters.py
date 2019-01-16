@@ -256,3 +256,22 @@ class BusFilterUsersView(Resource):
             return subscription, None
 
         return {'message': 'User not found'}, 404
+
+        
+class BusFilterUserView(Resource):
+    def delete(self, bus_filter_id, user_id):
+        """
+        Delete bus filter from a user
+        """
+        bus_filter = filters.get(bus_filter_id)
+        if bus_filter:
+            sub_list = subscriptions.get()
+            sub = [
+                x for x in sub_list if (
+                    x.get('user_id') == user_id and x.get('filter_id') == bus_filter_id)]
+            if sub:
+                subscriptions.delete(sub[0].get('id'))
+                response = {'deleted': True}
+                return response
+
+        return {'message': 'Bus filter not found'}, 404

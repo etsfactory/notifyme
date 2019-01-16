@@ -3,21 +3,22 @@ APi handler
 """
 import threading
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
-from flask_restful import Api
+from flask_restful import Api, Resource
 
 import settings as st
 
-from api.api_users import UsersView, UserView, UserFiltersView, UserFilterView
-from api.api_bus_filters import (
+from api.v1.api_users import UsersView, UserView, UserFiltersView, UserFilterView
+from api.v1.api_bus_filters import (
     BusFiltersView,
     BusFilterView,
     BusFilterUsersView,
+    BusFilterUserView,
     BusFilterTemplateView
 )
-from api.api_subscriptions import SubscriptionsView, SubscriptionView
-from api.api_templates import TemplatesView, TemplateView
+from api.v1.api_subscriptions import SubscriptionsView, SubscriptionView
+from api.v1.api_templates import TemplatesView, TemplateView
 
 
 class ApiHandler(threading.Thread):
@@ -34,7 +35,7 @@ class ApiHandler(threading.Thread):
         Thread running. API initialization
         """
         app = Flask(__name__)
-        api = Api(app)
+        api = Api(app, prefix='/v1')
         CORS(app)
 
         api.add_resource(UsersView, '/users')
@@ -49,6 +50,8 @@ class ApiHandler(threading.Thread):
         api.add_resource(BusFilterView, '/bus_filters/<string:bus_filter_id>')
         api.add_resource(BusFilterUsersView,
                          '/bus_filters/<string:bus_filter_id>/users')
+        api.add_resource(BusFilterUserView,
+                         '/bus_filters/<string:bus_filter_id>/users/<string:user_id>')
         api.add_resource(BusFilterTemplateView,
                          '/bus_filters/<string:bus_filter_id>/templates')
 
@@ -59,4 +62,12 @@ class ApiHandler(threading.Thread):
         api.add_resource(TemplatesView, '/templates')
         api.add_resource(TemplateView, '/templates/<string:template_id>')
 
+        api.add_resource(Documentation, '/spec')
         app.run(host=st.API_SERVER, port=st.API_PORT)
+
+class Documentation(Resource):
+    def get(self):
+        directory = '../../specs/'
+        filename = 'spec.yml'
+        return send_from_directory(directory, filename, as_attachment=True)
+
