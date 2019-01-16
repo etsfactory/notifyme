@@ -46,7 +46,7 @@ export default {
   }),
   computed: {
     usersFiltered() {
-      this.selectedbusFilters = [];
+      this.selectedUsers = [];
       return this.users.filter((item) => !this.isSuscribed(item.id) );
     }
   },

@@ -137,12 +137,11 @@ export default {
         process.env.VUE_APP_NOTIFYME_HOST +
         this.busFiltersApi +
         this.busFilter.id +
-        "/" +
         this.usersApi +
         "/" +
         this.selectedUser;
       axios.delete(busFilterEndpoint).then(() => {
-        this.getUserNotifications();
+        this.getBusNotifications();
       });
     },
     showSubsModal() {
