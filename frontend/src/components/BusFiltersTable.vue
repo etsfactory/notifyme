@@ -35,7 +35,7 @@ export default {
       { text: "Exchange Type", key: "exchange_type", sorteable: true },
       { text: "Category", key: "category", sorteable: true },
       { text: "Description", key: "description", sorteable: true },
-      { text: "Actions", key: "actions", sorteable: false }
+      { text: "", key: "actions", sorteable: false }
     ]
   }),
   methods: {

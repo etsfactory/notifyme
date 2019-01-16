@@ -31,7 +31,7 @@ export default {
       { text: "Id", key: "id", sorteable: true },
       { text: "Email", key: "email", sorteable: true },
       { text: "Name", key: "name", sorteable: true },
-      { text: "Actions", key: "actions", sorteable: false }
+      { text: "", key: "actions", sorteable: false }
     ]
   }),
   methods: {

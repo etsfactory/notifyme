@@ -12,15 +12,15 @@
       </div>
       <div class="text">
         <h2>Body for the email:</h2>
-        <button v-if="editingText" class="button-main">Save</button>
-        <button @click="cancelEditText" v-if="editingText" class="button-grey">Cancel</button>
+        <button v-if="editingText" class="button-main" @click="saveTemplate">Save</button>
         <pre v-highlightjs>
           <code
-            class="html text-body"
-            @blur="onTextEdit"
-            :class="{'editing-code': editingText}"
-            @click="editText"
-            :contenteditable="editingText">{{textHTML}}</code>
+  class="html text-body"
+  @blur="onTextEdit"
+  :class="{'editing-code': editingText}"
+  @click="editText"
+  contenteditable
+>{{textHTML}}</code>
         </pre>
         {{editedText}}
       </div>
@@ -69,11 +69,11 @@ export default {
   },
   methods: {
     getTemplate() {
-      const usersEndpoint =
+      const templateEndpoint =
         process.env.VUE_APP_NOTIFYME_HOST +
         this.templatesApi +
         this.$route.params.id;
-      axios.get(usersEndpoint).then(response => {
+      axios.get(templateEndpoint).then(response => {
         this.template = response.data;
         let text_breaks = this.template.text
           .replace(/{%/g, "\n{%")
@@ -98,11 +98,21 @@ export default {
       this.editingText = true;
     },
     onTextEdit(event) {
-      console.log("eeee");
       this.editedText = event.target.innerText;
     },
     cancelEditText() {
       this.editingText = false;
+    },
+    saveTemplate() {
+      const templateEndpoint =
+        process.env.VUE_APP_NOTIFYME_HOST +
+        this.templatesApi +
+        this.$route.params.id;
+      let template = this.template;
+      template.text = String(this.editedText);
+      axios.put(templateEndpoint, template).then(() => {
+        this.getTemplate();
+      });
     }
   }
 };

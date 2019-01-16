@@ -18,7 +18,7 @@
       </li>
     </ul>
     <div class="center">
-      <button class="button-main" @click="$emit('click', selectedUsers)">Create</button>
+      <button class="button-main" @click="$emit('click', selectedUsers)">Add users</button>
     </div>
   </div>
 </template>
@@ -43,8 +43,13 @@ export default {
   data: () => ({
     selectedUsers: [],
     userSelected: false,
-    usersFiltered: []
   }),
+  computed: {
+    usersFiltered() {
+      this.selectedbusFilters = [];
+      return this.users.filter((item) => !this.isSuscribed(item.id) );
+    }
+  },
   methods: {
     select(user, toggled) {
       if (toggled) {
@@ -60,13 +65,8 @@ export default {
     isSuscribed(user_id) {
       return this.subscriptions.some(item => item.id === user_id);
     },
-    filterUsers() {
-      this.usersFiltered = this.users.filter((item) => !this.isSuscribed(item.id) );
-    }
+
   },
-  created() {
-    this.filterUsers();
-  }
 };
 </script>
 

@@ -37,7 +37,7 @@ export default {
         id: "",
         exchange: "",
         key: "",
-        exchange_type: "fannout",
+        exchange_type: "fanout",
         durable: false,
         description: "",
         category: ""
@@ -78,7 +78,7 @@ export default {
           type: "select",
           label: "Exchange type",
           model: "exchange_type",
-          values: ["fannout", "direct"]
+          values: ["fanout", "direct"]
         },
         {
           type: "checkbox",

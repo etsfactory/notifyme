@@ -6,7 +6,7 @@
       <td>{{ template.row.subject }}</td>
       <td class="actions">
         <i class="far fa-eye icon" @click="navigateToTemplate(template.row.id)"></i>
-        <i class="far fa-trash-alt icon" @click="deleteTemplate(template.row.id)"></i>
+        <i v-if="remove" class="far fa-trash-alt icon" @click="deleteTemplate(template.row.id)"></i>
       </td>
     </template>
   </sorteable-table>
@@ -24,14 +24,18 @@ export default {
     templates: {
       type: Array,
       required: true
+    },
+    remove: {
+      type: Boolean,
+      default: true
     }
   },
   data: () => ({
     columns: [
       { text: "Id", key: "id", sorteable: true },
-      { text: "name", key: "email", sorteable: true },
-      { text: "subject", key: "name", sorteable: true },
-      { text: "Actions", key: "actions", sorteable: false }
+      { text: "Name", key: "email", sorteable: true },
+      { text: "Subject", key: "name", sorteable: true },
+      { text: "", key: "actions", sorteable: false }
     ]
   }),
   methods: {

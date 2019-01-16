@@ -1,7 +1,6 @@
 <template>
   <div class="users-subscription">
-    <ul class="user-list">
-      Bus filters not suscribed to this user:
+    <ul class="user-list">Bus filters not suscribed to this user:
       <li v-for="(busFilter,i) in busFiltersFiltered" :key="i" class="user">
         <div class="info">
           <div class="name">
@@ -18,7 +17,7 @@
       </li>
     </ul>
     <div class="center">
-      <button class="button-main" @click="$emit('click', selectedbusFilters)">Create</button>
+      <button class="button-main" @click="$emit('click', selectedbusFilters)">Add bus filters</button>
     </div>
   </div>
 </template>
@@ -42,9 +41,14 @@ export default {
   },
   data: () => ({
     selectedbusFilters: [],
-    busFilterSelected: false,
-    busFiltersFiltered: []
+    busFilterSelected: false
   }),
+  computed: {
+    busFiltersFiltered() {
+      this.selectedbusFilters = [];
+      return this.busFilters.filter(item => !this.isSuscribed(item.id));
+    }
+  },
   methods: {
     select(busFilter, toggled) {
       if (toggled) {
@@ -58,14 +62,8 @@ export default {
       this.busFilterSelected = toggled;
     },
     isSuscribed(id) {
-       return this.subscriptions.some(item => item.id === id);
-    },
-    filterbusFilters() {
-      this.busFiltersFiltered = this.busFilters.filter((item) => !this.isSuscribed(item.id) );
+      return this.subscriptions.some(item => item.id === id);
     }
-  },
-  created() {
-    this.filterbusFilters();
   }
 };
 </script>

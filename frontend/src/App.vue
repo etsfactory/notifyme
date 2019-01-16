@@ -111,6 +111,7 @@ input[type="submit"] {
   font-weight: bold !important;
   color: white;
   margin: 0px auto;
+  margin-top: 2rem;
 }
 .button-grey {
   padding: 0.8rem 3rem !important;

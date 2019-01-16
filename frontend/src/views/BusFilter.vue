@@ -5,10 +5,16 @@
         <i class="fas fa-filter"></i> BusFilter
       </h1>
       <div class="bus-filter-container">
-        <key-value-table class="info" :data="busFilter"/>
+        <key-value-table class="info" :data="busFilter" disable="template_id"/>
         <div class="buttons">
           <action-buttons @edit="showEditModal"></action-buttons>
         </div>
+      </div>
+      <div v-if="template" class="template">
+        <h2>
+          <i class="fas fa-envelope"></i> Template:
+        </h2>
+        <template-table :remove="false" :templates="[template]" @deleted="showDeleteModal"/>
       </div>
       <div v-if="notifications" class="users">
         <h2>
@@ -43,6 +49,7 @@
 <script>
 import axios from "axios";
 import UsersTable from "@/components/UsersTable.vue";
+import TemplateTable from "@/components/TemplateTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
@@ -53,6 +60,7 @@ export default {
   name: "BusFilter",
   components: {
     UsersTable,
+    TemplateTable,
     KeyValueTable,
     ActionButtons,
     ConfirmModal,
@@ -62,8 +70,10 @@ export default {
   data: () => ({
     busFilter: null,
     notifications: null,
+    template: null,
     usersApi: "/users",
     busFiltersApi: "/bus_filters/",
+    templatesApi: "/templates",
     showConfirmModal: false,
     showCreateModal: false,
     showSubscriptionModal: false
@@ -79,8 +89,23 @@ export default {
         this.$route.params.id;
       axios.get(usersEndpoint).then(response => {
         this.busFilter = response.data;
-        this.getBusNotifications();
+        this.getTemplate();
       });
+    },
+    getTemplate() {
+      if (this.busFilter.template_id) {
+        const templateEndpoint =
+          process.env.VUE_APP_NOTIFYME_HOST +
+          this.busFiltersApi +
+          this.$route.params.id +
+          this.templatesApi;
+        axios.get(templateEndpoint).then(response => {
+          this.template = response.data;
+          this.getBusNotifications();
+        });
+      } else {
+        this.getBusNotifications();
+      }
     },
     showEditModal() {
       this.showCreateModal = true;
@@ -144,8 +169,11 @@ export default {
 .info {
   width: 40%;
 }
-.users {
+.template {
   margin-top: 3rem;
+}
+.users {
+  margin-top: 5rem;
 }
 .bus-filter-container {
   display: flex;

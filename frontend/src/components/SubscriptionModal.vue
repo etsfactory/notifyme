@@ -74,9 +74,14 @@ export default {
       });
     }
   },
+  watch: {
+    subscriptions() {
+      this.users ? this.getUsers() : this.getBusFilters();
+    }
+  },
   created() {
     this.type === "users" ? this.getUsers() : this.getBusFilters();
-  }
+  },
 };
 </script>
 
