@@ -14,6 +14,7 @@ from api.v1.api_bus_filters import (
     BusFiltersView,
     BusFilterView,
     BusFilterUsersView,
+    BusFilterUserView,
     BusFilterTemplateView
 )
 from api.v1.api_subscriptions import SubscriptionsView, SubscriptionView
@@ -49,6 +50,8 @@ class ApiHandler(threading.Thread):
         api.add_resource(BusFilterView, '/bus_filters/<string:bus_filter_id>')
         api.add_resource(BusFilterUsersView,
                          '/bus_filters/<string:bus_filter_id>/users')
+        api.add_resource(BusFilterUserView,
+                         '/bus_filters/<string:bus_filter_id>/users/<string:user_id>')
         api.add_resource(BusFilterTemplateView,
                          '/bus_filters/<string:bus_filter_id>/templates')
 
