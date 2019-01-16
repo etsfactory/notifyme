@@ -18,7 +18,7 @@
       </li>
     </ul>
     <div class="center">
-      <button class="sub-button" @click="$emit('click', selectedUsers)">Create</button>
+      <button class="button-main" @click="$emit('click', selectedUsers)">Create</button>
     </div>
   </div>
 </template>

@@ -18,7 +18,7 @@
       </li>
     </ul>
     <div class="center">
-      <button class="sub-button" @click="$emit('click', selectedbusFilters)">Create</button>
+      <button class="button-main" @click="$emit('click', selectedbusFilters)">Create</button>
     </div>
   </div>
 </template>

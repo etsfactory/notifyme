@@ -12,12 +12,17 @@
       </div>
       <div class="text">
         <h2>Body for the email:</h2>
-       <span>{{template.text}}></span>
+        <button v-if="editingText" class="button-main">Save</button>
+        <button @click="cancelEditText" v-if="editingText" class="button-grey">Cancel</button>
         <pre v-highlightjs>
-          <code class="html">
-            {{template.text}}
-          </code>
+          <code
+            class="html text-body"
+            @blur="onTextEdit"
+            :class="{'editing-code': editingText}"
+            @click="editText"
+            :contenteditable="editingText">{{textHTML}}</code>
         </pre>
+        {{editedText}}
       </div>
       <create-bus-filter
         :model="template"
@@ -31,6 +36,7 @@
 
 <script>
 import axios from "axios";
+import beautify from "js-beautify";
 import UsersTable from "@/components/UsersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
@@ -53,7 +59,10 @@ export default {
     templatesApi: "/templates/",
     showConfirmModal: false,
     showCreateModal: false,
-    showSubscriptionModal: false
+    showSubscriptionModal: false,
+    textHTML: "",
+    editedText: "",
+    editingText: false
   }),
   created() {
     this.getTemplate(this.$route.params.id);
@@ -66,6 +75,13 @@ export default {
         this.$route.params.id;
       axios.get(usersEndpoint).then(response => {
         this.template = response.data;
+        let text_breaks = this.template.text
+          .replace(/{%/g, "\n{%")
+          .replace(/%}/g, "%}\n");
+        this.textHTML = beautify.html(text_breaks, {
+          indent_size: 2,
+          wrap_line_length: 100
+        });
       });
     },
     showEditModal() {
@@ -77,6 +93,16 @@ export default {
     },
     closeDeleteModal() {
       this.showConfirmModal = false;
+    },
+    editText() {
+      this.editingText = true;
+    },
+    onTextEdit(event) {
+      console.log("eeee");
+      this.editedText = event.target.innerText;
+    },
+    cancelEditText() {
+      this.editingText = false;
     }
   }
 };
@@ -111,5 +137,15 @@ export default {
 }
 .text {
   margin-top: 2rem;
+}
+.text-body {
+  transition: all 0.15s ease-in-out;
+}
+.editing-code {
+  background-color: white;
+  border: 2px solid $color-main;
+}
+.button-grey {
+  margin-left: 1rem;
 }
 </style>

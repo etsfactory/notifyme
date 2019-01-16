@@ -92,7 +92,7 @@ input[type="submit"] {
   border: none !important;
   cursor: pointer;
   border-radius: 5px;
-  font-weight:bold !important;
+  font-weight: bold !important;
 }
 .create-icon {
   position: absolute;
@@ -102,16 +102,25 @@ input[type="submit"] {
     cursor: pointer;
   }
 }
-.sub-button {
- padding: 0.8rem 3rem !important;
+.button-main {
+  padding: 0.8rem 3rem !important;
   background: linear-gradient(to right, $color-main-dark, $color-main);
   border: none !important;
   cursor: pointer;
   border-radius: 5px;
-  font-weight:bold !important;
+  font-weight: bold !important;
   color: white;
   margin: 0px auto;
-
+}
+.button-grey {
+  padding: 0.8rem 3rem !important;
+  background: #888888;
+  border: none !important;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold !important;
+  color: white;
+  margin: 0px auto;
 }
 .modal-bg {
   width: 100vw;
@@ -211,7 +220,8 @@ input[type="submit"] {
     background: #a0aabe;
   }
 }
-pre, code {
+pre,
+code {
   font-family: monospace, monospace;
 }
 pre {
