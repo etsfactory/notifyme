@@ -4,12 +4,12 @@
     <div class="modal-inner">
       <a class="modal-close" @click="close">X</a>
       <h2 class="modal-title">
-        <i class="fas fa-filter"></i>
-        {{ text }} bus filter
+        <i class="fas fa-envelope"></i>
+        {{ text }} template
       </h2>
       <vue-form-generator
         @validated="onValidated"
-        class="user-form"
+        class="template-form"
         tag="form"
         :schema="schema"
         :model="model"
@@ -23,7 +23,7 @@
 import axios from "axios";
 
 export default {
-  name: "CreateBusFilter",
+  name: "ConfirmModal",
   props: {
     visible: Boolean,
     edit: Boolean,
@@ -31,17 +31,14 @@ export default {
       type: Object,
       default: () => ({
         id: "",
-        exchange: "",
-        key: "",
-        exchange_type: "fanout",
-        durable: false,
-        description: "",
-        category: ""
+        name: "",
+        subject: "",
+        text: ""
       })
     }
   },
   data: () => ({
-    busFilterApi: "/bus_filters",
+    templatesApi: "/templates",
     formValid: false,
     schema: {
       fields: [
@@ -54,47 +51,33 @@ export default {
         },
         {
           type: "input",
-          inputType: "exchange",
-          label: "Exchange",
-          model: "exchange",
-          placeholder: "Bus exchange",
-          requiered: true,
-          min: 1,
-          validator: "string",
-          featured: true
+          inputType: "text",
+          label: "Name",
+          model: "name",
+          placeholder: "John Doe",
+          required: true,
+          featured: true,
         },
         {
           type: "input",
-          inputType: "string",
-          label: "Key",
-          model: "key",
-          placeholder: "Key for the exchange"
+          inputType: "text",
+          label: "Subject",
+          model: "subject",
+          placeholder: "Subject of the email",
+          required: true,
+          featured: true,
+          validator: "string"
         },
         {
-          type: "select",
-          label: "Exchange type",
-          model: "exchange_type",
-          values: ["fanout", "direct"]
-        },
-        {
-          type: "checkbox",
-          label: "Durable",
-          model: "durable",
-          default: false
-        },
-        {
-          type: "input",
-          inputType: "string",
-          label: "Description",
-          model: "description",
-          placeholder: "Description"
-        },
-        {
-          type: "input",
-          inputType: "string",
-          label: "Category",
-          model: "category",
-          placeholder: "Category"
+          type: "textArea",
+          rows: 10,
+          inputType: "text",
+          label: "Body",
+          model: "text",
+          placeholder: "Body of the email",
+          featured: true,
+          required: true,
+          validator: "string"
         }
       ]
     },
@@ -112,7 +95,7 @@ export default {
     close() {
       this.$emit("update:visible", false);
     },
-    createBusFilter() {
+    createTemplate() {
       for (var propName in this.model) {
         if (
           this.model[propName] === null ||
@@ -122,20 +105,20 @@ export default {
           delete this.model[propName];
         }
       }
-      const busFiltersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST + this.busFilterApi;
-      axios.post(busFiltersEndpoint, this.model).then(() => {
-        this.$emit("update:visible", false);
-        this.$emit("created");
-      });
+      console.log(this.model);
+      // const templatesEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.templatesApi;
+      // axios.post(templatesEndpoint, this.model).then(() => {
+      //   this.$emit("update:visible", false);
+      //   this.$emit("created");
+      // });
     },
-    editBusFilter() {
-      const busFiltersEndpoint =
+    editTemplate() {
+      const templatesEndpoint =
         process.env.VUE_APP_NOTIFYME_HOST +
-        this.busFilterApi +
+        this.templatesApi +
         "/" +
         this.model.id;
-      axios.put(busFiltersEndpoint, this.model).then(() => {
+      axios.put(templatesEndpoint, this.model).then(() => {
         this.$emit("update:visible", false);
         this.$emit("created");
       });
@@ -153,14 +136,30 @@ export default {
       buttonText: this.text,
       validateBeforeSubmit: true,
       styleClasses: "button-submit",
-      onSubmit: () =>
-        this.edit ? this.editBusFilter() : this.createBusFilter()
+      onSubmit: () => (this.edit ? this.editTemplate() : this.createTemplate())
     });
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.template-form /deep/ .field-input {
+  width: 60%;
+  display: block;
+  margin: 1rem auto;
+}
+.template-form /deep/ .field-textArea {
+  width: 100% !important;
+  display: block;
+  margin: 1rem auto;
+}
+.template-form {
+  width: 100%;
+}
+.modal-inner {
+  width: 40%;
+  max-width: 40%;
+}
 .modal .modal-title {
   font-size: 1.8rem;
 }

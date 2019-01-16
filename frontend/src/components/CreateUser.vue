@@ -26,10 +26,6 @@ export default {
   name: "ConfirmModal",
   props: {
     visible: Boolean,
-    title: {
-      type: String,
-      default: "Are you sure?"
-    },
     edit: Boolean,
     model: {
       type: Object,
@@ -86,6 +82,15 @@ export default {
       this.$emit("update:visible", false);
     },
     createUser() {
+      for (var propName in this.model) {
+        if (
+          this.model[propName] === null ||
+          this.model[propName] === undefined ||
+          this.model[propName] === ""
+        ) {
+          delete this.model[propName];
+        }
+      }
       const usersEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.usersApi;
       axios.post(usersEndpoint, this.model).then(() => {
         this.$emit("update:visible", false);
@@ -113,7 +118,7 @@ export default {
       buttonText: this.text,
       validateBeforeSubmit: true,
       styleClasses: "button-submit",
-      onSubmit: () => this.edit ? this.editUser() : this.createUser()
+      onSubmit: () => (this.edit ? this.editUser() : this.createUser())
     });
   }
 };

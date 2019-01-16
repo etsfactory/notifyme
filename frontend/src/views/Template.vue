@@ -1,10 +1,10 @@
 <template>
-  <div class="bus-filter">
+  <div class="template">
     <div v-if="template">
       <h1>
         <i class="fas fa-envelope"></i> Template
       </h1>
-      <div class="bus-filter-container">
+      <div class="template-container">
         <key-value-table class="info" :data="template" disable="text"/>
         <div class="buttons">
           <action-buttons @edit="showEditModal"></action-buttons>
@@ -119,7 +119,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.bus-filter {
+.template {
   position: relative;
 }
 .notifications-table /deep/.actions {
@@ -138,7 +138,7 @@ export default {
 .users {
   margin-top: 3rem;
 }
-.bus-filter-container {
+.template-container {
   display: flex;
   align-items: center;
 }

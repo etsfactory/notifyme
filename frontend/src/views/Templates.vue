@@ -6,7 +6,7 @@
     </h1>
     <template-table v-if="users" :templates="users" @deleted="showModal"/>
     <confirm-modal :visible.sync="showDeleteModal" @close="closeModal" @accept="deleteUser"/>
-    <create-user :visible.sync="showCreateModal" @created="getUsers"/>
+    <create-template :visible.sync="showCreateModal" @created="getTemplates"/>
   </div>
 </template>
 
@@ -14,14 +14,14 @@
 import axios from "axios";
 import TemplateTable from "@/components/TemplateTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
-import CreateUser from "@/components/CreateUser.vue";
+import CreateTemplate from "@/components/CreateTemplate.vue";
 
 export default {
   name: "Templates",
   components: {
     TemplateTable,
     ConfirmModal,
-    CreateUser
+    CreateTemplate
   },
   data: () => ({
     usersApi: "/templates",
@@ -31,10 +31,10 @@ export default {
     showCreateModal: false
   }),
   created() {
-    this.getUsers();
+    this.getTemplates();
   },
   methods: {
-    getUsers() {
+    getTemplates() {
       const usersEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.usersApi;
       axios.get(usersEndpoint).then(response => {
         this.users = response.data;
