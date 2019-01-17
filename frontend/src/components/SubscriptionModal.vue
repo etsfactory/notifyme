@@ -7,21 +7,21 @@
         v-if="users"
         :subscriptions="subscriptions"
         :users="users"
-        @click="createUserSubscription"
+        @click="createBusFilterSubscription"
       />
       <bus-filter-list
         v-if="busFilters"
         :subscriptions="subscriptions"
         :bus-filters="busFilters"
-        @click="createBusFilterSubscription"
+        @click="createUserSubscription"
       />
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 import usersApi from "@/logic/users";
+import busFiltersApi from "@/logic/bus_filters";
 
 import UserList from "@/components/UserList.vue";
 import BusFilterList from "@/components/BusFilterList.vue";
@@ -42,8 +42,6 @@ export default {
     }
   },
   data: () => ({
-    usersApi: "/users",
-    busFiltersApi: "/bus_filters",
     users: null,
     busFilters: null
   }),
@@ -51,31 +49,20 @@ export default {
     close() {
       this.$emit("update:visible", false);
     },
-    getUsers() {
-      const usersEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.usersApi;
-      axios.get(usersEndpoint).then(response => {
-        this.users = response.data;
-      });
+    async getUsers() {
+      let response = await usersApi.getAll();
+      this.users = response.data;
     },
-    getBusFilters() {
-      const busFiltersEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.busFiltersApi;
-      axios.get(busFiltersEndpoint).then(response => {
-        this.busFilters = response.data;
-      });
+    async getBusFilters() {
+      let response = await busFiltersApi.getAll();
+      this.busFilters = response.data;
     },
-    createUserSubscription(users) {
-      let usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.busFiltersApi +
-        "/" +
-        this.id +
-        this.usersApi;
-      axios.post(usersEndpoint, users).then(() => {
-        this.$emit("click");
-      });
+    async createUserSubscription(users) {
+      await usersApi.createSubscription(this.id, this.busFilters);
+      this.$emit("click");
     },
     async createBusFilterSubscription(busFilters) {
-      await usersApi.createSubscription(this.id, busFilters);
+      await busFiltersApi.createSubscription(this.id, this.users);
       this.$emit("click");
     }
   },

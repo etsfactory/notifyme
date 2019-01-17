@@ -47,7 +47,7 @@ export default {
       this.showDeleteModal = false;
     },
     async deleteUser() {
-      this.showDeleteModal = false;
+      this.closeModal();
       await usersApi.delete(this.selectedUser);
       this.getUsers();
     },

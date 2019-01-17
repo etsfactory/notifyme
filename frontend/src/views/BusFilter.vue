@@ -16,6 +16,9 @@
         </h2>
         <template-table :remove="false" :templates="[template]" @deleted="showDeleteModal"/>
       </div>
+      <div v-else class="template">
+        No template asociated with this bus filter. All subscriptions created with this bus filter will be created with the default template specified in the config file.
+      </div>
       <div v-if="notifications" class="users">
         <h2>
           <i class="fas fa-users"></i> Users suscribed to:
@@ -47,7 +50,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import busFiltersApi from "@/logic/bus_filters";
+
 import UsersTable from "@/components/UsersTable.vue";
 import TemplateTable from "@/components/TemplateTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
@@ -79,33 +83,24 @@ export default {
     showSubscriptionModal: false
   }),
   created() {
-    this.getBusFilter(this.$route.params.id);
+    this.getBusFilter();
   },
   methods: {
-    getBusFilter() {
-      const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.busFiltersApi +
-        this.$route.params.id;
-      axios.get(usersEndpoint).then(response => {
-        this.busFilter = response.data;
-        this.getTemplate();
-      });
+    async getBusFilter() {
+      let response = await busFiltersApi.get(this.$route.params.id);
+      this.busFilter = response.data;
+      this.getTemplate();
     },
-    getTemplate() {
+    async getTemplate() {
       if (this.busFilter.template_id) {
-        const templateEndpoint =
-          process.env.VUE_APP_NOTIFYME_HOST +
-          this.busFiltersApi +
-          this.$route.params.id +
-          this.templatesApi;
-        axios.get(templateEndpoint).then(response => {
-          this.template = response.data;
-          this.getBusNotifications();
-        });
-      } else {
-        this.getBusNotifications();
+        let response = await busFiltersApi.getTemplate();
+        this.template = response.data;
       }
+      this.getBusNotifications();
+    },
+    async getBusNotifications() {
+      let response = await busFiltersApi.getSubscriptions(this.busFilter.id);
+      this.notifications = response.data;
     },
     showEditModal() {
       this.showCreateModal = true;
@@ -121,28 +116,11 @@ export default {
       this.showSubscriptionModal = false;
       this.getBusNotifications();
     },
-    getBusNotifications() {
-      const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.busFiltersApi +
-        this.$route.params.id +
-        this.usersApi;
-      axios.get(usersEndpoint).then(response => {
-        this.notifications = response.data;
-      });
-    },
-    deleteSubscription() {
-      this.showConfirmModal = false;
-      const busFilterEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.busFiltersApi +
-        this.busFilter.id +
-        this.usersApi +
-        "/" +
-        this.selectedUser;
-      axios.delete(busFilterEndpoint).then(() => {
-        this.getBusNotifications();
-      });
+    async deleteSubscription() {
+      this.closeDeleteModal();
+      await busFiltersApi.deleteSubscription(this.busFilter.id, this.selectedUser);
+      this.getBusNotifications();
+
     },
     showSubsModal() {
       this.showSubscriptionModal = true;

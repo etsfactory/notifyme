@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import busFiltersApi from "@/logic/bus_filters";
+
 import BusFiltersTable from "@/components/BusFiltersTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateBusFilter from "@/components/CreateBusFilter.vue";
@@ -24,7 +25,6 @@ export default {
     CreateBusFilter
   },
   data: () => ({
-    busFiltersApi: "/bus_filters",
     busFilters: null,
     showDeleteModal: false,
     selectedBusFilter: null,
@@ -34,30 +34,21 @@ export default {
     this.getBusFilters();
   },
   methods: {
-    getBusFilters() {
-      const busFilterEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST + this.busFiltersApi;
-      axios.get(busFilterEndpoint).then(response => {
-        this.busFilters = response.data;
-      });
+    async getBusFilters() {
+      let response = await busFiltersApi.getAll();
+      this.busFilters = response.data;
     },
     showModal(bus_filter_id) {
       this.showDeleteModal = true;
       this.selectedBusFilter = bus_filter_id;
     },
-     closeModal() {
+    closeModal() {
       this.showDeleteModal = false;
     },
-    deleteBusFilter() {
-      this.showDeleteModal = false;
-      const busFilterEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.busFiltersApi +
-        "/" +
-        this.selectedBusFilter;
-      axios.delete(busFilterEndpoint).then(() => {
-        this.getBusFilters();
-      });
+    async deleteBusFilter() {
+      this.closeModal();
+      await busFiltersApi.delete(this.selectedBusFilter);
+      this.getBusFilters();
     },
     createBusFilter() {
       this.showCreateModal = true;

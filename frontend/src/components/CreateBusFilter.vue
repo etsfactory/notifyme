@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import busFiltersApi from "@/logic/bus_filters";
 
 export default {
   name: "CreateBusFilter",
@@ -112,7 +112,7 @@ export default {
     close() {
       this.$emit("update:visible", false);
     },
-    createBusFilter() {
+    async createBusFilter() {
       for (var propName in this.model) {
         if (
           this.model[propName] === null ||
@@ -122,23 +122,14 @@ export default {
           delete this.model[propName];
         }
       }
-      const busFiltersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST + this.busFilterApi;
-      axios.post(busFiltersEndpoint, this.model).then(() => {
-        this.$emit("update:visible", false);
-        this.$emit("created");
-      });
+      await busFiltersApi.post(this.model);
+      this.$emit("update:visible", false);
+      this.$emit("created");
     },
-    editBusFilter() {
-      const busFiltersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.busFilterApi +
-        "/" +
-        this.model.id;
-      axios.put(busFiltersEndpoint, this.model).then(() => {
-        this.$emit("update:visible", false);
-        this.$emit("created");
-      });
+    async editBusFilter() {
+      await busFiltersApi.put(this.model);
+      this.$emit("update:visible", false);
+      this.$emit("created");
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;
