@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import usersApi from "@/logic/users";
 
 export default {
   name: "ConfirmModal",
@@ -81,7 +81,7 @@ export default {
     close() {
       this.$emit("update:visible", false);
     },
-    createUser() {
+    async createUser() {
       for (var propName in this.model) {
         if (
           this.model[propName] === null ||
@@ -91,19 +91,15 @@ export default {
           delete this.model[propName];
         }
       }
-      const usersEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.usersApi;
-      axios.post(usersEndpoint, this.model).then(() => {
-        this.$emit("update:visible", false);
-        this.$emit("created");
-      });
+
+      await usersApi.post(this.model);
+      this.$emit("update:visible", false);
+      this.$emit("created");
     },
-    editUser() {
-      const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST + this.usersApi + "/" + this.model.id;
-      axios.put(usersEndpoint, this.model).then(() => {
-        this.$emit("update:visible", false);
-        this.$emit("created");
-      });
+    async editUser() {
+      await usersApi.put(this.model);
+      this.$emit("update:visible", false);
+      this.$emit("created");
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;

@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import usersApi from "@/logic/users";
+
 import BusFiltersTable from "@/components/BusFiltersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
@@ -57,7 +58,6 @@ export default {
   data: () => ({
     user: null,
     notifications: null,
-    usersApi: "/users/",
     notificationsApi: "/bus_filters",
     showConfirmModal: false,
     selectedBusFilter: null,
@@ -73,28 +73,22 @@ export default {
     }
   },
   created() {
-    this.getUser(this.$route.params.id);
+    this.getUser();
   },
   methods: {
-    getUser() {
-      const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.usersApi +
-        this.$route.params.id;
-      axios.get(usersEndpoint).then(response => {
-        this.user = response.data;
-        this.getUserNotifications(this.$route.params.id);
-      });
+    async getUser() {
+      let response = await usersApi.get(this.$route.params.id);
+      this.user = response.data;
+      this.getUserNotifications(this.user.id);
     },
-    getUserNotifications() {
-      const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.usersApi +
-        this.user.id +
-        this.notificationsApi;
-      axios.get(usersEndpoint).then(response => {
-        this.notifications = response.data;
-      });
+    async getUserNotifications() {
+      let response = await usersApi.getSubscriptions(this.user.id)
+      this.notifications = response.data;
+    },
+    async deleteSubscription() {
+      this.showConfirmModal = false;
+      await usersApi.deleteSubscription(this.user.id, this.selectedBusFilter);
+      this.getUserNotifications();
     },
     showDeleteModal(bus_filter_id) {
       this.showConfirmModal = true;
@@ -105,19 +99,6 @@ export default {
     },
     closeDeleteModal() {
       this.showConfirmModal = false;
-    },
-    deleteSubscription() {
-      this.showConfirmModal = false;
-      const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.usersApi +
-        this.user.id +
-        this.notificationsApi +
-        "/" +
-        this.selectedBusFilter;
-      axios.delete(usersEndpoint).then(() => {
-        this.getUserNotifications();
-      });
     },
     showSubsModal() {
       this.showSubscriptionModal = true;

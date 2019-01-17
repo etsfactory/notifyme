@@ -3,14 +3,26 @@
     <div class="modal-bg" @click="close"></div>
     <div class="modal-inner">
       <a class="modal-close" @click="close">X</a>
-      <user-list v-if="users" :subscriptions="subscriptions" :users="users" @click="createUserSubscription"/>
-      <bus-filter-list v-if="busFilters" :subscriptions="subscriptions" :bus-filters="busFilters" @click="createBusFilterSubscription"/>
+      <user-list
+        v-if="users"
+        :subscriptions="subscriptions"
+        :users="users"
+        @click="createUserSubscription"
+      />
+      <bus-filter-list
+        v-if="busFilters"
+        :subscriptions="subscriptions"
+        :bus-filters="busFilters"
+        @click="createBusFilterSubscription"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import usersApi from "@/logic/users";
+
 import UserList from "@/components/UserList.vue";
 import BusFilterList from "@/components/BusFilterList.vue";
 
@@ -62,16 +74,9 @@ export default {
         this.$emit("click");
       });
     },
-    createBusFilterSubscription(busFilters) {
-      let busFiltersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.usersApi +
-        "/" +
-        this.id +
-        this.busFiltersApi;
-      axios.post(busFiltersEndpoint, busFilters).then(() => {
-        this.$emit("click");
-      });
+    async createBusFilterSubscription(busFilters) {
+      await usersApi.createSubscription(this.id, busFilters);
+      this.$emit("click");
     }
   },
   watch: {

@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import usersApi from "@/logic/users";
+
 import UsersTable from "@/components/UsersTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateUser from "@/components/CreateUser.vue";
@@ -24,21 +25,19 @@ export default {
     CreateUser
   },
   data: () => ({
-    usersApi: "/users",
     users: null,
     showDeleteModal: false,
     selectedUser: null,
-    showCreateModal: false
+    showCreateModal: false,
+    error: null
   }),
   created() {
     this.getUsers();
   },
   methods: {
-    getUsers() {
-      const usersEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.usersApi;
-      axios.get(usersEndpoint).then(response => {
-        this.users = response.data;
-      });
+    async getUsers() {
+      let response = await usersApi.getAll();
+      this.users = response.data;
     },
     showModal(user_id) {
       this.showDeleteModal = true;
@@ -47,16 +46,10 @@ export default {
     closeModal() {
       this.showDeleteModal = false;
     },
-    deleteUser() {
+    async deleteUser() {
       this.showDeleteModal = false;
-      const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.usersApi +
-        "/" +
-        this.selectedUser;
-      axios.delete(usersEndpoint).then(() => {
-        this.getUsers();
-      });
+      await usersApi.delete(this.selectedUser);
+      this.getUsers();
     },
     createUser() {
       this.showCreateModal = true;
