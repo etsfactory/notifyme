@@ -24,7 +24,7 @@
         </pre>
         {{editedText}}
       </div>
-      <create-bus-filter
+      <create-template
         :model="template"
         :visible.sync="showCreateModal"
         :edit="true"
@@ -41,7 +41,7 @@ import UsersTable from "@/components/UsersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
-import CreateBusFilter from "@/components/CreateBusFilter.vue";
+import CreateTemplate from "@/components/CreateTemplate.vue";
 import SubscriptionModal from "@/components/SubscriptionModal.vue";
 
 export default {
@@ -51,7 +51,7 @@ export default {
     KeyValueTable,
     ActionButtons,
     ConfirmModal,
-    CreateBusFilter,
+    CreateTemplate,
     SubscriptionModal
   },
   data: () => ({
