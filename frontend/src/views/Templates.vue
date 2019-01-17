@@ -1,17 +1,18 @@
 <template>
-  <div class="users">
+  <div class="templates">
     <h1>
       <i class="fas fa-envelope"></i> Templates
-      <i class="fas fa-plus-circle create-icon" @click="createUser"></i>
+      <i class="fas fa-plus-circle create-icon" @click="createTemplate"></i>
     </h1>
-    <template-table v-if="users" :templates="users" @deleted="showModal"/>
-    <confirm-modal :visible.sync="showDeleteModal" @close="closeModal" @accept="deleteUser"/>
+    <template-table v-if="templates" :templates="templates" @deleted="showModal"/>
+    <confirm-modal :visible.sync="showDeleteModal" @close="closeModal" @accept="deleteTemplate"/>
     <create-template :visible.sync="showCreateModal" @created="getTemplates"/>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import templatesApi from "@/logic/templates";
+
 import TemplateTable from "@/components/TemplateTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateTemplate from "@/components/CreateTemplate.vue";
@@ -24,41 +25,31 @@ export default {
     CreateTemplate
   },
   data: () => ({
-    usersApi: "/templates",
-    users: null,
+    templates: null,
     showDeleteModal: false,
-    selectedUser: null,
+    selectedTemplate: null,
     showCreateModal: false
   }),
   created() {
     this.getTemplates();
   },
   methods: {
-    getTemplates() {
-      const usersEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.usersApi;
-      axios.get(usersEndpoint).then(response => {
-        this.users = response.data;
-      });
+    async getTemplates() {
+      let response = await templatesApi.getAll();
+      this.templates = response.data;
     },
-    showModal(user_id) {
+    showModal(template_id) {
       this.showDeleteModal = true;
-      this.selectedUser = user_id;
+      this.selectedTemplate = template_id;
     },
     closeModal() {
       this.showDeleteModal = false;
     },
-    deleteUser() {
-      this.showDeleteModal = false;
-      const usersEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.usersApi +
-        "/" +
-        this.selectedUser;
-      axios.delete(usersEndpoint).then(() => {
-        this.getUsers();
-      });
+    async deleteTemplate() {
+      await templatesApi.delete(this.selectedTemplate)
+      this.getTemplates()
     },
-    createUser() {
+    createTemplate() {
       this.showCreateModal = true;
     }
   }
@@ -66,8 +57,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.users {
+.templates {
   position: relative;
 }
-
 </style>

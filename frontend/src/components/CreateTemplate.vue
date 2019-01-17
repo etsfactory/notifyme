@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import templatesApi from "@/logic/templates";
 
 export default {
   name: "ConfirmModal",
@@ -38,7 +38,6 @@ export default {
     }
   },
   data: () => ({
-    templatesApi: "/templates",
     formValid: false,
     schema: {
       fields: [
@@ -95,7 +94,7 @@ export default {
     close() {
       this.$emit("update:visible", false);
     },
-    createTemplate() {
+    async createTemplate() {
       for (var propName in this.model) {
         if (
           this.model[propName] === null ||
@@ -105,23 +104,14 @@ export default {
           delete this.model[propName];
         }
       }
-      console.log(this.model);
-      // const templatesEndpoint = process.env.VUE_APP_NOTIFYME_HOST + this.templatesApi;
-      // axios.post(templatesEndpoint, this.model).then(() => {
-      //   this.$emit("update:visible", false);
-      //   this.$emit("created");
-      // });
+      await templatesApi.post(this.model);
+      this.$emit("update:visible", false);
+      this.$emit("created");
     },
-    editTemplate() {
-      const templatesEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.templatesApi +
-        "/" +
-        this.model.id;
-      axios.put(templatesEndpoint, this.model).then(() => {
-        this.$emit("update:visible", false);
-        this.$emit("created");
-      });
+    async editTemplate() {
+      await templatesApi.put(this.model)
+      this.$emit("update:visible", false);
+      this.$emit("created");
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;

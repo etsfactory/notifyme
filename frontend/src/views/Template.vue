@@ -22,7 +22,6 @@
   contenteditable
 >{{textHTML}}</code>
         </pre>
-        {{editedText}}
       </div>
       <create-template
         :model="template"
@@ -36,6 +35,7 @@
 
 <script>
 import axios from "axios";
+import templatesApi from "@/logic/templates";
 import beautify from "js-beautify";
 import UsersTable from "@/components/UsersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
@@ -56,7 +56,6 @@ export default {
   },
   data: () => ({
     template: null,
-    templatesApi: "/templates/",
     showConfirmModal: false,
     showCreateModal: false,
     showSubscriptionModal: false,
@@ -65,24 +64,24 @@ export default {
     editingText: false
   }),
   created() {
-    this.getTemplate(this.$route.params.id);
+    this.getTemplate();
   },
   methods: {
-    getTemplate() {
-      const templateEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.templatesApi +
-        this.$route.params.id;
-      axios.get(templateEndpoint).then(response => {
-        this.template = response.data;
-        let text_breaks = this.template.text
-          .replace(/{%/g, "\n{%")
-          .replace(/%}/g, "%}\n");
-        this.textHTML = beautify.html(text_breaks, {
-          indent_size: 2,
-          wrap_line_length: 100
-        });
+    async getTemplate() {
+      let response = await templatesApi.get(this.$route.params.id);
+      this.template = response.data;
+      let text_breaks = response.data.text
+        .replace(/{%/g, "\n{%")
+        .replace(/%}/g, "%}\n");
+      this.textHTML = beautify.html(text_breaks, {
+        indent_size: 2,
+        wrap_line_length: 100
       });
+    },
+    async saveTemplate() {
+      this.template.text = String(this.editedText);
+      await templatesApi.put(this.template);
+      this.getTemplate();
     },
     showEditModal() {
       this.showCreateModal = true;
@@ -102,17 +101,6 @@ export default {
     },
     cancelEditText() {
       this.editingText = false;
-    },
-    saveTemplate() {
-      const templateEndpoint =
-        process.env.VUE_APP_NOTIFYME_HOST +
-        this.templatesApi +
-        this.$route.params.id;
-      let template = this.template;
-      template.text = String(this.editedText);
-      axios.put(templateEndpoint, template).then(() => {
-        this.getTemplate();
-      });
     }
   }
 };
