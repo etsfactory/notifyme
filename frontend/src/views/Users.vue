@@ -5,7 +5,7 @@
       <i class="fas fa-plus-circle create-icon" @click="createUser"></i>
     </h1>
     <users-table v-if="users" :users="users" @deleted="showModal"/>
-    <confirm-modal :visible.sync="showDeleteModal" @close="closeModal" @accept="deleteUser"/>
+    <confirm-modal :visible.sync="showDeleteModal" @accept="deleteUser"/>
     <create-user :visible.sync="showCreateModal" @created="getUsers"/>
   </div>
 </template>
@@ -42,9 +42,6 @@ export default {
     showModal(user_id) {
       this.showDeleteModal = true;
       this.selectedUser = user_id;
-    },
-    closeModal() {
-      this.showDeleteModal = false;
     },
     async deleteUser() {
       this.closeModal();

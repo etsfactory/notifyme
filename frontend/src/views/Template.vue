@@ -7,12 +7,16 @@
       <div class="template-container">
         <key-value-table class="info" :data="template" disable="text"/>
         <div class="buttons">
-          <action-buttons @edit="showEditModal"></action-buttons>
+          <action-buttons @edit="showEditModal" @remove="showDeleteTemplate = true"></action-buttons>
+            <confirm-modal
+              :visible.sync="showDeleteTemplate"
+              @accept="deleteTemplate"
+              subtitle="This action can not be undone"
+          />
         </div>
       </div>
       <div class="text">
         <h2>Body for the email:</h2>
-        <button v-if="editingText" class="button-main" @click="saveTemplate">Save</button>
         <pre v-highlightjs>
           <code
   class="html text-body"
@@ -22,6 +26,7 @@
   contenteditable
 >{{textHTML}}</code>
         </pre>
+        <button v-if="editingText" class="button-main button-edit" @click="saveTemplate">Save</button>
       </div>
       <create-template
         :model="template"
@@ -59,6 +64,7 @@ export default {
     showConfirmModal: false,
     showCreateModal: false,
     showSubscriptionModal: false,
+    showDeleteTemplate: false,
     textHTML: "",
     editedText: "",
     editingText: false
@@ -71,6 +77,7 @@ export default {
       let response = await templatesApi.get(this.$route.params.id);
       this.template = response.data;
       let text_breaks = response.data.text
+        .replace(/(\r\n\t|\n|\r\t)/gm, "")
         .replace(/{%/g, "\n{%")
         .replace(/%}/g, "%}\n");
       this.textHTML = beautify.html(text_breaks, {
@@ -79,9 +86,13 @@ export default {
       });
     },
     async saveTemplate() {
-      this.template.text = String(this.editedText);
+      this.template.text = String(this.editedText).replace(/(\r\n\t|\n|\r\t)/gm, "");
       await templatesApi.put(this.template);
       this.getTemplate();
+    },
+    async deleteTemplate() {
+      await templatesApi.delete(this.template.id);
+      this.$router.push('/templates');
     },
     showEditModal() {
       this.showCreateModal = true;
@@ -142,8 +153,15 @@ export default {
 .editing-code {
   background-color: white;
   border: 2px solid $color-main;
+  padding: 0.5rem;
 }
 .button-grey {
   margin-left: 1rem;
+}
+.button-edit {
+  margin-top: -3rem;
+}
+pre {
+  margin: 0;
 }
 </style>

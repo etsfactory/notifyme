@@ -63,7 +63,6 @@ class BusConnectionHandler():
         """"
         When a message is received
         """
-        print('New message')
         user_emails = []
         if st.SEND_EMAILS:
             exchange = message.get('metadata').get('exchange')

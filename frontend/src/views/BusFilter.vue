@@ -7,17 +7,31 @@
       <div class="bus-filter-container">
         <key-value-table class="info" :data="busFilter" disable="template_id"/>
         <div class="buttons">
-          <action-buttons @edit="showEditModal"></action-buttons>
+          <action-buttons @edit="showEditModal" @remove="showDeleteBusFilter = true"></action-buttons>
+          <confirm-modal
+            :visible.sync="showDeleteBusFilter"
+            @accept="deleteBusFilter"
+            subtitle="This action can not be undone."
+          />
         </div>
       </div>
       <div v-if="template" class="template">
         <h2>
           <i class="fas fa-envelope"></i> Template:
         </h2>
-        <template-table :remove="false" :templates="[template]" @deleted="showDeleteModal"/>
+        <template-table :remove="false" :templates="[template]"/>
       </div>
       <div v-else class="template">
         No template asociated with this bus filter. All subscriptions created with this bus filter will be created with the default template specified in the config file.
+        <button
+          class="button-main button-template"
+          @click="showTemplateCreate"
+        >Create template</button>
+        <create-template
+          :visible.sync="showTemplateModal"
+          :http-call="false"
+          @created="createTemplate"
+        />
       </div>
       <div v-if="notifications" class="users">
         <h2>
@@ -27,7 +41,6 @@
         <users-table :users="notifications" @deleted="showDeleteModal"/>
         <confirm-modal
           :visible.sync="showConfirmModal"
-          @close="closeDeleteModal"
           @accept="deleteSubscription"
           subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
         />
@@ -58,6 +71,7 @@ import KeyValueTable from "@/components/KeyValueTable.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateBusFilter from "@/components/CreateBusFilter.vue";
+import CreateTemplate from "@/components/CreateTemplate.vue";
 import SubscriptionModal from "@/components/SubscriptionModal.vue";
 
 export default {
@@ -69,17 +83,17 @@ export default {
     ActionButtons,
     ConfirmModal,
     CreateBusFilter,
+    CreateTemplate,
     SubscriptionModal
   },
   data: () => ({
     busFilter: null,
     notifications: null,
     template: null,
-    usersApi: "/users",
-    busFiltersApi: "/bus_filters/",
-    templatesApi: "/templates",
     showConfirmModal: false,
     showCreateModal: false,
+    showTemplateModal: false,
+    showDeleteBusFilter: false,
     showSubscriptionModal: false
   }),
   created() {
@@ -93,7 +107,7 @@ export default {
     },
     async getTemplate() {
       if (this.busFilter.template_id) {
-        let response = await busFiltersApi.getTemplate();
+        let response = await busFiltersApi.getTemplate(this.busFilter.id);
         this.template = response.data;
       }
       this.getBusNotifications();
@@ -102,6 +116,16 @@ export default {
       let response = await busFiltersApi.getSubscriptions(this.busFilter.id);
       this.notifications = response.data;
     },
+    async createTemplate(template) {
+      await busFiltersApi.createTemplate(this.busFilter.id, template);
+      this.showTemplateModal = false;
+      let response = await busFiltersApi.getTemplate(this.busFilter.id);
+      this.template = response.data;
+    },
+    async deleteBusFilter() {
+      await busFiltersApi.delete(this.busFilter.id);
+      this.$router.push("/bus_filters");
+    },
     showEditModal() {
       this.showCreateModal = true;
     },
@@ -109,18 +133,19 @@ export default {
       this.showConfirmModal = true;
       this.selectedUser = id;
     },
-    closeDeleteModal() {
-      this.showConfirmModal = false;
+    showTemplateCreate() {
+      this.showTemplateModal = true;
     },
     subscriptionsCreated() {
       this.showSubscriptionModal = false;
       this.getBusNotifications();
     },
     async deleteSubscription() {
-      this.closeDeleteModal();
-      await busFiltersApi.deleteSubscription(this.busFilter.id, this.selectedUser);
+      await busFiltersApi.deleteSubscription(
+        this.busFilter.id,
+        this.selectedUser
+      );
       this.getBusNotifications();
-
     },
     showSubsModal() {
       this.showSubscriptionModal = true;
@@ -158,5 +183,9 @@ export default {
 }
 .buttons {
   width: 35%;
+}
+.button-template {
+  display: block;
+  margin: 1rem 0;
 }
 </style>

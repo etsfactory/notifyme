@@ -7,7 +7,12 @@
       <div class="user-container">
         <key-value-table :data="user" class="info"/>
         <div class="buttons">
-          <action-buttons @edit="showEditModal"></action-buttons>
+          <action-buttons @edit="showEditModal" @remove="showDeleteUserModal = true"></action-buttons>
+          <confirm-modal
+            :visible.sync="showDeleteUserModal"
+            @accept="deleteUser"
+            subtitle="This action can not be undone"
+          />
         </div>
       </div>
       <div v-if="notifications" class="notifications">
@@ -18,7 +23,6 @@
         <bus-filters-table :bus-filters="notifications" @deleted="showDeleteModal"/>
         <confirm-modal
           :visible.sync="showConfirmModal"
-          @close="closeDeleteModal"
           @accept="deleteSubscription"
           subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
         />
@@ -58,8 +62,8 @@ export default {
   data: () => ({
     user: null,
     notifications: null,
-    notificationsApi: "/bus_filters",
     showConfirmModal: false,
+    showDeleteUserModal: false,
     selectedBusFilter: null,
     showCreateModal: false,
     showSubscriptionModal: false
@@ -82,7 +86,7 @@ export default {
       this.getUserNotifications(this.user.id);
     },
     async getUserNotifications() {
-      let response = await usersApi.getSubscriptions(this.user.id)
+      let response = await usersApi.getSubscriptions(this.user.id);
       this.notifications = response.data;
     },
     async deleteSubscription() {
@@ -90,15 +94,16 @@ export default {
       await usersApi.deleteSubscription(this.user.id, this.selectedBusFilter);
       this.getUserNotifications();
     },
+    async deleteUser() {
+      await usersApi.delete(this.user.id);
+      this.$router.push("/users");
+    },
     showDeleteModal(bus_filter_id) {
       this.showConfirmModal = true;
       this.selectedBusFilter = bus_filter_id;
     },
     showEditModal() {
       this.showCreateModal = true;
-    },
-    closeDeleteModal() {
-      this.showConfirmModal = false;
     },
     showSubsModal() {
       this.showSubscriptionModal = true;

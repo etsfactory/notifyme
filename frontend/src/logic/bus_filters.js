@@ -31,6 +31,9 @@ export default {
     return axios.delete(BUS_FILTERS_ENDPOINT + "/" + busId + USERS_PATH + "/" + userId)
   },
   getTemplate(busId) {
-    return axios.delete(BUS_FILTERS_ENDPOINT + "/" + busId + TEMPLATE_PATH)
+    return axios.get(BUS_FILTERS_ENDPOINT + "/" + busId + TEMPLATE_PATH)
+  },
+  createTemplate(busId, template) {
+    return axios.post(BUS_FILTERS_ENDPOINT + "/" + busId + TEMPLATE_PATH, template)
   }
 }

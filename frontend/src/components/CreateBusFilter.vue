@@ -115,9 +115,10 @@ export default {
     async createBusFilter() {
       for (var propName in this.model) {
         if (
-          this.model[propName] === null ||
-          this.model[propName] === undefined ||
-          this.model[propName] === ""
+          (this.model[propName] === null ||
+            this.model[propName] === undefined ||
+            this.model[propName] === "") &&
+          propName !== "key"
         ) {
           delete this.model[propName];
         }

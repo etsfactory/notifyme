@@ -27,6 +27,10 @@ export default {
   props: {
     visible: Boolean,
     edit: Boolean,
+    httpCall: {
+      type: Boolean,
+      default: true
+    },
     model: {
       type: Object,
       default: () => ({
@@ -55,7 +59,7 @@ export default {
           model: "name",
           placeholder: "John Doe",
           required: true,
-          featured: true,
+          featured: true
         },
         {
           type: "input",
@@ -104,12 +108,18 @@ export default {
           delete this.model[propName];
         }
       }
-      await templatesApi.post(this.model);
-      this.$emit("update:visible", false);
-      this.$emit("created");
+      if (this.httpCall) {
+        this.model.text = this.model.text.replace(/(\r\n\t|\n|\r\t)/gm, "");
+        await templatesApi.post(this.model);
+        this.$emit("update:visible", false);
+        this.$emit("created");
+      } else {
+        this.$emit("created", this.model);
+      }
     },
     async editTemplate() {
-      await templatesApi.put(this.model)
+      this.model.text = this.model.text.replace(/(\r\n\t|\n|\r\t)/gm, "");
+      await templatesApi.put(this.model);
       this.$emit("update:visible", false);
       this.$emit("created");
     },

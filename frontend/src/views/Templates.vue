@@ -5,7 +5,7 @@
       <i class="fas fa-plus-circle create-icon" @click="createTemplate"></i>
     </h1>
     <template-table v-if="templates" :templates="templates" @deleted="showModal"/>
-    <confirm-modal :visible.sync="showDeleteModal" @close="closeModal" @accept="deleteTemplate"/>
+    <confirm-modal :visible.sync="showDeleteModal" @accept="deleteTemplate"/>
     <create-template :visible.sync="showCreateModal" @created="getTemplates"/>
   </div>
 </template>
@@ -42,10 +42,8 @@ export default {
       this.showDeleteModal = true;
       this.selectedTemplate = template_id;
     },
-    closeModal() {
-      this.showDeleteModal = false;
-    },
     async deleteTemplate() {
+      this.showDeleteModal = false;
       await templatesApi.delete(this.selectedTemplate)
       this.getTemplates()
     },
