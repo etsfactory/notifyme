@@ -1,7 +1,10 @@
 <template>
   <div class="users-subscription">
-    <ul class="user-list">
-      Users not suscribed to this bus filter:
+    <ul class="user-list">Users not suscribed to this bus filter:
+      <div class="warning" v-if="usersFiltered.length === 0">
+        <strong>No users found.</strong> Please go to
+        <router-link to="/users">users page</router-link>and create some
+      </div>
       <li v-for="(user,i) in usersFiltered" :key="i" class="user">
         <div class="info">
           <div class="name">
@@ -18,7 +21,11 @@
       </li>
     </ul>
     <div class="center">
-      <button class="button-main" @click="$emit('click', selectedUsers)">Add users</button>
+      <button
+        v-if="usersFiltered.length !== 0"
+        class="button-main"
+        @click="$emit('click', selectedUsers)"
+      >Add users</button>
     </div>
   </div>
 </template>
@@ -42,12 +49,12 @@ export default {
   },
   data: () => ({
     selectedUsers: [],
-    userSelected: false,
+    userSelected: false
   }),
   computed: {
     usersFiltered() {
       this.selectedUsers = [];
-      return this.users.filter((item) => !this.isSuscribed(item.id) );
+      return this.users.filter(item => !this.isSuscribed(item.id));
     }
   },
   methods: {
@@ -64,9 +71,8 @@ export default {
     },
     isSuscribed(user_id) {
       return this.subscriptions.some(item => item.id === user_id);
-    },
-
-  },
+    }
+  }
 };
 </script>
 

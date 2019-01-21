@@ -72,6 +72,11 @@ body {
   margin: 0px auto;
   text-align: center;
 }
+.warning {
+  padding: 1rem;
+  margin: 1rem auto;
+  background-color: #fff5e1;
+}
 .content {
   left: $sidebar-width;
   transition: left 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);

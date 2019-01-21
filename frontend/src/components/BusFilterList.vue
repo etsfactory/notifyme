@@ -1,6 +1,10 @@
 <template>
   <div class="users-subscription">
     <ul class="user-list">Bus filters not suscribed to this user:
+      <div class="warning" v-if="busFiltersFiltered.length === 0">
+        <strong>No filters found.</strong> Please go to
+        <router-link to="/bus_filters"> filters page</router-link>and create some
+      </div>
       <li v-for="(busFilter,i) in busFiltersFiltered" :key="i" class="user">
         <div class="info">
           <div class="name">
@@ -17,7 +21,11 @@
       </li>
     </ul>
     <div class="center">
-      <button class="button-main" @click="$emit('click', selectedbusFilters)">Add bus filters</button>
+      <button
+        v-if="busFiltersFiltered.length !== 0"
+        class="button-main"
+        @click="$emit('click', selectedbusFilters)"
+      >Add bus filters</button>
     </div>
   </div>
 </template>
