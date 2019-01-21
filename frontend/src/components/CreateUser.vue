@@ -7,6 +7,7 @@
         <i class="fas fa-user"></i>
         {{ text }} user
       </h2>
+      <error v-if="error" :error="error"/>
       <vue-form-generator
         @validated="onValidated"
         class="user-form"
@@ -21,6 +22,7 @@
 
 <script>
 import usersApi from "@/logic/users";
+import Error from "@/components/Error.vue";
 
 export default {
   name: "ConfirmModal",
@@ -39,6 +41,7 @@ export default {
   data: () => ({
     usersApi: "/users",
     formValid: false,
+    error: null,
     schema: {
       fields: [
         {
@@ -92,14 +95,22 @@ export default {
         }
       }
 
-      await usersApi.post(this.model);
-      this.$emit("update:visible", false);
-      this.$emit("created");
+      try {
+        await usersApi.post(this.model);
+        this.$emit("update:visible", false);
+        this.$emit("created");
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     async editUser() {
-      await usersApi.put(this.model);
-      this.$emit("update:visible", false);
-      this.$emit("created");
+      try {
+        await usersApi.put(this.model);
+        this.$emit("update:visible", false);
+        this.$emit("created");
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;

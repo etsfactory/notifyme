@@ -1,22 +1,23 @@
 <template>
   <div class="template">
+    <h1>
+      <i class="fas fa-envelope"></i> Template
+    </h1>
+    <error v-if="error" :error="error"/>
     <div v-if="template">
-      <h1>
-        <i class="fas fa-envelope"></i> Template
-      </h1>
       <div class="template-container">
         <key-value-table class="info" :data="template" disable="text"/>
         <div class="buttons">
           <action-buttons @edit="showEditModal" @remove="showDeleteTemplate = true"></action-buttons>
-            <confirm-modal
-              :visible.sync="showDeleteTemplate"
-              @accept="deleteTemplate"
-              subtitle="This action can not be undone"
+          <confirm-modal
+            :visible.sync="showDeleteTemplate"
+            @accept="deleteTemplate"
+            subtitle="This action can not be undone"
           />
         </div>
       </div>
       <div class="text">
-        <h2>Body for the email:</h2>
+        <h2>Body of the email:</h2>
         <pre v-highlightjs>
           <code
   class="html text-body"
@@ -42,22 +43,22 @@
 import axios from "axios";
 import templatesApi from "@/logic/templates";
 import beautify from "js-beautify";
-import UsersTable from "@/components/UsersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateTemplate from "@/components/CreateTemplate.vue";
 import SubscriptionModal from "@/components/SubscriptionModal.vue";
+import Error from "@/components/Error.vue";
 
 export default {
   name: "BusFilter",
   components: {
-    UsersTable,
     KeyValueTable,
     ActionButtons,
     ConfirmModal,
     CreateTemplate,
-    SubscriptionModal
+    SubscriptionModal,
+    Error
   },
   data: () => ({
     template: null,
@@ -67,32 +68,48 @@ export default {
     showDeleteTemplate: false,
     textHTML: "",
     editedText: "",
-    editingText: false
+    editingText: false,
+    error: null
   }),
   created() {
     this.getTemplate();
   },
   methods: {
     async getTemplate() {
-      let response = await templatesApi.get(this.$route.params.id);
-      this.template = response.data;
-      let text_breaks = response.data.text
-        .replace(/(\r\n\t|\n|\r\t)/gm, "")
-        .replace(/{%/g, "\n{%")
-        .replace(/%}/g, "%}\n");
-      this.textHTML = beautify.html(text_breaks, {
-        indent_size: 2,
-        wrap_line_length: 100
-      });
+      try {
+        let response = await templatesApi.get(this.$route.params.id);
+        this.template = response.data;
+        let text_breaks = response.data.text
+          .replace(/(\r\n\t|\n|\r\t)/gm, "")
+          .replace(/{%/g, "\n{%")
+          .replace(/%}/g, "%}\n");
+        this.textHTML = beautify.html(text_breaks, {
+          indent_size: 2,
+          wrap_line_length: 100
+        });
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     async saveTemplate() {
-      this.template.text = String(this.editedText).replace(/(\r\n\t|\n|\r\t)/gm, "");
-      await templatesApi.put(this.template);
-      this.getTemplate();
+      try {
+        this.template.text = String(this.editedText).replace(
+          /(\r\n\t|\n|\r\t)/gm,
+          ""
+        );
+        await templatesApi.put(this.template);
+        this.getTemplate();
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     async deleteTemplate() {
-      await templatesApi.delete(this.template.id);
-      this.$router.push('/templates');
+      try {
+        await templatesApi.delete(this.template.id);
+        this.$router.push("/templates");
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     showEditModal() {
       this.showCreateModal = true;

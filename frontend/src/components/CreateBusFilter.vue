@@ -7,6 +7,7 @@
         <i class="fas fa-filter"></i>
         {{ text }} bus filter
       </h2>
+      <error v-if="error" :error="error"/>
       <vue-form-generator
         @validated="onValidated"
         class="user-form"
@@ -21,6 +22,7 @@
 
 <script>
 import busFiltersApi from "@/logic/bus_filters";
+import Error from "@/components/Error.vue";
 
 export default {
   name: "CreateBusFilter",
@@ -43,6 +45,7 @@ export default {
   data: () => ({
     busFilterApi: "/bus_filters",
     formValid: false,
+    error: null,
     schema: {
       fields: [
         {
@@ -123,14 +126,22 @@ export default {
           delete this.model[propName];
         }
       }
-      await busFiltersApi.post(this.model);
-      this.$emit("update:visible", false);
-      this.$emit("created");
+      try {
+        await busFiltersApi.post(this.model);
+        this.$emit("update:visible", false);
+        this.$emit("created");
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     async editBusFilter() {
-      await busFiltersApi.put(this.model);
-      this.$emit("update:visible", false);
-      this.$emit("created");
+      try {
+        await busFiltersApi.put(this.model);
+        this.$emit("update:visible", false);
+        this.$emit("created");
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;

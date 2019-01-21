@@ -4,7 +4,8 @@
       <i class="fas fa-users"></i> Users
       <i class="fas fa-plus-circle create-icon" @click="createUser"></i>
     </h1>
-    <users-table v-if="users" :users="users" @deleted="showModal"/>
+    <error v-if="error" :error="error"/>
+    <users-table v-else-if="users" :users="users" @deleted="showModal"/>
     <confirm-modal :visible.sync="showDeleteModal" @accept="deleteUser"/>
     <create-user :visible.sync="showCreateModal" @created="getUsers"/>
   </div>
@@ -16,13 +17,15 @@ import usersApi from "@/logic/users";
 import UsersTable from "@/components/UsersTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateUser from "@/components/CreateUser.vue";
+import Error from "@/components/Error.vue";
 
 export default {
   name: "Users",
   components: {
     UsersTable,
     ConfirmModal,
-    CreateUser
+    CreateUser,
+    Error
   },
   data: () => ({
     users: null,
@@ -36,16 +39,26 @@ export default {
   },
   methods: {
     async getUsers() {
-      let response = await usersApi.getAll();
-      this.users = response.data;
+      try {
+        let response = await usersApi.getAll();
+        this.users = response.data;
+      } catch (error) {
+        this.error = error.response;
+
+      }
     },
     showModal(user_id) {
       this.showDeleteModal = true;
       this.selectedUser = user_id;
     },
     async deleteUser() {
-      this.closeModal();
-      await usersApi.delete(this.selectedUser);
+      this.showDeleteModal = false;
+      try {
+        await usersApi.delete(this.selectedUser);
+      } catch (error) {
+        this.error = error.response;
+
+      }
       this.getUsers();
     },
     createUser() {
@@ -59,5 +72,4 @@ export default {
 .users {
   position: relative;
 }
-
 </style>

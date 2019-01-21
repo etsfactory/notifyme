@@ -3,10 +3,13 @@
     <div v-for="(value, key, i) in data" :key="i" class="table">
       <span v-if="key !== disable" class="row">
         <div class="column">
-          <div class="column-container key">{{key}}</div>
+          <div v-if="key === 'id'" class="column-container key"><strong>{{key}}</strong></div>
+          <div v-else class="column-container key">{{key}}</div>
         </div>
         <div class="column">
-          <div class="column-container">{{value}}</div>
+
+          <div v-if="key === 'id'" class="column-container"><strong>{{value}}</strong></div>
+          <div v-else class="column-container">{{value}}</div>
         </div>
       </span>
     </div>
@@ -40,7 +43,6 @@ export default {
   }
 }
 .key {
-  font-weight: bold;
   color: $color-main-dark;
 }
 .column {

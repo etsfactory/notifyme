@@ -4,6 +4,7 @@
       <i class="fas fa-envelope"></i> Templates
       <i class="fas fa-plus-circle create-icon" @click="createTemplate"></i>
     </h1>
+    <error v-if="error" :error="error"/>
     <template-table v-if="templates" :templates="templates" @deleted="showModal"/>
     <confirm-modal :visible.sync="showDeleteModal" @accept="deleteTemplate"/>
     <create-template :visible.sync="showCreateModal" @created="getTemplates"/>
@@ -16,27 +17,34 @@ import templatesApi from "@/logic/templates";
 import TemplateTable from "@/components/TemplateTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateTemplate from "@/components/CreateTemplate.vue";
+import Error from "@/components/Error.vue";
 
 export default {
   name: "Templates",
   components: {
     TemplateTable,
     ConfirmModal,
-    CreateTemplate
+    CreateTemplate,
+    Error
   },
   data: () => ({
     templates: null,
     showDeleteModal: false,
     selectedTemplate: null,
-    showCreateModal: false
+    showCreateModal: false,
+    error: null,
   }),
   created() {
     this.getTemplates();
   },
   methods: {
     async getTemplates() {
-      let response = await templatesApi.getAll();
-      this.templates = response.data;
+      try {
+        let response = await templatesApi.getAll();
+        this.templates = response.data;
+      } catch(error) {
+        this.error = error.response;
+      }
     },
     showModal(template_id) {
       this.showDeleteModal = true;
@@ -44,7 +52,11 @@ export default {
     },
     async deleteTemplate() {
       this.showDeleteModal = false;
-      await templatesApi.delete(this.selectedTemplate)
+      try {
+        await templatesApi.delete(this.selectedTemplate)
+      } catch (error) {
+        this.error = error.response;
+      }
       this.getTemplates()
     },
     createTemplate() {

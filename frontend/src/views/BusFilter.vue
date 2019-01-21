@@ -1,9 +1,10 @@
 <template>
   <div class="bus-filter">
+    <h1>
+      <i class="fas fa-filter"></i> BusFilter
+    </h1>
+    <error v-if="userError" :error="userError"/>
     <div v-if="busFilter">
-      <h1>
-        <i class="fas fa-filter"></i> BusFilter
-      </h1>
       <div class="bus-filter-container">
         <key-value-table class="info" :data="busFilter" disable="template_id"/>
         <div class="buttons">
@@ -15,10 +16,11 @@
           />
         </div>
       </div>
+      <h2>
+        <i class="fas fa-envelope"></i> Template:
+      </h2>
       <div v-if="template" class="template">
-        <h2>
-          <i class="fas fa-envelope"></i> Template:
-        </h2>
+        <error v-if="busFilterError" :error="busFilterError"/>
         <template-table :remove="false" :templates="[template]"/>
       </div>
       <div v-else class="template">
@@ -33,11 +35,12 @@
           @created="createTemplate"
         />
       </div>
-      <div v-if="notifications" class="users">
-        <h2>
-          <i class="fas fa-users"></i> Users suscribed to:
-          <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
-        </h2>
+      <h2 class="notifications-title">
+        <i class="fas fa-users"></i> Users suscribed to:
+        <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
+      </h2>
+      <error v-if="userError" :error="userError"/>
+      <div v-if="notifications" class="notifications">
         <users-table :users="notifications" @deleted="showDeleteModal"/>
         <confirm-modal
           :visible.sync="showConfirmModal"
@@ -94,37 +97,60 @@ export default {
     showCreateModal: false,
     showTemplateModal: false,
     showDeleteBusFilter: false,
-    showSubscriptionModal: false
+    showSubscriptionModal: false,
+    busFilterError: null,
+    userError: null,
+    templateError: null
   }),
   created() {
     this.getBusFilter();
   },
   methods: {
     async getBusFilter() {
-      let response = await busFiltersApi.get(this.$route.params.id);
-      this.busFilter = response.data;
-      this.getTemplate();
+      try {
+        let response = await busFiltersApi.get(this.$route.params.id);
+        this.busFilter = response.data;
+        this.getTemplate();
+      } catch (error) {
+        this.busFilterError = error.response;
+      }
     },
     async getTemplate() {
-      if (this.busFilter.template_id) {
-        let response = await busFiltersApi.getTemplate(this.busFilter.id);
-        this.template = response.data;
+      try {
+        if (this.busFilter.template_id) {
+          let response = await busFiltersApi.getTemplate(this.busFilter.id);
+          this.template = response.data;
+        }
+        this.getBusNotifications();
+      } catch (error) {
+        this.templateError = error.response;
       }
-      this.getBusNotifications();
     },
     async getBusNotifications() {
-      let response = await busFiltersApi.getSubscriptions(this.busFilter.id);
-      this.notifications = response.data;
+      try {
+        let response = await busFiltersApi.getSubscriptions(this.busFilter.id);
+        this.notifications = response.data;
+      } catch (error) {
+        this.userError = error.response;
+      }
     },
     async createTemplate(template) {
-      await busFiltersApi.createTemplate(this.busFilter.id, template);
-      this.showTemplateModal = false;
-      let response = await busFiltersApi.getTemplate(this.busFilter.id);
-      this.template = response.data;
+      try {
+        await busFiltersApi.createTemplate(this.busFilter.id, template);
+        this.showTemplateModal = false;
+        let response = await busFiltersApi.getTemplate(this.busFilter.id);
+        this.template = response.data;
+      } catch (error) {
+        this.templateError = error.response;
+      }
     },
     async deleteBusFilter() {
-      await busFiltersApi.delete(this.busFilter.id);
-      this.$router.push("/bus_filters");
+      try {
+        await busFiltersApi.delete(this.busFilter.id);
+        this.$router.push("/bus_filters");
+      } catch (error) {
+        this.busFilter = error.response;
+      }
     },
     showEditModal() {
       this.showCreateModal = true;
@@ -174,7 +200,7 @@ export default {
 .template {
   margin-top: 3rem;
 }
-.users {
+.notifications-title {
   margin-top: 5rem;
 }
 .bus-filter-container {

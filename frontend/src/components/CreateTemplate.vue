@@ -7,6 +7,7 @@
         <i class="fas fa-envelope"></i>
         {{ text }} template
       </h2>
+      <error v-if="error" :error="error"/>
       <vue-form-generator
         @validated="onValidated"
         class="template-form"
@@ -21,6 +22,7 @@
 
 <script>
 import templatesApi from "@/logic/templates";
+import Error from "@/components/Error.vue";
 
 export default {
   name: "ConfirmModal",
@@ -43,6 +45,7 @@ export default {
   },
   data: () => ({
     formValid: false,
+    error: null,
     schema: {
       fields: [
         {
@@ -108,20 +111,28 @@ export default {
           delete this.model[propName];
         }
       }
-      if (this.httpCall) {
-        this.model.text = this.model.text.replace(/(\r\n\t|\n|\r\t)/gm, "");
-        await templatesApi.post(this.model);
-        this.$emit("update:visible", false);
-        this.$emit("created");
-      } else {
-        this.$emit("created", this.model);
+      try {
+        if (this.httpCall) {
+          this.model.text = this.model.text.replace(/(\r\n\t|\n|\r\t)/gm, "");
+          await templatesApi.post(this.model);
+          this.$emit("update:visible", false);
+          this.$emit("created");
+        } else {
+          this.$emit("created", this.model);
+        }
+      } catch (error) {
+        this.error = error.response;
       }
     },
     async editTemplate() {
-      this.model.text = this.model.text.replace(/(\r\n\t|\n|\r\t)/gm, "");
-      await templatesApi.put(this.model);
-      this.$emit("update:visible", false);
-      this.$emit("created");
+      try {
+        this.model.text = this.model.text.replace(/(\r\n\t|\n|\r\t)/gm, "");
+        await templatesApi.put(this.model);
+        this.$emit("update:visible", false);
+        this.$emit("created");
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;

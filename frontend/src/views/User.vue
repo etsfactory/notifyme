@@ -1,9 +1,10 @@
 <template>
   <div class="user">
+    <h1>
+      <i class="fas fa-user"></i> User
+    </h1>
+    <error v-if="userError" :error="userError"/>
     <div v-if="user">
-      <h1>
-        <i class="fas fa-user"></i> User
-      </h1>
       <div class="user-container">
         <key-value-table :data="user" class="info"/>
         <div class="buttons">
@@ -15,11 +16,12 @@
           />
         </div>
       </div>
+      <h2 class="notifications-title">
+        <i class="fas fa-filter"></i> Suscribed to:
+        <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
+      </h2>
+      <error v-if="busFilterError" :error="busFilterError"/>
       <div v-if="notifications" class="notifications">
-        <h2>
-          <i class="fas fa-filter"></i> Suscribed to:
-          <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
-        </h2>
         <bus-filters-table :bus-filters="notifications" @deleted="showDeleteModal"/>
         <confirm-modal
           :visible.sync="showConfirmModal"
@@ -48,6 +50,7 @@ import ConfirmModal from "@/components/ConfirmModal.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import CreateUser from "@/components/CreateUser.vue";
 import SubscriptionModal from "@/components/SubscriptionModal.vue";
+import Error from "@/components/Error.vue";
 
 export default {
   name: "User",
@@ -57,7 +60,8 @@ export default {
     ConfirmModal,
     ActionButtons,
     CreateUser,
-    SubscriptionModal
+    SubscriptionModal,
+    Error
   },
   data: () => ({
     user: null,
@@ -66,7 +70,9 @@ export default {
     showDeleteUserModal: false,
     selectedBusFilter: null,
     showCreateModal: false,
-    showSubscriptionModal: false
+    showSubscriptionModal: false,
+    userError: null,
+    busFilterError: null
   }),
   computed: {
     nameToDisplay() {
@@ -81,22 +87,38 @@ export default {
   },
   methods: {
     async getUser() {
-      let response = await usersApi.get(this.$route.params.id);
-      this.user = response.data;
-      this.getUserNotifications(this.user.id);
+      try {
+        let response = await usersApi.get(this.$route.params.id);
+        this.user = response.data;
+        this.getUserNotifications(this.user.id);
+      } catch (error) {
+        this.userError = error.response;
+      }
     },
     async getUserNotifications() {
-      let response = await usersApi.getSubscriptions(this.user.id);
-      this.notifications = response.data;
+      try {
+        let response = await usersApi.getSubscriptions(this.user.id);
+        this.notifications = response.data;
+      } catch (error) {
+        this.busFilterError = error.response;
+      }
     },
     async deleteSubscription() {
-      this.showConfirmModal = false;
-      await usersApi.deleteSubscription(this.user.id, this.selectedBusFilter);
-      this.getUserNotifications();
+      try {
+        this.showConfirmModal = false;
+        await usersApi.deleteSubscription(this.user.id, this.selectedBusFilter);
+        this.getUserNotifications();
+      } catch (error) {
+        this.busFilterError = error.response;
+      }
     },
     async deleteUser() {
-      await usersApi.delete(this.user.id);
-      this.$router.push("/users");
+      try {
+        await usersApi.delete(this.user.id);
+        this.$router.push("/users");
+      } catch (error) {
+        this.userError = error.response;
+      }
     },
     showDeleteModal(bus_filter_id) {
       this.showConfirmModal = true;
@@ -133,7 +155,7 @@ export default {
 .info {
   width: 40%;
 }
-.notifications {
+.notifications-title {
   margin-top: 3rem;
 }
 .user-container {

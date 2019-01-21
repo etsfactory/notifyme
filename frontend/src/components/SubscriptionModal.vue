@@ -3,6 +3,7 @@
     <div class="modal-bg" @click="close"></div>
     <div class="modal-inner">
       <a class="modal-close" @click="close">X</a>
+      <error v-if="error" :error="error"/>
       <user-list
         v-if="users"
         :subscriptions="subscriptions"
@@ -26,6 +27,8 @@ import busFiltersApi from "@/logic/bus_filters";
 import UserList from "@/components/UserList.vue";
 import BusFilterList from "@/components/BusFilterList.vue";
 
+import Error from "@/components/Error.vue";
+
 export default {
   name: "SubscriptionModal",
   components: {
@@ -43,27 +46,44 @@ export default {
   },
   data: () => ({
     users: null,
-    busFilters: null
+    busFilters: null,
+    error: null
   }),
   methods: {
     close() {
       this.$emit("update:visible", false);
     },
     async getUsers() {
-      let response = await usersApi.getAll();
-      this.users = response.data;
+      try {
+        let response = await usersApi.getAll();
+        this.users = response.data;
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     async getBusFilters() {
-      let response = await busFiltersApi.getAll();
-      this.busFilters = response.data;
+      try {
+        let response = await busFiltersApi.getAll();
+        this.busFilters = response.data;
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     async createUserSubscription(users) {
-      await usersApi.createSubscription(this.id, this.busFilters);
-      this.$emit("click");
+      try {
+        await usersApi.createSubscription(this.id, this.busFilters);
+        this.$emit("click");
+      } catch (error) {
+        this.error = error.response;
+      }
     },
     async createBusFilterSubscription(busFilters) {
-      await busFiltersApi.createSubscription(this.id, this.users);
-      this.$emit("click");
+      try {
+        await busFiltersApi.createSubscription(this.id, this.users);
+        this.$emit("click");
+      } catch (error) {
+        this.error = error.response;
+      }
     }
   },
   watch: {
@@ -73,7 +93,7 @@ export default {
   },
   created() {
     this.type === "users" ? this.getUsers() : this.getBusFilters();
-  },
+  }
 };
 </script>
 
