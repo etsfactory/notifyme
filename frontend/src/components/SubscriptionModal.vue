@@ -27,8 +27,6 @@ import busFiltersApi from "@/logic/bus_filters";
 import UserList from "@/components/UserList.vue";
 import BusFilterList from "@/components/BusFilterList.vue";
 
-import Error from "@/components/Error.vue";
-
 export default {
   name: "SubscriptionModal",
   components: {
@@ -36,12 +34,21 @@ export default {
     BusFilterList
   },
   props: {
-    visible: Boolean,
-    type: String,
-    id: String,
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: ""
+    },
+    id: {
+      type: String,
+      default: ""
+    },
     subscriptions: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data: () => ({
@@ -49,6 +56,14 @@ export default {
     busFilters: null,
     error: null
   }),
+  watch: {
+    subscriptions() {
+      this.users ? this.getUsers() : this.getBusFilters();
+    }
+  },
+  created() {
+    this.type === "users" ? this.getUsers() : this.getBusFilters();
+  },
   methods: {
     close() {
       this.$emit("update:visible", false);
@@ -69,30 +84,22 @@ export default {
         this.error = error.response;
       }
     },
-    async createUserSubscription(users) {
+    async createUserSubscription(busFilters) {
       try {
-        await usersApi.createSubscription(this.id, this.busFilters);
+        await usersApi.createSubscription(this.id, busFilters);
         this.$emit("click");
       } catch (error) {
         this.error = error.response;
       }
     },
-    async createBusFilterSubscription(busFilters) {
+    async createBusFilterSubscription(users) {
       try {
-        await busFiltersApi.createSubscription(this.id, this.users);
+        await busFiltersApi.createSubscription(this.id, users);
         this.$emit("click");
       } catch (error) {
         this.error = error.response;
       }
     }
-  },
-  watch: {
-    subscriptions() {
-      this.users ? this.getUsers() : this.getBusFilters();
-    }
-  },
-  created() {
-    this.type === "users" ? this.getUsers() : this.getBusFilters();
   }
 };
 </script>

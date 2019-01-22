@@ -12,7 +12,7 @@
           <confirm-modal
             :visible.sync="showDeleteTemplate"
             @accept="deleteTemplate"
-            subtitle="This action can not be undone"
+            subtitle="This action can not be undone. All bus filters asociated with this template will be replaced with default template"
           />
         </div>
       </div>
@@ -40,14 +40,12 @@
 </template>
 
 <script>
-import axios from "axios";
 import templatesApi from "@/logic/templates";
 import beautify from "js-beautify";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateTemplate from "@/components/CreateTemplate.vue";
-import SubscriptionModal from "@/components/SubscriptionModal.vue";
 import Error from "@/components/Error.vue";
 
 export default {
@@ -57,7 +55,6 @@ export default {
     ActionButtons,
     ConfirmModal,
     CreateTemplate,
-    SubscriptionModal,
     Error
   },
   data: () => ({

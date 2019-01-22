@@ -26,6 +26,9 @@ import Error from "@/components/Error.vue";
 
 export default {
   name: "ConfirmModal",
+  components: {
+    Error
+  },
   props: {
     visible: Boolean,
     edit: Boolean,
@@ -80,6 +83,18 @@ export default {
       return this.edit ? "Edit" : "Create";
     }
   },
+  created() {
+    if (this.edit) {
+      this.schema.fields[0].disabled = true;
+    }
+    this.schema.fields.push({
+      type: "submit",
+      buttonText: this.text,
+      validateBeforeSubmit: true,
+      styleClasses: "button-submit",
+      onSubmit: () => (this.edit ? this.editUser() : this.createUser())
+    });
+  },
   methods: {
     close() {
       this.$emit("update:visible", false);
@@ -114,19 +129,8 @@ export default {
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;
+      this.error = errors;
     }
-  },
-  created() {
-    if (this.edit) {
-      this.schema.fields[0].disabled = true;
-    }
-    this.schema.fields.push({
-      type: "submit",
-      buttonText: this.text,
-      validateBeforeSubmit: true,
-      styleClasses: "button-submit",
-      onSubmit: () => (this.edit ? this.editUser() : this.createUser())
-    });
   }
 };
 </script>

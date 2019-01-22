@@ -3,7 +3,8 @@ import axios from "axios";
 const USERS_PATH = "/users";
 const BUS_FILTERS_PATH = "/bus_filters";
 const TEMPLATE_PATH = "/templates";
-const BUS_FILTERS_ENDPOINT = process.env.VUE_APP_NOTIFYME_HOST + BUS_FILTERS_PATH;
+const BUS_FILTERS_ENDPOINT =
+  process.env.VUE_APP_NOTIFYME_HOST + BUS_FILTERS_PATH;
 
 export default {
   get(busId) {
@@ -28,12 +29,17 @@ export default {
     return axios.post(BUS_FILTERS_ENDPOINT + "/" + busId + USERS_PATH, users);
   },
   deleteSubscription(busId, userId) {
-    return axios.delete(BUS_FILTERS_ENDPOINT + "/" + busId + USERS_PATH + "/" + userId)
+    return axios.delete(
+      BUS_FILTERS_ENDPOINT + "/" + busId + USERS_PATH + "/" + userId
+    );
   },
   getTemplate(busId) {
-    return axios.get(BUS_FILTERS_ENDPOINT + "/" + busId + TEMPLATE_PATH)
+    return axios.get(BUS_FILTERS_ENDPOINT + "/" + busId + TEMPLATE_PATH);
   },
   createTemplate(busId, template) {
-    return axios.post(BUS_FILTERS_ENDPOINT + "/" + busId + TEMPLATE_PATH, template)
+    return axios.post(
+      BUS_FILTERS_ENDPOINT + "/" + busId + TEMPLATE_PATH,
+      template
+    );
   }
-}
+};

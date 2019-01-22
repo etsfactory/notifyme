@@ -24,7 +24,10 @@ export default {
       type: Object,
       required: true
     },
-    disable: String
+    disable: {
+      type: String,
+      default: ""
+    }
   }
 };
 </script>

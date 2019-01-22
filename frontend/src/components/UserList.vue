@@ -40,11 +40,11 @@ export default {
   props: {
     users: {
       type: Array,
-      default: []
+      default: () => []
     },
     subscriptions: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data: () => ({

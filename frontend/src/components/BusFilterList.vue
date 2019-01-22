@@ -40,11 +40,11 @@ export default {
   props: {
     busFilters: {
       type: Array,
-      default: []
+      default: () => []
     },
     subscriptions: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data: () => ({
