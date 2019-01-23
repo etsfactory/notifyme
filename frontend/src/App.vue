@@ -23,9 +23,9 @@ export default {
   },
   data: () => ({
     sections: [
-      { name: "Users", url: "/users" },
-      { name: "Bus filters", url: "/bus_filters" },
-      { name: "Templates", url: "/templates" }
+      { name: "Users", url: "/users", icon: "fas fa-users" },
+      { name: "Bus filters", url: "/bus_filters", icon: "fas fa-filter" },
+      { name: "Templates", url: "/templates", icon: "fas fa-envelope" }
     ]
   }),
   computed: {
@@ -67,6 +67,12 @@ body {
       color: #42b983;
     }
   }
+}
+a,
+a:active,
+a:focus,
+button {
+  outline: none;
 }
 .center {
   margin: 0px auto;

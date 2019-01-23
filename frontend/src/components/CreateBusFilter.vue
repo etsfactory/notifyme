@@ -161,7 +161,6 @@ export default {
     },
     onValidated(isValid, errors) {
       this.isValid = isValid;
-      this.error = errors;
     }
   }
 };

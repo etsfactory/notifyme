@@ -1,12 +1,15 @@
 <template>
   <aside class="sidebar">
     <nav>
-      <ul>
-      <li v-for="(section, i) in sections" :key="i" class="links">
-        <div @click="closeSidebar()">
-          <router-link class="link" :to="section.url">{{ section.name }}</router-link>
-        </div>
-      </li>
+      <ul class="link-list">
+        <li v-for="(section, i) in sections" :key="i">
+          <router-link class="link" :to="section.url">
+            <div class="link-container">
+              <i class="icon" :class="section.icon"></i>
+              {{ section.name }}
+            </div>
+          </router-link>
+        </li>
       </ul>
     </nav>
   </aside>
@@ -39,7 +42,7 @@ export default {
   display: block;
   width: $sidebar-width;
   height: 100%;
-  background: $sidebar-color;
+  background: linear-gradient(to bottom, $sidebar-color, $sidebar-color-dark);
   left: 0;
   top: 0;
   bottom: 0;
@@ -49,15 +52,30 @@ export default {
     left: -$sidebar-width;
   }
 }
-.links {
-  list-style: none;
-  margin-top: 2rem;
-  margin: 2rem 0.5rem;
+.link-list {
+  padding: 0;
+  margin-top: 2.9rem;
 }
 .link {
+  list-style: none;
+  margin-top: 1rem;
+  padding: 1rem 0;
   color: white;
   text-decoration: none;
   font-weight: bold;
+  width: 100%;
+  display: block;
   font-size: 1.2rem;
+  &:hover {
+    background: $color-main-dark;
+  }
+}
+.link-container {
+  display: flex;
+  width: 90%;
+  justify-content: center;
+}
+.icon {
+  margin-right: 1rem;
 }
 </style>
