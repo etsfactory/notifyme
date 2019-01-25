@@ -44,7 +44,6 @@ export default {
         this.users = response.data;
       } catch (error) {
         this.error = error.response;
-
       }
     },
     showModal(user_id) {
@@ -57,7 +56,6 @@ export default {
         await usersApi.delete(this.selectedUser);
       } catch (error) {
         this.error = error.response;
-
       }
       this.getUsers();
     },

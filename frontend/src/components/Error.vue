@@ -24,10 +24,10 @@ export default {
   font-weight: bold;
 }
 .bounce-enter-active {
-  animation: bounce-in .1s ease-in-out;
+  animation: bounce-in 0.1s ease-in-out;
 }
 .bounce-leave-active {
-  animation: bounce-in .1s ease-in-out;
+  animation: bounce-in 0.1s ease-in-out;
 }
 @keyframes bounce-in {
   0% {

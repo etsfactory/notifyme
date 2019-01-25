@@ -40,11 +40,11 @@ export default {
   props: {
     users: {
       type: Array,
-      default: []
+      default: () => []
     },
     subscriptions: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data: () => ({
@@ -53,8 +53,12 @@ export default {
   }),
   computed: {
     usersFiltered() {
-      this.selectedUsers = [];
       return this.users.filter(item => !this.isSuscribed(item.id));
+    }
+  },
+  watch: {
+    users() {
+      this.selectedUsers = [];
     }
   },
   methods: {
@@ -82,6 +86,10 @@ export default {
   width: 100%;
   margin: 0;
   padding: 0;
+}
+.user-list {
+  overflow-y: auto;
+  max-height: 700px;
 }
 .user {
   display: flex;

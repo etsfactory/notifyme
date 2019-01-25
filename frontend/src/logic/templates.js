@@ -18,5 +18,5 @@ export default {
   },
   delete(templateId) {
     return axios.delete(TEMPLATES_ENDPOINT + "/" + templateId);
-  },
-}
+  }
+};
