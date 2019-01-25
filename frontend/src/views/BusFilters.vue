@@ -58,7 +58,7 @@ export default {
       this.showDeleteModal = false;
       try {
         await busFiltersApi.delete(this.selectedBusFilter);
-      } catch(error) {
+      } catch (error) {
         this.error = error.response;
       }
       this.getBusFilters();

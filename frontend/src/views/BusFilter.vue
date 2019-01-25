@@ -16,7 +16,7 @@
           />
         </div>
       </div>
-      <h2>
+      <h2 class="templates-title">
         <i class="fas fa-envelope"></i> Template:
       </h2>
       <div v-if="template" class="template">
@@ -197,11 +197,11 @@ export default {
 .info {
   width: 40%;
 }
-.template {
+.templates-title {
   margin-top: 3rem;
 }
 .notifications-title {
-  margin-top: 5rem;
+  margin-top: 3rem;
 }
 .bus-filter-container {
   display: flex;

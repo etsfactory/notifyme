@@ -24,9 +24,14 @@ export default {
     return axios.get(USERS_ENDPOINT + "/" + userId + BUS_FILTERS_PATH);
   },
   createSubscription(userId, busFilters) {
-    return axios.post(USERS_ENDPOINT + "/" + userId + BUS_FILTERS_PATH, busFilters);
+    return axios.post(
+      USERS_ENDPOINT + "/" + userId + BUS_FILTERS_PATH,
+      busFilters
+    );
   },
   deleteSubscription(userId, busFilterId) {
-    return axios.delete(USERS_ENDPOINT + "/" + userId + BUS_FILTERS_PATH + "/" + busFilterId)
+    return axios.delete(
+      USERS_ENDPOINT + "/" + userId + BUS_FILTERS_PATH + "/" + busFilterId
+    );
   }
-}
+};

@@ -1,11 +1,11 @@
 <template>
-  <div class="users-subscription">
-    <ul class="user-list">Bus filters not suscribed to this user:
+  <div class="bus-filter-subscription">
+    <ul class="bus-filter-list">Bus filters not suscribed to this user:
       <div class="warning" v-if="busFiltersFiltered.length === 0">
         <strong>No filters found.</strong> Please go to
-        <router-link to="/bus_filters"> filters page</router-link>and create some
+        <router-link to="/bus_filters">filters page</router-link>and create some
       </div>
-      <li v-for="(busFilter,i) in busFiltersFiltered" :key="i" class="user">
+      <li v-for="(busFilter,i) in busFiltersFiltered" :key="i" class="bus-filter">
         <div class="info">
           <div class="name">
             <span class="id">{{busFilter.exchange}}</span>
@@ -40,11 +40,11 @@ export default {
   props: {
     busFilters: {
       type: Array,
-      default: []
+      default: () => []
     },
     subscriptions: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data: () => ({
@@ -53,8 +53,12 @@ export default {
   }),
   computed: {
     busFiltersFiltered() {
-      this.selectedbusFilters = [];
       return this.busFilters.filter(item => !this.isSuscribed(item.id));
+    }
+  },
+  watch: {
+    busFilters() {
+      this.selectedbusFilters = [];
     }
   },
   methods: {
@@ -77,13 +81,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.user-list,
-.users-subscription {
+.bus-filter-list,
+.bus-filter-subscription {
   width: 100%;
   margin: 0;
   padding: 0;
 }
-.user {
+.bus-filter-list {
+  overflow-y: auto;
+  max-height: 700px;
+}
+.bus-filter {
   display: flex;
   justify-content: space-between;
   width: 100%;

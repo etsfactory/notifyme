@@ -32,7 +32,7 @@ export default {
     showDeleteModal: false,
     selectedTemplate: null,
     showCreateModal: false,
-    error: null,
+    error: null
   }),
   created() {
     this.getTemplates();
@@ -42,7 +42,7 @@ export default {
       try {
         let response = await templatesApi.getAll();
         this.templates = response.data;
-      } catch(error) {
+      } catch (error) {
         this.error = error.response;
       }
     },
@@ -53,11 +53,11 @@ export default {
     async deleteTemplate() {
       this.showDeleteModal = false;
       try {
-        await templatesApi.delete(this.selectedTemplate)
+        await templatesApi.delete(this.selectedTemplate);
       } catch (error) {
         this.error = error.response;
       }
-      this.getTemplates()
+      this.getTemplates();
     },
     createTemplate() {
       this.showCreateModal = true;
