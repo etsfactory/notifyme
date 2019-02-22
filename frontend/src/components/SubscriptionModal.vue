@@ -23,6 +23,7 @@
 <script>
 import usersApi from "@/logic/users";
 import busFiltersApi from "@/logic/bus_filters";
+import Error from "@/components/Error.vue";
 
 import UserList from "@/components/UserList.vue";
 import BusFilterList from "@/components/BusFilterList.vue";
@@ -31,7 +32,8 @@ export default {
   name: "SubscriptionModal",
   components: {
     UserList,
-    BusFilterList
+    BusFilterList,
+    Error
   },
   props: {
     visible: {

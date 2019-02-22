@@ -61,7 +61,7 @@ export default {
   }
 }
 .link {
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   color: white;
   text-decoration: none;
   font-weight: bold;
@@ -69,5 +69,8 @@ export default {
   height: 100%;
   display: block;
   font-size: 1.2rem;
+}
+.icon {
+  margin-right: 0.2rem;
 }
 </style>
