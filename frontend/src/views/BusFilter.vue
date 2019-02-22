@@ -48,6 +48,7 @@
           subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
         />
         <subscription-modal
+          v-if="showSubscriptionModal"
           :visible.sync="showSubscriptionModal"
           type="users"
           :id="busFilter.id"

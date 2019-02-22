@@ -1,5 +1,5 @@
 <template>
-  <div v-show="visible" class="modal" id="modal" :class="{hide: !visible}">
+  <div v-if="visible" class="modal" id="modal" :class="{hide: !visible}">
     <div class="modal-bg" @click="close"></div>
     <div class="modal-inner">
       <a class="modal-close" @click="close">X</a>
@@ -85,19 +85,23 @@ export default {
       }
     },
     async createUserSubscription(busFilters) {
-      try {
-        await usersApi.createSubscription(this.id, busFilters);
-        this.$emit("click");
-      } catch (error) {
-        this.error = error.response;
+      if (busFilters) {
+        try {
+          await usersApi.createSubscription(this.id, busFilters);
+          this.$emit("click");
+        } catch (error) {
+          this.error = error.response;
+        }
       }
     },
     async createBusFilterSubscription(users) {
-      try {
-        await busFiltersApi.createSubscription(this.id, users);
-        this.$emit("click");
-      } catch (error) {
-        this.error = error.response;
+      if (users) {
+        try {
+          await busFiltersApi.createSubscription(this.id, users);
+          this.$emit("click");
+        } catch (error) {
+          this.error = error.response;
+        }
       }
     }
   }
