@@ -16,6 +16,15 @@
         :model="model"
         :options="formOptions"
       ></vue-form-generator>
+      <pre class="code" v-highlightjs>
+          <code
+            class="html text-body"
+            @blur="onTextEdit"
+            @click="editText"
+            contenteditable>{{code}}
+          </code>
+        </pre>
+      <button class="button-main" @click="editTemplate">Edit</button>
     </div>
   </div>
 </template>
@@ -32,6 +41,7 @@ export default {
   props: {
     visible: Boolean,
     edit: Boolean,
+    code: String,
     httpCall: {
       type: Boolean,
       default: true
@@ -49,6 +59,7 @@ export default {
   data: () => ({
     formValid: false,
     error: null,
+    editingText: false,
     schema: {
       fields: [
         {
@@ -63,7 +74,7 @@ export default {
           inputType: "text",
           label: "Name",
           model: "name",
-          placeholder: "John Doe",
+          placeholder: "Logs",
           required: true,
           featured: true
         },
@@ -75,17 +86,6 @@ export default {
           placeholder: "Subject of the email",
           required: true,
           featured: true,
-          validator: "string"
-        },
-        {
-          type: "textArea",
-          rows: 10,
-          inputType: "text",
-          label: "Body",
-          model: "text",
-          placeholder: "Body of the email",
-          featured: true,
-          required: true,
           validator: "string"
         }
       ]
@@ -104,13 +104,6 @@ export default {
     if (this.edit) {
       this.schema.fields[0].disabled = true;
     }
-    this.schema.fields.push({
-      type: "submit",
-      buttonText: this.text,
-      validateBeforeSubmit: true,
-      styleClasses: "button-submit",
-      onSubmit: () => (this.edit ? this.editTemplate() : this.createTemplate())
-    });
   },
   methods: {
     close() {
@@ -149,7 +142,16 @@ export default {
         this.error = error.response;
       }
     },
-    onValidated(isValid, errors) {
+    editText() {
+      this.editingText = true;
+    },
+    onTextEdit(event) {
+      this.model.text = event.target.innerText;
+    },
+    cancelEditText() {
+      this.editingText = false;
+    },
+    onValidated(isValid) {
       this.isValid = isValid;
     }
   }
@@ -184,5 +186,16 @@ export default {
 }
 .modal /deep/ .button-submit input {
   margin: 0px auto !important;
+}
+.code {
+  max-width: 100%;
+  width: 100%;
+  padding: 0 10px;
+}
+.code code {
+  max-width: 100%;
+  background-color: white;
+  border: 1px solid grey;
+  border-radius: 10px;
 }
 </style>

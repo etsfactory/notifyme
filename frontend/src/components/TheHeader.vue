@@ -15,17 +15,26 @@
             </div>
           </router-link>
         </li>
+        <li class="about">
+          <router-link to="/about">
+            <h1 class="title">
+              <i class="fas fa-info-circle"></i>
+            </h1>
+          </router-link>
+        </li>
       </ul>
     </nav>
   </header>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
 export default {
   name: "TheHeader",
   props: {
-    sections: Array
+    sections: {
+      type: Array,
+      default: () => []
+    }
   }
 };
 </script>
@@ -72,5 +81,12 @@ export default {
 }
 .icon {
   margin-right: 0.2rem;
+}
+.about {
+  margin-left: auto;
+  margin-right: 50px;
+  .fa-info-circle {
+    color: white;
+  }
 }
 </style>

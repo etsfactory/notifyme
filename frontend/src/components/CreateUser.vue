@@ -127,7 +127,7 @@ export default {
         this.error = error.response;
       }
     },
-    onValidated(isValid, errors) {
+    onValidated(isValid) {
       this.isValid = isValid;
     }
   }

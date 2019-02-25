@@ -26,7 +26,8 @@
         :model="template"
         :visible.sync="showCreateModal"
         :edit="true"
-        @created="getTemplate"
+        @created="$router.go(0)"
+        :code="textHTML"
       />
     </div>
   </div>
@@ -76,18 +77,6 @@ export default {
           indent_size: 2,
           wrap_line_length: 100
         });
-      } catch (error) {
-        this.error = error.response;
-      }
-    },
-    async saveTemplate() {
-      try {
-        this.template.text = String(this.editedText).replace(
-          /(\r\n\t|\n|\r\t)/gm,
-          ""
-        );
-        await templatesApi.put(this.template);
-        this.getTemplate();
       } catch (error) {
         this.error = error.response;
       }

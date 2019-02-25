@@ -6,7 +6,7 @@
       <td>{{ template.row.subject }}</td>
       <td class="actions">
         <i class="far fa-eye icon" @click="navigateToTemplate(template.row.id)"></i>
-        <i v-if="remove" class="far fa-trash-alt icon" @click="deleteTemplate(template.row.id)"></i>
+        <i v-if="remove && template.row.name !== 'default'" class="far fa-trash-alt icon" @click="deleteTemplate(template.row.id)"></i>
       </td>
     </template>
   </sorteable-table>

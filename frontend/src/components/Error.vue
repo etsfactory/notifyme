@@ -1,6 +1,9 @@
 <template>
   <transition name="bounce">
-    <div class="http-error">{{error.statusText}} - {{error.status}}</div>
+    <div class="http-error">
+      <span v-if="!error.data.message">ERROR {{error.status}} - {{error.statusText}}</span>
+      <span v-else >{{error.data.message}}</span>
+    </div>
   </transition>
 </template>
 
@@ -22,6 +25,7 @@ export default {
   font-size: 1.2rem;
   margin-top: 2rem;
   font-weight: bold;
+  margin: 1rem 0;
 }
 .bounce-enter-active {
   animation: bounce-in 0.1s ease-in-out;
