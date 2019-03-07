@@ -19,21 +19,15 @@
       <div class="text">
         <h2>Body of the email:</h2>
         <pre v-highlightjs>
-          <code
-  class="html text-body"
-  @blur="onTextEdit"
-  :class="{'editing-code': editingText}"
-  @click="editText"
-  contenteditable
->{{textHTML}}</code>
+          <code class="html text-body">{{textHTML}}</code>
         </pre>
-        <button v-if="editingText" class="button-main button-edit" @click="saveTemplate">Save</button>
       </div>
       <create-template
         :model="template"
         :visible.sync="showCreateModal"
         :edit="true"
-        @created="getTemplate"
+        @created="$router.go(0)"
+        :code="textHTML"
       />
     </div>
   </div>
@@ -65,7 +59,6 @@ export default {
     showDeleteTemplate: false,
     textHTML: "",
     editedText: "",
-    editingText: false,
     error: null
   }),
   created() {
@@ -88,18 +81,6 @@ export default {
         this.error = error.response;
       }
     },
-    async saveTemplate() {
-      try {
-        this.template.text = String(this.editedText).replace(
-          /(\r\n\t|\n|\r\t)/gm,
-          ""
-        );
-        await templatesApi.put(this.template);
-        this.getTemplate();
-      } catch (error) {
-        this.error = error.response;
-      }
-    },
     async deleteTemplate() {
       try {
         await templatesApi.delete(this.template.id);
@@ -117,15 +98,6 @@ export default {
     },
     closeDeleteModal() {
       this.showConfirmModal = false;
-    },
-    editText() {
-      this.editingText = true;
-    },
-    onTextEdit(event) {
-      this.editedText = event.target.innerText;
-    },
-    cancelEditText() {
-      this.editingText = false;
     }
   }
 };
@@ -162,12 +134,7 @@ export default {
   margin-top: 2rem;
 }
 .text-body {
-  transition: all 0.15s ease-in-out;
-}
-.editing-code {
-  background-color: white;
-  border: 2px solid $color-main;
-  padding: 0.5rem;
+  padding: 0;
 }
 .button-grey {
   margin-left: 1rem;

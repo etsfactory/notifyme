@@ -2,7 +2,7 @@
   <div id="app">
     <the-sidebar :sections="sections" :class="{ collapsed: sidebarCollapsed}"/>
     <div :class="{ content: true, collapsed: sidebarCollapsed}">
-      <the-header/>
+      <the-header :sections="sections"/>
       <main class="main-content">
         <router-view></router-view>
       </main>

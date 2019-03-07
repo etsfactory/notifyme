@@ -91,6 +91,8 @@ class BusConnectionHandler():
                             st.logger.info(
                                 'Notification to: %r', user['email'])
                             user_emails.append(user['email'])
+                    else:
+                        subject, text = self.get_default_template(template, message)
                 self.smtp.send(user_emails, subject, text)
 
     def create_email(self, template, message):
@@ -99,6 +101,24 @@ class BusConnectionHandler():
         :return: two params, subject and email text
         """
         subject = ''
+        if template.get('subject'):
+            subject_t = Template(
+                template.get('subject'),
+                undefined=SilentUndefined)
+            subject = subject_t.render(message)
+
+        text_t = Template(template.get('text'), undefined=SilentUndefined)
+        text = text_t.render(message)
+
+        return subject, text
+
+    def get_default_template(self, message):
+        """
+        Create email from default template
+        :return: two params, subject and email text
+        """
+        subject = ''
+        template = self.templates_handler.get_default_template()
         if template.get('subject'):
             subject_t = Template(
                 template.get('subject'),
