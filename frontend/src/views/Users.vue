@@ -1,9 +1,10 @@
 <template>
   <div class="users">
-    <h1>
-      <i class="fas fa-users"></i> Users
-      <i class="fas fa-plus-circle create-icon" @click="createUser"></i>
-    </h1>
+    <the-header>
+      <template slot="title">
+        Users
+      </template>
+    </the-header>
     <error v-if="error" :error="error"/>
     <users-table v-else-if="users" :users="users" @deleted="showModal"/>
     <confirm-modal :visible.sync="showDeleteModal" @accept="deleteUser"/>
@@ -16,6 +17,7 @@ import usersApi from "@/logic/users";
 
 import UsersTable from "@/components/UsersTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
+import TheHeader from "@/components/TheHeader.vue";
 import CreateUser from "@/components/CreateUser.vue";
 import Error from "@/components/Error.vue";
 
@@ -24,6 +26,7 @@ export default {
   components: {
     UsersTable,
     ConfirmModal,
+    TheHeader,
     CreateUser,
     Error
   },

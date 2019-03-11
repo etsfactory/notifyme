@@ -195,28 +195,34 @@ export default {
   background: transparent;
   width: 100%;
   border-collapse: collapse;
-  tr:nth-child(even) {
-    background: $color-main-light;
+  tr {
+    border-bottom: 1px solid #BDBDBD;
+    &:hover .actions {
+      opacity: 1;
+    }
   }
   tbody tr:hover td {
-    background-color: $color-secondary-light;
+    background-color: rgb(236, 236, 236);
   }
-  tbody th,
-  tbody td {
-    border-right: 3px solid #e7e7e7;
+  th {
+    padding: 1.15rem 1rem;
+    &::after{
+      color: $color-main;
+      font-size: 0.8rem;
+    }
   }
-  th,
   td {
-    padding: 0.4rem 1rem;
+    padding: 0.9rem 1rem;
     text-align: left;
     white-space: nowrap;
+    color: #4F4F4F;
   }
 }
 .sorteable {
   cursor: pointer;
 }
 .header {
-  border-bottom: 2px solid $color-main;
+  border-bottom: 2px solid black;
   vertical-align: middle;
   position: relative;
   text-align: left;
@@ -224,16 +230,28 @@ export default {
 }
 .headerSortUp::after {
   content: "▼";
-  font-size: 8px;
   position: absolute;
   right: 5px;
   top: 30%;
 }
 .headerSortDown::after {
   content: "▲";
-  font-size: 8px;
   position: absolute;
   right: 5px;
   top: 30%;
+}
+.actions {
+  opacity: 0;
+  text-align: center !important;
+  &:hover {
+    opacity: 1;
+  }
+}
+.icon {
+  padding: 0 1rem;
+  cursor: pointer;
+  &:hover {
+    color: $color-main-dark;
+  }
 }
 </style>

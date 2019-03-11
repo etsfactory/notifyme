@@ -46,14 +46,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.users-table /deep/.actions {
-  text-align: center !important;
-}
-.icon {
-  padding: 0 3rem;
-  cursor: pointer;
-  &:hover {
-    color: $color-main-dark;
-  }
-}
+
 </style>

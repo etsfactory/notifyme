@@ -50,18 +50,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.users-table /deep/.actions {
-  text-align: center !important;
-}
 .users-table /deep/.multiline {
   white-space: pre-line;
   word-wrap: break-word;
 }
-.icon {
-  padding: 0 3rem;
-  cursor: pointer;
-  &:hover {
-    color: $color-main-dark;
-  }
-}
+
 </style>

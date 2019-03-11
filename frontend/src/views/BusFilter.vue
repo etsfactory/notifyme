@@ -1,8 +1,10 @@
 <template>
   <div class="bus-filter">
-    <h1>
-      <i class="fas fa-filter"></i> BusFilter
-    </h1>
+    <the-header>
+      <template slot="title">
+        <h1>Bus Filters</h1>
+      </template>
+    </the-header>
     <error v-if="userError" :error="userError"/>
     <div v-if="busFilter">
       <div class="bus-filter-container">
@@ -29,11 +31,7 @@
           class="button-main button-template"
           @click="showTemplateCreate"
         >Create template</button>
-        <create-template
-          :visible.sync="showTemplateModal"
-          :http-call="false"
-          @created="createTemplate"
-        />
+        <create-template :visible.sync="showTemplateModal" :http-call="false" @created="createTemplate"/>
       </div>
       <h2 class="notifications-title">
         <i class="fas fa-users"></i> Users suscribed to:
@@ -55,12 +53,7 @@
           :subscriptions="notifications"
           @click="subscriptionsCreated"
         />
-        <create-bus-filter
-          :model="busFilter"
-          :visible.sync="showCreateModal"
-          :edit="true"
-          @created="getBusFilter"
-        />
+        <create-bus-filter :model="busFilter" :visible.sync="showCreateModal" :edit="true" @created="getBusFilter"/>
       </div>
     </div>
   </div>

@@ -1,11 +1,14 @@
 <template>
   <div id="app">
-    <the-sidebar :sections="sections" :class="{ collapsed: sidebarCollapsed}"/>
-    <div :class="{ content: true, collapsed: sidebarCollapsed}">
-      <the-header :sections="sections"/>
-      <main class="main-content">
-        <router-view></router-view>
-      </main>
+    <div class="grid">
+      <div class="sidebar">
+        <the-sidebar :sections="sections"/>
+      </div>
+      <div class="content">
+        <main class="main-content">
+          <router-view></router-view>
+        </main>
+      </div>
     </div>
   </div>
 </template>
@@ -44,7 +47,7 @@ body {
     "Ubuntu", "Helvetica Neue", Arial, sans-serif;
   width: 100%;
   height: 100%;
-  background: #f3f3f3;
+  background: #fdfdfd;
   line-height: 1.5em;
   font-weight: 400;
   font-style: normal;
@@ -57,6 +60,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+.grid {
+  display: grid;
+  grid-template-columns: [sidebar] 10% [content] 90%;
+}
+.sidebar {
+  grid-column: sidebar;
 }
 #nav {
   padding: 30px;
@@ -84,18 +94,14 @@ button {
   background-color: #fff5e1;
 }
 .content {
-  left: $sidebar-width;
   transition: left 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
   position: relative;
-  position: fixed;
-  width: 100%;
+  padding: 0 2rem;
+  grid-column: content;
   &.collapsed {
     position: relative;
     left: 0;
   }
-}
-.main-content {
-  padding: 1rem 3rem;
 }
 input[type="submit"] {
   padding: 0.8rem 3rem !important;
@@ -247,4 +253,5 @@ pre > code {
 .hljs {
   background: transparent;
 }
+
 </style>
