@@ -104,8 +104,8 @@ export default {
       }
     },
     async deleteSubscription() {
+      this.showConfirmModal = false;
       try {
-        this.showConfirmModal = false;
         await usersApi.deleteSubscription(this.user.id, this.selectedBusFilter);
         this.getUserNotifications();
       } catch (error) {
@@ -113,6 +113,7 @@ export default {
       }
     },
     async deleteUser() {
+      this.showDeleteUserModal = false;
       try {
         await usersApi.delete(this.user.id);
         this.$router.push("/users");

@@ -48,6 +48,7 @@
           subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
         />
         <subscription-modal
+          v-if="showSubscriptionModal"
           :visible.sync="showSubscriptionModal"
           type="users"
           :id="busFilter.id"
@@ -145,6 +146,7 @@ export default {
       }
     },
     async deleteBusFilter() {
+      this.showDeleteBusFilter = false;
       try {
         await busFiltersApi.delete(this.busFilter.id);
         this.$router.push("/bus_filters");
@@ -167,6 +169,7 @@ export default {
       this.getBusNotifications();
     },
     async deleteSubscription() {
+      this.showConfirmModal = false;
       await busFiltersApi.deleteSubscription(
         this.busFilter.id,
         this.selectedUser

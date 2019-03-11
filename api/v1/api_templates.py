@@ -40,6 +40,8 @@ class TemplatesView(Resource):
         result, errors = templates_schema.load(json_data)
         if errors:
             return errors, 422
+        if result.get('name') == 'default':
+            return {'message': 'You cannot create multiple default templates'}, 500
 
         templates.insert(result)
         return result, 201
@@ -87,7 +89,10 @@ class TemplateView(Resource):
         """
         template = templates.get(template_id)
         if template:
-            templates.delete(template_id)
-            response = {'deleted': True}
-            return response
+            if template.get('name') == 'default':
+                return {'message': 'Default template cannot be deleted'}, 500
+            else:
+                templates.delete(template_id)
+                response = {'deleted': True}
+                return response
         return {'message': 'Template not found'}, 404
