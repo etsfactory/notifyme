@@ -24,7 +24,7 @@
             contenteditable>{{code}}
           </code>
         </pre>
-      <button class="button-main" @click="editTemplate">Edit</button>
+      <button class="button-main button-submit" @click="editTemplate">Edit</button>
     </div>
   </div>
 </template>

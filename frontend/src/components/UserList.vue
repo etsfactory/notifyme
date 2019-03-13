@@ -23,7 +23,7 @@
     <div class="center">
       <button
         v-if="usersFiltered.length !== 0"
-        class="button-main"
+        class="button-main button-submit"
         @click="$emit('click', selectedUsers)"
       >Add users</button>
     </div>

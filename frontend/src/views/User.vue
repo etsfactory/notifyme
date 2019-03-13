@@ -1,41 +1,48 @@
 <template>
-  <div class="user">
-    <h1>
-      <i class="fas fa-user"></i> User
-    </h1>
+  <div>
     <error v-if="userError" :error="userError"/>
     <div v-if="user">
-      <div class="user-container">
-        <key-value-table :data="user" class="info"/>
-        <div class="buttons">
-          <action-buttons @edit="showEditModal" @remove="showDeleteUserModal = true"></action-buttons>
-          <confirm-modal
-            :visible.sync="showDeleteUserModal"
-            @accept="deleteUser"
-            subtitle="This action can not be undone"
-          />
+      <the-header>
+        <template slot="title">User</template>
+        <template slot="buttons">
+          <router-link to="/bus_filters" class="link"><i class="fas fa-chevron-left"></i>Back to users</router-link>
+        </template>
+      </the-header>
+      <div class="user">
+        <div class="user-container">
+          <div class="buttons">
+            <action-buttons @edit="showEditModal" @remove="showDeleteUserModal = true"></action-buttons>
+            <confirm-modal
+              :visible.sync="showDeleteUserModal"
+              @accept="deleteUser"
+              subtitle="This action can not be undone"
+            />
+          </div>
+          <key-value-table :data="user" class="info"/>
         </div>
-      </div>
-      <h2 class="notifications-title">
-        <i class="fas fa-filter"></i> Suscribed to:
-        <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
-      </h2>
-      <error v-if="busFilterError" :error="busFilterError"/>
-      <div v-if="notifications" class="notifications">
-        <bus-filters-table :bus-filters="notifications" @deleted="showDeleteModal"/>
-        <confirm-modal
-          :visible.sync="showConfirmModal"
-          @accept="deleteSubscription"
-          subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
-        />
-        <subscription-modal
-          :visible.sync="showSubscriptionModal"
-          type="busFilters"
-          :id="user.id"
-          :subscriptions="notifications"
-          @click="subscriptionsCreated"
-        />
-        <create-user :model="user" :visible.sync="showCreateModal" :edit="true" @created="getUser"/>
+        <div class="right">
+          <h2 class="notifications-title">
+            Suscribed to:
+            <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
+          </h2>
+          <error v-if="busFilterError" :error="busFilterError"/>
+          <div v-if="notifications" class="notifications">
+            <bus-filters-table :bus-filters="notifications" @deleted="showDeleteModal"/>
+            <confirm-modal
+              :visible.sync="showConfirmModal"
+              @accept="deleteSubscription"
+              subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
+            />
+            <subscription-modal
+              :visible.sync="showSubscriptionModal"
+              type="busFilters"
+              :id="user.id"
+              :subscriptions="notifications"
+              @click="subscriptionsCreated"
+            />
+            <create-user :model="user" :visible.sync="showCreateModal" :edit="true" @created="getUser"/>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -46,6 +53,7 @@ import usersApi from "@/logic/users";
 
 import BusFiltersTable from "@/components/BusFiltersTable.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
+import TheHeader from "@/components/TheHeader.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import CreateUser from "@/components/CreateUser.vue";
@@ -61,6 +69,7 @@ export default {
     ActionButtons,
     CreateUser,
     SubscriptionModal,
+    TheHeader,
     Error
   },
   data: () => ({
@@ -140,8 +149,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header {
+  width: 24%;
+}
 .user {
   position: relative;
+  display: flex;
 }
 .notifications-table /deep/.actions {
   text-align: center !important;
@@ -153,17 +166,26 @@ export default {
     color: $color-main-dark;
   }
 }
-.info {
-  width: 40%;
-}
-.notifications-title {
-  margin-top: 3rem;
-}
 .user-container {
+  width: 25%;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  padding-right: 3rem;
 }
 .buttons {
-  width: 35%;
+  width: 100%;
+}
+.right {
+  width: 75%;
+  margin-top: -4.98rem;
+}
+.fa-chevron-left {
+  color: $color-main;
+  margin-right: 0.5rem;
+}
+.link {
+  text-decoration: none;
+  color: #828282;
 }
 </style>

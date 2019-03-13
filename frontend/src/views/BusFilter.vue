@@ -1,59 +1,63 @@
 <template>
-  <div class="bus-filter">
-    <the-header>
-      <template slot="title">
-        <h1>Bus Filters</h1>
-      </template>
-    </the-header>
+  <div>
     <error v-if="userError" :error="userError"/>
     <div v-if="busFilter">
-      <div class="bus-filter-container">
-        <key-value-table class="info" :data="busFilter" disable="template_id"/>
-        <div class="buttons">
-          <action-buttons @edit="showEditModal" @remove="showDeleteBusFilter = true"></action-buttons>
-          <confirm-modal
-            :visible.sync="showDeleteBusFilter"
-            @accept="deleteBusFilter"
-            subtitle="This action can not be undone."
-          />
+      <the-header>
+        <template slot="title">Bus filter</template>
+        <template slot="buttons">
+          <router-link to="/bus_filters" class="link">
+            <i class="fas fa-chevron-left"></i>Back to bus filters
+          </router-link>
+        </template>
+      </the-header>
+      <div class="bus-filter">
+        <div class="bus-filter-container">
+          <div class="buttons">
+            <action-buttons @edit="showEditModal" @remove="showDeleteBusFilter = true"></action-buttons>
+            <confirm-modal
+              :visible.sync="showDeleteBusFilter"
+              @accept="deleteBusFilter"
+              subtitle="This action can not be undone."
+            />
+          </div>
+          <key-value-table class="info" :data="busFilter" disable="template_id"/>
         </div>
-      </div>
-      <h2 class="templates-title">
-        <i class="fas fa-envelope"></i> Template:
-      </h2>
-      <div v-if="template" class="template">
-        <error v-if="busFilterError" :error="busFilterError"/>
-        <template-table :remove="false" :templates="[template]"/>
-      </div>
-      <div v-else class="template">
-        No template asociated with this bus filter. All subscriptions created with this bus filter will be created with the default template specified in the config file.
-        <button
-          class="button-main button-template"
-          @click="showTemplateCreate"
-        >Create template</button>
-        <create-template :visible.sync="showTemplateModal" :http-call="false" @created="createTemplate"/>
-      </div>
-      <h2 class="notifications-title">
-        <i class="fas fa-users"></i> Users suscribed to:
-        <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
-      </h2>
-      <error v-if="userError" :error="userError"/>
-      <div v-if="notifications" class="notifications">
-        <users-table :users="notifications" @deleted="showDeleteModal"/>
-        <confirm-modal
-          :visible.sync="showConfirmModal"
-          @accept="deleteSubscription"
-          subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
-        />
-        <subscription-modal
-          v-if="showSubscriptionModal"
-          :visible.sync="showSubscriptionModal"
-          type="users"
-          :id="busFilter.id"
-          :subscriptions="notifications"
-          @click="subscriptionsCreated"
-        />
-        <create-bus-filter :model="busFilter" :visible.sync="showCreateModal" :edit="true" @created="getBusFilter"/>
+        <div class="right">
+          <h2 class="templates-title">Template:</h2>
+          <div v-if="template" class="template">
+            <error v-if="busFilterError" :error="busFilterError"/>
+            <template-table :remove="false" :templates="[template]"/>
+          </div>
+          <div v-else class="template">
+            No template asociated with this bus filter. All subscriptions created with this bus filter will be created with the default template specified in the config file.
+            <button
+              class="button-main button-template"
+              @click="showTemplateCreate"
+            >Create template</button>
+            <create-template :visible.sync="showTemplateModal" :http-call="false" @created="createTemplate"/>
+          </div>
+          <h2 class="notifications-title">Users suscribed to:
+            <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
+          </h2>
+          <error v-if="userError" :error="userError"/>
+          <div v-if="notifications" class="notifications">
+            <users-table :users="notifications" @deleted="showDeleteModal"/>
+            <confirm-modal
+              :visible.sync="showConfirmModal"
+              @accept="deleteSubscription"
+              subtitle="This action can not be undone. This will delete the relation between user and bus filter but the bus filter won't be deleted"
+            />
+            <subscription-modal
+              v-if="showSubscriptionModal"
+              :visible.sync="showSubscriptionModal"
+              type="users"
+              :id="busFilter.id"
+              :subscriptions="notifications"
+              @click="subscriptionsCreated"
+            />
+            <create-bus-filter :model="busFilter" :visible.sync="showCreateModal" :edit="true" @created="getBusFilter"/>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -64,6 +68,7 @@ import busFiltersApi from "@/logic/bus_filters";
 
 import UsersTable from "@/components/UsersTable.vue";
 import TemplateTable from "@/components/TemplateTable.vue";
+import TheHeader from "@/components/TheHeader.vue";
 import KeyValueTable from "@/components/KeyValueTable.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
@@ -81,6 +86,7 @@ export default {
     ConfirmModal,
     CreateBusFilter,
     CreateTemplate,
+    TheHeader,
     SubscriptionModal
   },
   data: () => ({
@@ -177,8 +183,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header {
+  width: 24%;
+}
 .bus-filter {
   position: relative;
+  display: flex;
 }
 .notifications-table /deep/.actions {
   text-align: center !important;
@@ -190,24 +200,36 @@ export default {
     color: $color-main-dark;
   }
 }
-.info {
-  width: 40%;
-}
-.templates-title {
-  margin-top: 3rem;
-}
-.notifications-title {
-  margin-top: 3rem;
-}
 .bus-filter-container {
+  width: 25%;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  padding-right: 3rem;
 }
 .buttons {
-  width: 35%;
+  width: 100%;
 }
 .button-template {
   display: block;
   margin: 1rem 0;
+}
+.right {
+  width: 75%;
+  margin-top: -4.98rem;
+}
+.fa-chevron-left {
+  color: $color-main;
+  margin-right: 0.5rem;
+}
+.link {
+  text-decoration: none;
+  color: #828282;
+}
+.notifications-title {
+  margin-top: 5rem;
+}
+.templates-title {
+  margin-bottom: 3rem;
 }
 </style>

@@ -1,7 +1,9 @@
 <template>
   <aside>
     <div class="logo">
-      <logo/>
+      <router-link to="/">
+        <logo/>
+      </router-link>
     </div>
     <nav>
       <ul class="link-list">
@@ -46,6 +48,11 @@ export default {
 .link-list {
   padding: 0;
   margin-top: 5rem;
+  list-style: none;
+  .router-link-active {
+    color: #4f4f4f;
+    border-left: 4px solid $color-main;
+  }
 }
 .link {
   list-style: none;
@@ -62,10 +69,6 @@ export default {
     color: #4f4f4f;
     border-left: 7px solid $color-main;
   }
-}
-.router-link-active {
-  color: #4f4f4f;
-  border-left: 4px solid $color-main;
 }
 .link-container {
   width: 100%;

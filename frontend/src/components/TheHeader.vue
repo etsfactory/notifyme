@@ -1,19 +1,17 @@
 <template>
   <header class="header">
-    <nav class="link-list">
-      <h1 class="title">
-        <slot name="title"></slot>
-      </h1>
-      <div class="buttons">
-        <slot name="buttons"></slot>
-      </div>
-    </nav>
+    <h1 class="title">
+      <slot name="title"></slot>
+    </h1>
+    <div class="buttons">
+      <slot name="buttons"></slot>
+    </div>
   </header>
 </template>
 
 <script>
 export default {
-  name: "TheHeader",
+  name: "TheHeader"
 };
 </script>
 
@@ -25,6 +23,7 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 .title {
   font-size: 1.65rem;

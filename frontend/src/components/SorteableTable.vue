@@ -22,11 +22,7 @@
       <template v-if="isObject(data)">
         <tr v-for="(item, i) in sortedData" :key="i">
           <slot name="row" :row="item">
-            <td
-              v-for="(column, j) in columns"
-              :key="j"
-              v-if="hasValue(item, column)"
-            >{{itemValue(item, column)}}</td>
+            <td v-for="(column, j) in columns" :key="j" v-if="hasValue(item, column)">{{itemValue(item, column)}}</td>
           </slot>
         </tr>
       </template>
@@ -196,7 +192,7 @@ export default {
   width: 100%;
   border-collapse: collapse;
   tr {
-    border-bottom: 1px solid #BDBDBD;
+    border-bottom: 1px solid #bdbdbd;
     &:hover .actions {
       opacity: 1;
     }
@@ -206,7 +202,7 @@ export default {
   }
   th {
     padding: 1.15rem 1rem;
-    &::after{
+    &::after {
       color: $color-main;
       font-size: 0.8rem;
     }
@@ -215,7 +211,7 @@ export default {
     padding: 0.9rem 1rem;
     text-align: left;
     white-space: nowrap;
-    color: #4F4F4F;
+    color: #4f4f4f;
   }
 }
 .sorteable {
@@ -250,8 +246,11 @@ export default {
 .icon {
   padding: 0 1rem;
   cursor: pointer;
-  &:hover {
-    color: $color-main-dark;
-  }
+}
+.fa-eye {
+  color: #828282 !important;
+}
+.fa-trash-alt {
+  color: $color-main !important;
 }
 </style>

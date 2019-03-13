@@ -1,8 +1,11 @@
 <template>
   <div class="bus_filters">
     <the-header>
-      <template slot="title">
-        Bus Filters
+      <template slot="title">Bus Filters</template>
+      <template slot="buttons">
+        <button class="button-main" @click="createBusFilter">
+          <i class="fas fa-plus-circle create-icon"></i>Create bus filter
+        </button>
       </template>
     </the-header>
     <error v-if="error" :error="error"/>

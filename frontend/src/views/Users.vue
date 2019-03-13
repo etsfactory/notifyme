@@ -1,8 +1,11 @@
 <template>
   <div class="users">
     <the-header>
-      <template slot="title">
-        Users
+      <template slot="title">Users</template>
+      <template slot="buttons">
+        <button class="button-main" @click="createUser">
+          <i class="fas fa-plus-circle create-icon"></i>Create user
+        </button>
       </template>
     </the-header>
     <error v-if="error" :error="error"/>

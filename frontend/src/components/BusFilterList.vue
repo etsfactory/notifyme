@@ -23,7 +23,7 @@
     <div class="center">
       <button
         v-if="busFiltersFiltered.length !== 0"
-        class="button-main"
+        class="button-main button-submit"
         @click="$emit('click', selectedbusFilters)"
       >Add bus filters</button>
     </div>

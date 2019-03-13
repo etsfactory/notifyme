@@ -42,7 +42,7 @@ html,
 body {
   color: #000;
   margin: 0;
-  font-size: calc(13px + 0.3vmin);
+  font-size: calc(11px + 0.2vmax);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Helvetica Neue", Arial, sans-serif;
   width: 100%;
@@ -62,11 +62,20 @@ body {
   color: #2c3e50;
 }
 .grid {
-  display: grid;
-  grid-template-columns: [sidebar] 10% [content] 90%;
+  display: flex;
 }
 .sidebar {
-  grid-column: sidebar;
+  width: $sidebar-width;
+}
+.content {
+  transition: left 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+  position: relative;
+  padding: 0 3rem;
+  width: 90%;
+  &.collapsed {
+    position: relative;
+    left: 0;
+  }
 }
 #nav {
   padding: 30px;
@@ -93,41 +102,62 @@ button {
   margin: 1rem auto;
   background-color: #fff5e1;
 }
-.content {
-  transition: left 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
-  position: relative;
-  padding: 0 2rem;
-  grid-column: content;
-  &.collapsed {
-    position: relative;
-    left: 0;
-  }
+.vue-form-generator * {
+  box-sizing: border-box;
 }
-input[type="submit"] {
-  padding: 0.8rem 3rem !important;
-  background: linear-gradient(to right, $color-main-dark, $color-main);
-  border: none !important;
-  cursor: pointer;
-  border-radius: 5px;
-  font-weight: bold !important;
+.vue-form-generator .form-control {
+  display: block;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.vue-form-generator .form-control:not([class*=" col-"]) {
+  width: 100%;
+}
+.form-group:not([class*=" col-"]) {
+  width: 100%;
+}
+.vue-form-generator .field-wrap {
+  display: flex;
+}
+.vue-form-generator .field-input .wrapper {
+  width: 100%;
+}
+.form-group {
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 1rem;
 }
 .create-icon {
-  position: absolute;
-  right: 0;
-  &:hover {
-    color: $color-main-dark;
-    cursor: pointer;
-  }
+  cursor: pointer;
+  margin-right: 0.7rem;
+  color: $color-main;
 }
-.button-main {
-  padding: 0.8rem 3rem !important;
-  background: linear-gradient(to right, $color-main-dark, $color-main);
+.button-main,
+.field-wrap input[type="submit"] {
+  padding: 0.6rem 1rem !important;
+  background: #f2f2f2;
   border: none !important;
   cursor: pointer;
-  border-radius: 5px;
   font-weight: bold !important;
-  color: white;
+  color: #333333;
   margin: 0px auto;
+  border-radius: 3px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+}
+.field-wrap input[type="submit"],
+.button-submit {
+  padding: 0.8rem 2rem !important;
   margin-top: 2rem;
 }
 .button-grey {
@@ -163,7 +193,6 @@ input[type="submit"] {
   visibility: hidden;
   opacity: 0;
   overflow: hiden;
-  transition: 0.4s ease-in-out;
   visibility: visible;
   opacity: 1;
 
@@ -177,7 +206,6 @@ input[type="submit"] {
     width: 500px;
     background-color: #fff;
     border-radius: 6px;
-    transition: 0.64s ease-in-out;
     z-index: 3;
     padding: 4rem 2rem;
   }
@@ -253,5 +281,41 @@ pre > code {
 .hljs {
   background: transparent;
 }
-
+@media (max-width: 1250px) {
+  .grid {
+    flex-wrap: wrap;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    .logo {
+      width: 20%;
+      margin-top: 1rem;
+    }
+    aside {
+      display: flex;
+      align-items: center;
+      nav {
+        width: 80%;
+        min-width: 80%;
+        .link-list {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          min-width: 100%;
+          margin-top: 0;
+          justify-content: space-evenly;
+          .link-container {
+            padding: 0 1rem;
+          }
+        }
+      }
+    }
+  }
+  .content {
+    min-width: 100%;
+    width: 100%;
+    margin-top: 2rem;
+  }
+}
 </style>

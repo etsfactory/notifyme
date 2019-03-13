@@ -8,8 +8,8 @@
         </div>
         <div class="column">
 
-          <div v-if="key === 'id'" class="column-container"><strong>{{value}}</strong></div>
-          <div v-else class="column-container">{{value}}</div>
+          <div v-if="key === 'id'" class="column-container data"><strong>{{value}}</strong></div>
+          <div v-else class="column-container data">{{value}}</div>
         </div>
       </span>
     </div>
@@ -33,25 +33,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.keyvalue-table {
+  width: 100%;
+  color: #4F4F4F;
+  margin-top: 4rem;
+}
 .row {
   display: grid;
   flex-wrap: wrap;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.5fr 1fr;
   grid-auto-rows: 1fr;
-  border-bottom: 1px solid grey;
-  border-right: 3px solid $color-main;
-  border-left: 3px solid $color-main;
-  & > .column:first-child {
-    border-right: 3px solid $color-main;
-  }
+  border-bottom: 1px solid #BDBDBD;
+  padding: 0.4rem 1rem;
 }
 .key {
-  color: $color-main-dark;
+  font-weight: bold;
+  text-transform: capitalize;
 }
 .column {
   width: 100%;
 }
 .column-container {
   padding: 0.3rem 1rem;
+}
+.data {
+  font-size: 0.9rem;
 }
 </style>
