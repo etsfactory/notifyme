@@ -36,9 +36,13 @@
             >Create template</button>
             <create-template :visible.sync="showTemplateModal" :http-call="false" @created="createTemplate"/>
           </div>
-          <h2 class="notifications-title">Users suscribed to:
-            <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
-          </h2>
+          <div class="right-title">
+            <h2 class="notifications-title">Users suscribed to:</h2>
+            <button class="button-create" @click="showSubsModal">
+              <i class="fas fa-plus-circle create-icon"></i> New subscription
+            </button>
+          </div>
+
           <error v-if="userError" :error="userError"/>
           <div v-if="notifications" class="notifications">
             <users-table :users="notifications" @deleted="showDeleteModal"/>
@@ -231,5 +235,27 @@ export default {
 }
 .templates-title {
   margin-bottom: 3rem;
+}
+.right-title {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.button-create {
+  background: transparent;
+  border: none !important;
+  cursor: pointer;
+  color: #333333;
+  border-radius: 3px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  height: 45px;
+  padding: 0 1rem;
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
 }
 </style>

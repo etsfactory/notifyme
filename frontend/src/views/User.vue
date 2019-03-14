@@ -5,7 +5,9 @@
       <the-header>
         <template slot="title">User</template>
         <template slot="buttons">
-          <router-link to="/bus_filters" class="link"><i class="fas fa-chevron-left"></i>Back to users</router-link>
+          <router-link to="/bus_filters" class="link">
+            <i class="fas fa-chevron-left"></i>Back to users
+          </router-link>
         </template>
       </the-header>
       <div class="user">
@@ -21,10 +23,10 @@
           <key-value-table :data="user" class="info"/>
         </div>
         <div class="right">
-          <h2 class="notifications-title">
-            Suscribed to:
-            <i class="fas fa-plus-circle create-icon" @click="showSubsModal"></i>
-          </h2>
+          <div class="right-title">
+            <h2 class="notifications-title">Suscribed to:</h2>
+            <button class="button-create" @click="showSubsModal"><i class="fas fa-plus-circle create-icon"></i> New subscription</button>
+          </div>
           <error v-if="busFilterError" :error="busFilterError"/>
           <div v-if="notifications" class="notifications">
             <bus-filters-table :bus-filters="notifications" @deleted="showDeleteModal"/>
@@ -187,5 +189,27 @@ export default {
 .link {
   text-decoration: none;
   color: #828282;
+}
+.right-title {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.button-create {
+  background: transparent;
+  border: none !important;
+  cursor: pointer;
+  color: #333333;
+  border-radius: 3px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  height: 45px;
+  padding: 0 1rem;
+  &:hover {
+    background: rgba(0,0,0,0.04);
+  }
 }
 </style>

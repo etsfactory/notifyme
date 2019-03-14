@@ -3,7 +3,7 @@
     <ul class="user-list">Users not suscribed to this bus filter:
       <div class="warning" v-if="usersFiltered.length === 0">
         <strong>No users found.</strong> Please go to
-        <router-link to="/users">users page</router-link>and create some
+        <router-link to="/users">users page</router-link> and create some
       </div>
       <li v-for="(user,i) in usersFiltered" :key="i" class="user">
         <div class="info">
