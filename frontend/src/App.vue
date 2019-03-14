@@ -38,6 +38,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:400,700');
+
 html,
 body {
   color: #000;
@@ -47,18 +49,19 @@ body {
     "Ubuntu", "Helvetica Neue", Arial, sans-serif;
   width: 100%;
   height: 100%;
-  background: #fdfdfd;
+  background: #ffffff;
   line-height: 1.5em;
   font-weight: 400;
   font-style: normal;
+  font-family: 'Ubuntu', sans-serif;
+}
+h1, h2, h3 {
+  font-weight: normal;
 }
 #app {
   width: 100%;
   height: 100%;
   margin: 0;
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
 .grid {
@@ -71,7 +74,7 @@ body {
   transition: left 0.3s cubic-bezier(0.2, 0.3, 0.25, 0.9);
   position: relative;
   padding: 0 3rem;
-  width: 90%;
+  width: $content-width;
   &.collapsed {
     position: relative;
     left: 0;
@@ -96,6 +99,9 @@ button {
 .center {
   margin: 0px auto;
   text-align: center;
+}
+.errors {
+  color: $color-main;
 }
 .warning {
   padding: 1rem;
@@ -144,7 +150,7 @@ button {
 .button-main,
 .field-wrap input[type="submit"] {
   padding: 0.6rem 1rem !important;
-  background: #f2f2f2;
+  background: transparent;
   border: none !important;
   cursor: pointer;
   font-weight: bold !important;
@@ -154,11 +160,18 @@ button {
   text-transform: uppercase;
   display: flex;
   align-items: center;
+  margin-top: 5px;
+  &:hover {
+    background: #f2f2f2;
+  }
 }
 .field-wrap input[type="submit"],
 .button-submit {
   padding: 0.8rem 2rem !important;
   margin-top: 2rem;
+}
+.field-wrap input[type="submit"], .button-template {
+  background: #f2f2f2;
 }
 .button-grey {
   padding: 0.8rem 3rem !important;
@@ -195,7 +208,6 @@ button {
   overflow: hiden;
   visibility: visible;
   opacity: 1;
-
   &-inner {
     position: relative;
     margin: 5% auto;
@@ -281,7 +293,15 @@ pre > code {
 .hljs {
   background: transparent;
 }
-@media (max-width: 1250px) {
+@media (max-width: 1520px) {
+  .sidebar {
+    width: $sidebar-width + 8%;
+  }
+  .content {
+    padding: 0 1.5rem;
+  }
+}
+@media (max-width: 1220px) {
   .grid {
     flex-wrap: wrap;
   }
@@ -306,7 +326,7 @@ pre > code {
           margin-top: 0;
           justify-content: space-evenly;
           .link-container {
-            padding: 0 1rem;
+            padding: 0 1.5rem;
           }
         }
       }

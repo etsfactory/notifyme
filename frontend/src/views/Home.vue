@@ -73,7 +73,7 @@ export default {
   align-content: center;
   justify-content: center;
   &:hover {
-    background-color: $color-main-light;
+    background-color: $color-secundary;
   }
 }
 .icon {

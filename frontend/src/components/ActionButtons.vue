@@ -1,8 +1,10 @@
 <template>
   <div class="actions">
-    <button class="button edit" @click="$emit('edit')"><i class="fas fa-edit"></i>
+    <button class="button edit" @click="$emit('edit')">
+      <i class="fas fa-edit"></i>
     </button>
-    <button class="button delete" @click="$emit('remove')"><i class="far fa-trash-alt"></i>
+    <button class="button delete" @click="$emit('remove')">
+      <i class="far fa-trash-alt"></i>
     </button>
   </div>
 </template>
@@ -36,10 +38,16 @@ export default {
 .edit {
   background-color: rgba(0, 145, 255, 0.2);
   color: #0091ff;
+  &:hover {
+    background-color: rgba(0, 145, 255, 0.5);
+  }
 }
 .delete {
   margin-left: 0.7rem;
   background-color: rgba(235, 87, 87, 0.2);
   color: #eb5757;
+  &:hover {
+    background-color: rgba(235, 87, 87, 0.5);
+  }
 }
 </style>

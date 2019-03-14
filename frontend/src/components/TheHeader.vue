@@ -29,6 +29,6 @@ export default {
   font-size: 1.65rem;
   margin: 0;
   padding: 0;
-  font-weight: 600;
+  font-weight: normal;
 }
 </style>

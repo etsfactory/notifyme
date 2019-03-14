@@ -9,6 +9,7 @@
       <ul class="link-list">
         <li v-for="(section, i) in sections" :key="i">
           <router-link class="link" :to="section.url">
+            <div class="border"></div>
             <div class="link-container">
               <i class="icon" :class="section.icon"></i>
               {{ section.name }}
@@ -51,28 +52,36 @@ export default {
   list-style: none;
   .router-link-active {
     color: #4f4f4f;
-    border-left: 4px solid $color-main;
+    .border {
+      width: 4px;
+    }
   }
 }
 .link {
+  position: relative;
   list-style: none;
-  margin-top: 1rem;
+  margin-top: 2rem;
   padding: 1rem 0;
   color: #bdbdbd;
   text-decoration: none;
-  font-weight: bold;
+  text-transform: uppercase;
   width: 100%;
   display: block;
   font-size: 1.2rem;
   transition: all 0.15s ease-in-out;
-  &:hover {
-    color: #4f4f4f;
-    border-left: 7px solid $color-main;
+  letter-spacing: 0.15px;
+  &:not(.router-link-active) {
+    &:hover > .border {
+      width: 7px;
+    }
+    &:hover {
+      color: #4f4f4f;
+    }
   }
 }
 .link-container {
   width: 100%;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
 }
 .icon {
   margin-right: 1rem;
@@ -85,5 +94,15 @@ export default {
     width: 70%;
     height: auto;
   }
+}
+.border {
+  position: absolute;
+  width: 0px;
+  height: 97%;
+  top: 0;
+  left: 0;
+  background: $color-degree;
+  transition: width 0.15s ease-in-out;
+  border-radius: 15px;
 }
 </style>

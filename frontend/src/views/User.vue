@@ -25,7 +25,9 @@
         <div class="right">
           <div class="right-title">
             <h2 class="notifications-title">Suscribed to:</h2>
-            <button class="button-create" @click="showSubsModal"><i class="fas fa-plus-circle create-icon"></i> New subscription</button>
+            <button class="button-create" @click="showSubsModal">
+              <i class="fas fa-plus-circle create-icon"></i> New subscription
+            </button>
           </div>
           <error v-if="busFilterError" :error="busFilterError"/>
           <div v-if="notifications" class="notifications">
@@ -165,7 +167,7 @@ export default {
   padding: 0 3rem;
   cursor: pointer;
   &:hover {
-    color: $color-main-dark;
+    color: $color-secundary;
   }
 }
 .user-container {
@@ -180,7 +182,7 @@ export default {
 }
 .right {
   width: 75%;
-  margin-top: -4.98rem;
+  margin-top: -5.22rem;
 }
 .fa-chevron-left {
   color: $color-main;
@@ -209,7 +211,15 @@ export default {
   height: 45px;
   padding: 0 1rem;
   &:hover {
-    background: rgba(0,0,0,0.04);
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+@media (max-width: 1520px) {
+  .user-container {
+    width: 30%;
+  }
+  .right {
+    width: 70%;
   }
 }
 </style>

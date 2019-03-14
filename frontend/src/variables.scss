@@ -1,8 +1,17 @@
+$color-degree: linear-gradient(90deg, #FF7345 0%, #FF3E7A 100%);
 $color-main: #FF3E7A;
-$color-main-dark: #00A4B3;
-$color-main-light: #e2eff0;
+$color-secundary: #FF7345;
 
-$color-secondary: #72d3bc;
-$color-secondary-light: #e2f0e6;
+$color-action: #0091FF;
+$color-archieved: #00CD69;
+$color-warning: #FEBC0C;
+$color-error: #EB5757;
+
+$color-error-light: #EB5757;
+$color-warning-light: #FEBC0C;
+
+$color-text: #4F4F4F;
+$color-text-light: #BDBDBD;
 
 $sidebar-width: 10%;
+$content-width: 100% - $sidebar-width;

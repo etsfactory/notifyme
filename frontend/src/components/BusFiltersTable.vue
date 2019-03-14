@@ -30,7 +30,7 @@ export default {
   },
   data: () => ({
     columns: [
-      { text: "Id", key: "id", sorteable: true },
+      { text: "ID", key: "id", sorteable: true },
       { text: "Exchange", key: "exchange", sorteable: true },
       { text: "Exchange Type", key: "exchange_type", sorteable: true },
       { text: "Category", key: "category", sorteable: true },

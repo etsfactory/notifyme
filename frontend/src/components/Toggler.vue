@@ -61,11 +61,11 @@ export default {
 }
 
 input:checked + .slider {
-  background-color: $color-main-dark;
+  background-color: $color-secundary;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px $color-main-dark;
+  box-shadow: 0 0 1px $color-secundary;
 }
 
 input:checked + .slider:before {

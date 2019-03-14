@@ -8,6 +8,8 @@
         {{ text }} bus filter
       </h2>
       <error v-if="error" :error="error"/>
+      <p class="center">* If an id is not provided automatically an id will be generated.</p>
+      <p class="center">ID cannot be change.</p>
       <vue-form-generator
         @validated="onValidated"
         class="user-form"
@@ -60,18 +62,17 @@ export default {
         },
         {
           type: "input",
-          inputType: "exchange",
+          inputType: "text",
           label: "Exchange",
           model: "exchange",
           placeholder: "Bus exchange",
-          requiered: true,
-          min: 1,
+          required: true,
           validator: "string",
           featured: true
         },
         {
           type: "input",
-          inputType: "string",
+          inputType: "text",
           label: "Key",
           model: "key",
           placeholder: "Key for the exchange"
@@ -90,14 +91,14 @@ export default {
         },
         {
           type: "input",
-          inputType: "string",
+          inputType: "text",
           label: "Description",
           model: "description",
           placeholder: "Description"
         },
         {
           type: "input",
-          inputType: "string",
+          inputType: "text",
           label: "Category",
           model: "category",
           placeholder: "Category"

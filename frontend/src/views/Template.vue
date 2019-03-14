@@ -129,7 +129,7 @@ export default {
   padding: 0 3rem;
   cursor: pointer;
   &:hover {
-    color: $color-main-dark;
+    color: $color-secundary;
   }
 }
 .users {
@@ -159,7 +159,7 @@ pre {
 }
 .right {
   width: 75%;
-  margin-top: -4.98rem;
+  margin-top: -5.22rem;
 }
 .link {
   text-decoration: none;

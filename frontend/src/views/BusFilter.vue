@@ -30,10 +30,9 @@
           </div>
           <div v-else class="template">
             No template asociated with this bus filter. All subscriptions created with this bus filter will be created with the default template specified in the config file.
-            <button
-              class="button-main button-template"
-              @click="showTemplateCreate"
-            >Create template</button>
+             <button class="button-create" @click="showTemplateCreate">
+              <i class="fas fa-plus-circle create-icon"></i> Create template
+            </button>
             <create-template :visible.sync="showTemplateModal" :http-call="false" @created="createTemplate"/>
           </div>
           <div class="right-title">
@@ -201,7 +200,7 @@ export default {
   padding: 0 3rem;
   cursor: pointer;
   &:hover {
-    color: $color-main-dark;
+    color: $color-secundary;
   }
 }
 .bus-filter-container {
@@ -220,7 +219,7 @@ export default {
 }
 .right {
   width: 75%;
-  margin-top: -4.98rem;
+  margin-top: -5.22rem;
 }
 .fa-chevron-left {
   color: $color-main;
@@ -230,9 +229,6 @@ export default {
   text-decoration: none;
   color: #828282;
 }
-.notifications-title {
-  margin-top: 5rem;
-}
 .templates-title {
   margin-bottom: 3rem;
 }
@@ -241,6 +237,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 5rem;
 }
 .button-create {
   background: transparent;
@@ -257,5 +254,8 @@ export default {
   &:hover {
     background: rgba(0, 0, 0, 0.04);
   }
+}
+.template button {
+  margin-top: 1rem;
 }
 </style>
