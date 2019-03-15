@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <h1><i class="fas fa-cog"></i> Control panel</h1>
-    <div class="menu">
+    <!-- <div class="menu">
       <div class="item">
         <router-link class="link" to="/users">
           <div class="item-container">
@@ -40,13 +39,22 @@
           </div>
         </router-link>
       </div>
+    </div>-->
+    <div class="section">
+      <h1>Latest messages</h1>
+      <messages/>
     </div>
   </div>
 </template>
 
 <script>
+import Messages from "@/components/Messages.vue";
+
 export default {
-  name: "Home"
+  name: "Home",
+  components: {
+    Messages
+  }
 };
 </script>
 
@@ -76,7 +84,7 @@ export default {
   align-content: center;
   justify-content: center;
   &:hover {
-    background-color: rgba(0,0,0,0.02);
+    background-color: rgba(0, 0, 0, 0.02);
   }
 }
 .icon {
@@ -92,5 +100,8 @@ export default {
 .link {
   color: black;
   text-decoration: none;
+}
+.section {
+  margin-top: 3rem;
 }
 </style>

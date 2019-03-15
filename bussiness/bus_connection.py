@@ -6,6 +6,8 @@ from jinja2 import Template, Undefined
 from raccoon import Consumer
 
 import settings as st
+import datetime
+import rethinkdb as r
 
 from connectors.smtp import SMTPHandler
 
@@ -13,6 +15,7 @@ from bussiness.users import UsersHandler
 from bussiness.bus_filters import BusFiltersHandler
 from bussiness.subscriptions import SubscriptionsHandler
 from bussiness.templates import TemplatesHandler
+from bussiness.messages import MessagesHandler
 
 
 class BusConnectionHandler():
@@ -27,6 +30,7 @@ class BusConnectionHandler():
         self.subscriptions_handler = SubscriptionsHandler()
         self.users_handler = UsersHandler()
         self.templates_handler = TemplatesHandler()
+        self.messages_handler = MessagesHandler()
         self.smtp = SMTPHandler(
             st.SMTP_EMAIL,
             st.SMTP_PASS,
@@ -93,6 +97,8 @@ class BusConnectionHandler():
                             user_emails.append(user['email'])
                     else:
                         subject, text = self.get_default_template(template, message)
+                now = datetime.datetime.now(r.make_timezone('00:00'))
+                self.archive_message(bus_filter.get('exchange'), now, user_emails, bus_filter.get('description'))
                 self.smtp.send(user_emails, subject, text)
 
     def create_email(self, template, message):
@@ -141,6 +147,13 @@ class BusConnectionHandler():
         Unbind the queue from exchange and key
         """
         self.bus_thread.unbind_queue(exchange, key)
+
+    def archive_message(self, exchange, date, user_emails, description):
+        """
+        Archive message to the database
+        """
+        message = {'exchange': exchange, 'date': date, 'users': user_emails, 'description': description}
+        self.messages_handler.insert(message)
 
 
 class SilentUndefined(Undefined):

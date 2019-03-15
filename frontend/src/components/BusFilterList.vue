@@ -25,7 +25,7 @@
         v-if="busFiltersFiltered.length !== 0"
         class="button-main button-submit"
         @click="$emit('click', selectedbusFilters)"
-      >Add bus filters</button>
+      ><img svg-inline class="icon create-icon" src="../assets/icons/plus.svg"> Add bus filters</button>
     </div>
   </div>
 </template>

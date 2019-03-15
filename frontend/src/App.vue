@@ -2,7 +2,7 @@
   <div id="app">
     <div class="grid">
       <div class="sidebar">
-        <the-sidebar />
+        <the-sidebar/>
       </div>
       <div class="content">
         <main class="main-content">
@@ -31,7 +31,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Ubuntu:400,700');
+@import url("https://fonts.googleapis.com/css?family=Ubuntu:400,700");
 
 html,
 body {
@@ -46,9 +46,11 @@ body {
   line-height: 1.5em;
   font-weight: 400;
   font-style: normal;
-  font-family: 'Ubuntu', sans-serif;
+  font-family: "Ubuntu", sans-serif;
 }
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-weight: normal;
 }
 #app {
@@ -101,8 +103,8 @@ button {
   margin: 1rem auto;
   background-color: #fff5e1;
 }
-.actions > *{
-  vertical-align : middle;
+.actions > * {
+  vertical-align: middle;
 }
 .vue-form-generator * {
   box-sizing: border-box;
@@ -165,7 +167,8 @@ button {
   padding: 0.8rem 2rem !important;
   margin-top: 2rem;
 }
-.field-wrap input[type="submit"], .button-template {
+.field-wrap input[type="submit"],
+.button-template {
   background: #f2f2f2;
 }
 .button-grey {
@@ -215,6 +218,8 @@ button {
     border-radius: 6px;
     z-index: 3;
     padding: 4rem 2rem;
+    box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0 9px 46px 8px rgba(0, 0, 0, 0.12), 0 11px 15px -7px rgba(0, 0, 0, 0.2);
   }
 }
 .modal-title {
