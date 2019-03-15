@@ -26,7 +26,7 @@
           <div class="right-title">
             <h2 class="notifications-title">Suscribed to:</h2>
             <button class="button-create" @click="showSubsModal">
-              <i class="fas fa-plus-circle create-icon"></i> New subscription
+              <img svg-inline class="create-icon" src="../assets/icons/plus.svg"> New subscription
             </button>
           </div>
           <error v-if="busFilterError" :error="busFilterError"/>
@@ -182,7 +182,7 @@ export default {
 }
 .right {
   width: 75%;
-  margin-top: -5.22rem;
+  margin-top: -78px;
 }
 .fa-chevron-left {
   color: $color-main;
@@ -207,7 +207,7 @@ export default {
   text-transform: uppercase;
   display: flex;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   height: 45px;
   padding: 0 1rem;
   &:hover {

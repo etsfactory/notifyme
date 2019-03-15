@@ -4,7 +4,7 @@
       <template slot="title">Bus Filters</template>
       <template slot="buttons">
         <button class="button-main" @click="createBusFilter">
-          <i class="fas fa-plus-circle create-icon"></i>Create bus filter
+          <img svg-inline class="icon create-icon" src="../assets/icons/plus.svg">Create bus filter
         </button>
       </template>
     </the-header>

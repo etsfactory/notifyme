@@ -27,6 +27,7 @@
     "lint-staged": "^8.1.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
+    "vue-svg-inline-loader": "^1.2.13",
     "vue-template-compiler": "^2.5.21"
   },
   "gitHooks": {

@@ -4,7 +4,7 @@
       <template slot="title">Users</template>
       <template slot="buttons">
         <button class="button-main" @click="createUser">
-          <i class="fas fa-plus-circle create-icon"></i>Create user
+        <img svg-inline class="icon create-icon" src="../assets/icons/plus.svg">Create user
         </button>
       </template>
     </the-header>

@@ -1,10 +1,10 @@
 <template>
   <div class="actions">
     <button class="button edit" @click="$emit('edit')">
-      <i class="fas fa-edit"></i>
+      <img svg-inline class="icon" src="../assets/icons/pencil.svg">
     </button>
     <button class="button delete" @click="$emit('remove')">
-      <i class="far fa-trash-alt"></i>
+      <img svg-inline class="icon" src="../assets/icons/trash.svg">
     </button>
   </div>
 </template>
@@ -20,7 +20,7 @@ export default {
   display: flex;
   width: 100%;
   align-items: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 .button {
   border: none;

@@ -159,7 +159,7 @@ pre {
 }
 .right {
   width: 75%;
-  margin-top: -5.22rem;
+  margin-top: -78px;
 }
 .link {
   text-decoration: none;

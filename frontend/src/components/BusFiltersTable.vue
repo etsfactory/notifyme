@@ -7,8 +7,8 @@
       <td>{{busFilter.row.category}}</td>
       <td class="multiline">{{busFilter.row.description}}</td>
       <td class="actions">
-        <i class="far fa-eye icon" @click="navigateToBusFilter(busFilter.row.id)"></i>
-        <i class="far fa-trash-alt icon" @click="deleteBusFilter(busFilter.row.id)"></i>
+        <img svg-inline class="icon" src="../assets/icons/eye.svg" @click="navigateToBusFilter(busFilter.row.id)">
+        <img svg-inline class="icon trash" src="../assets/icons/trash.svg" @click="deleteBusFilter(busFilter.row.id)">
       </td>
     </template>
   </sorteable-table>
@@ -54,5 +54,4 @@ export default {
   white-space: pre-line;
   word-wrap: break-word;
 }
-
 </style>

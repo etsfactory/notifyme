@@ -5,8 +5,8 @@
       <td>{{ template.row.name }}</td>
       <td>{{ template.row.subject }}</td>
       <td class="actions">
-        <i class="far fa-eye icon" @click="navigateToTemplate(template.row.id)"></i>
-        <i v-if="remove && template.row.name !== 'default'" class="far fa-trash-alt icon" @click="deleteTemplate(template.row.id)"></i>
+        <img svg-inline class="icon" src="../assets/icons/eye.svg" @click="navigateToTemplate(template.row.id)">
+        <img v-if="remove && template.row.name !== 'default'" svg-inline class="icon trash" src="../assets/icons/trash.svg" @click="deleteTemplate(template.row.id)">
       </td>
     </template>
   </sorteable-table>
@@ -32,7 +32,7 @@ export default {
   },
   data: () => ({
     columns: [
-      { text: "Id", key: "id", sorteable: true },
+      { text: "ID", key: "id", sorteable: true },
       { text: "Name", key: "email", sorteable: true },
       { text: "Subject", key: "name", sorteable: true },
       { text: "", key: "actions", sorteable: false }

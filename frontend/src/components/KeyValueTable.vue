@@ -47,7 +47,7 @@ export default {
   grid-template-columns: 35% 65%;
   grid-auto-rows: 1fr;
   border-bottom: 1px solid #bdbdbd;
-  padding: 0.4rem 0;
+  padding: 0.5rem 0;
 }
 .key {
   font-weight: bold;

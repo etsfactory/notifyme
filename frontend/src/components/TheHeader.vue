@@ -19,7 +19,7 @@ export default {
 .header {
   background: transparent;
   color: #4f4f4f;
-  height: 90px;
+  height: 96px;
   position: relative;
   display: flex;
   align-items: center;

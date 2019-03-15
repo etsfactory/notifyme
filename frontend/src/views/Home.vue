@@ -51,6 +51,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.home {
+  margin-top: 2.2rem;
+}
 .menu {
   display: grid;
   grid-template-columns: repeat(3, 150px);
@@ -73,7 +76,7 @@ export default {
   align-content: center;
   justify-content: center;
   &:hover {
-    background-color: $color-secundary;
+    background-color: rgba(0,0,0,0.02);
   }
 }
 .icon {

@@ -7,12 +7,32 @@
     </div>
     <nav>
       <ul class="link-list">
-        <li v-for="(section, i) in sections" :key="i">
-          <router-link class="link" :to="section.url">
+        <li>
+          <router-link class="link" to="/users">
             <div class="border"></div>
             <div class="link-container">
-              <i class="icon" :class="section.icon"></i>
-              {{ section.name }}
+              <img svg-inline class="icon" src="../assets/icons/users.svg">
+              Users
+            </div>
+          </router-link>
+        </li>
+
+        <li>
+          <router-link class="link" to="/bus_filters">
+            <div class="border"></div>
+            <div class="link-container">
+              <img svg-inline class="icon" src="../assets/icons/filter.svg">
+              Bus filters
+            </div>
+          </router-link>
+        </li>
+
+        <li>
+          <router-link class="link" to="/templates">
+            <div class="border"></div>
+            <div class="link-container">
+              <img svg-inline class="icon" src="../assets/icons/templates.svg">
+              Templates
             </div>
           </router-link>
         </li>
@@ -29,12 +49,6 @@ export default {
   name: "TheSidebar",
   components: {
     Logo
-  },
-  props: {
-    sections: {
-      type: Array,
-      required: true
-    }
   },
   methods: {
     ...mapMutations(["setSidebarCollapsed"]),
@@ -55,6 +69,9 @@ export default {
     .border {
       width: 4px;
     }
+    .icon path {
+      fill: $color-main !important;
+    }
   }
 }
 .link {
@@ -67,12 +84,15 @@ export default {
   text-transform: uppercase;
   width: 100%;
   display: block;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   transition: all 0.15s ease-in-out;
   letter-spacing: 0.15px;
   &:not(.router-link-active) {
     &:hover > .border {
       width: 7px;
+    }
+    &:hover .link-container .icon path {
+      fill: $color-main !important;
     }
     &:hover {
       color: #4f4f4f;
@@ -84,12 +104,12 @@ export default {
   padding: 0 1.5rem;
 }
 .icon {
-  margin-right: 1rem;
+  margin-right: 0.5rem;
 }
 .logo {
   width: 100%;
   text-align: center;
-  margin-top: 3rem;
+  margin-top: 40px;
   svg {
     width: 70%;
     height: auto;

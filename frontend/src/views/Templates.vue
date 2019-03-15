@@ -4,7 +4,7 @@
       <template slot="title">Templates</template>
       <template slot="buttons">
         <button class="button-main" @click="createTemplate">
-          <i class="fas fa-plus-circle create-icon"></i>Create template
+          <img svg-inline class="icon create-icon" src="../assets/icons/plus.svg">Create template
         </button>
       </template>
     </the-header>

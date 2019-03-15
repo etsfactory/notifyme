@@ -2,7 +2,7 @@
   <div id="app">
     <div class="grid">
       <div class="sidebar">
-        <the-sidebar :sections="sections"/>
+        <the-sidebar />
       </div>
       <div class="content">
         <main class="main-content">
@@ -24,13 +24,6 @@ export default {
     TheHeader,
     TheSidebar
   },
-  data: () => ({
-    sections: [
-      { name: "Users", url: "/users", icon: "fas fa-users" },
-      { name: "Bus filters", url: "/bus_filters", icon: "fas fa-filter" },
-      { name: "Templates", url: "/templates", icon: "fas fa-envelope" }
-    ]
-  }),
   computed: {
     ...mapState(["sidebarCollapsed"])
   }
@@ -44,7 +37,7 @@ html,
 body {
   color: #000;
   margin: 0;
-  font-size: calc(11px + 0.2vmax);
+  font-size: calc(10px + 0.2vmax);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Helvetica Neue", Arial, sans-serif;
   width: 100%;
@@ -108,6 +101,9 @@ button {
   margin: 1rem auto;
   background-color: #fff5e1;
 }
+.actions > *{
+  vertical-align : middle;
+}
 .vue-form-generator * {
   box-sizing: border-box;
 }
@@ -153,7 +149,6 @@ button {
   background: transparent;
   border: none !important;
   cursor: pointer;
-  font-weight: bold !important;
   color: #333333;
   margin: 0px auto;
   border-radius: 3px;
