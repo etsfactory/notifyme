@@ -27,7 +27,7 @@ export default {
   position: relative;
   display: inline-block;
   width: 60px;
-  height: 25px;
+  height: 26px;
   margin: 0px auto;
 }
 .switch input {
@@ -42,26 +42,28 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: 0.4s;
+  background-color: transparent;
   transition: 0.4s;
+  border: 2px solid #bdbdbd;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 21px;
-  width: 21px;
+  height: 14px;
+  width: 14px;
   top: 2px;
   left: 3px;
   bottom: 4px;
-  background-color: white;
-  -webkit-transition: 0.4s;
   transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: $color-secundary;
+  border: 2px solid $color-main;
+}
+
+input:checked + .slider:before {
+  border: 2px solid $color-main;
 }
 
 input:focus + .slider {
@@ -78,5 +80,6 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+  border: 2px solid #bdbdbd;
 }
 </style>

@@ -16,7 +16,7 @@
             ({{item.users.length}})
             <div class="popup">Users:
               <ul>
-                <li v-for="(item, i) in item.users" :key="i">{{item}}</li>
+                <li v-for="(email, j) in item.users" :key="j">{{email}}</li>
               </ul>
             </div>
           </div>
@@ -33,7 +33,6 @@
 </template>
 
 <script>
-
 import dayjs from "dayjs";
 
 export default {
@@ -53,12 +52,12 @@ export default {
       console.log(this.columns);
       return {
         gridTemplateColumns: `repeat(${this.columns}, 1fr)`
-      }
-    },
+      };
+    }
   },
   methods: {
     formatDate(date) {
-      return dayjs(date).format('YYYY/MM/DD - HH:mm:ss')
+      return dayjs(date).format("YYYY/MM/DD - HH:mm:ss");
     }
   }
 };

@@ -17,7 +17,11 @@ module.exports = {
       .options({
         removeAttributes: ["alt", "src"],
         svgo: {
-          plugins: [{ cleanupIDs: false }, { removeDoctype: true }, { removeComments: true }]
+          plugins: [
+            { cleanupIDs: false },
+            { removeDoctype: true },
+            { removeComments: true }
+          ]
         }
       });
   }

@@ -27,7 +27,9 @@
         v-if="usersFiltered.length !== 0"
         class="button-main button-submit"
         @click="$emit('click', selectedUsers)"
-      ><img svg-inline class="icon create-icon" src="../assets/icons/plus.svg"> Add users</button>
+      >
+        <img svg-inline class="icon create-icon" src="../assets/icons/plus.svg"> Add users
+      </button>
     </div>
   </div>
 </template>
@@ -87,18 +89,20 @@ export default {
 .users-subscription {
   width: 100%;
   margin: 0;
-  padding: 0;
 }
 .user-list {
   overflow-y: auto;
   max-height: 700px;
+  padding: 1rem 0;
 }
 .user {
   width: 48%;
   display: flex;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.03);
   margin-top: 1rem;
+  background: #f2f2f2;
+  border-radius: 5px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 .info {
   width: 80%;
