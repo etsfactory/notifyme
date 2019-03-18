@@ -64,6 +64,10 @@ class Realtime():
                     if old_bus.get('exchange') != new_bus.get(
                             'exchange') or old_bus.get('key') != new_bus.get('key'):
                         self.start_connection()
+                    
+                    if old_bus.get('template_id') != new_bus.get(
+                            'template_id'):
+                        self.subscriptions.edit_subscriptions_template(new_bus)
         except BaseException:
             raise ConnectionLost()
 

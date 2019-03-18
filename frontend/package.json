@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "0.18.0",
+    "dayjs": "1.8.10",
     "highlight.js": "9.13.1",
     "js-beautify": "^1.8.9",
     "vue": "2.5.21",

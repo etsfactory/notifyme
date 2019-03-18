@@ -42,18 +42,38 @@
     </div>-->
     <div class="section">
       <h1>Latest messages</h1>
-      <messages/>
+      <messages :messages="messages"/>
     </div>
   </div>
 </template>
 
 <script>
+import messagesApi from "@/logic/messages";
 import Messages from "@/components/Messages.vue";
 
 export default {
   name: "Home",
   components: {
     Messages
+  },
+  data: () => ({
+    messages: null,
+    error: null
+  }),
+  created() {
+    this.getMessages();
+  },
+  methods: {
+    async getMessages() {
+      try {
+        let response = await messagesApi.getAll();
+        this.messages = response.data.sort((a, b) => {
+          return new Date(b.date) - new Date(a.date);
+        });
+      } catch (error) {
+        this.error = error.response;
+      }
+    }
   }
 };
 </script>

@@ -78,7 +78,6 @@ class BusConnectionHandler():
                         bus_filter):
                     user = self.users_handler.get(sub['user_id'])
                     template = self.templates_handler.get(sub['template_id'])
-
                     if template:
                         subject, text = self.create_email(template, message)
                         user_filter = template.get('user_filter')
@@ -97,9 +96,9 @@ class BusConnectionHandler():
                             user_emails.append(user['email'])
                     else:
                         subject, text = self.get_default_template(template, message)
-                now = datetime.datetime.now(r.make_timezone('00:00'))
-                self.archive_message(bus_filter.get('exchange'), now, user_emails, bus_filter.get('description'))
+                now = r.now().to_iso8601()
                 self.smtp.send(user_emails, subject, text)
+                self.archive_message(bus_filter.get('exchange'), now, user_emails, subject)
 
     def create_email(self, template, message):
         """

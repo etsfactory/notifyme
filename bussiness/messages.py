@@ -23,10 +23,7 @@ class MessagesHandler():
         Get all templates from the database
         :template_id: Template id to search for if provided
         """
-        messages = self.db_handler.get_data(key)
-        for message in messages:
-            message['date'] = str(datetime.datetime.utcnow())
-        return messages
+        return self.db_handler.get_data(key)
     
     def insert(self, msgs):
         """
