@@ -133,5 +133,6 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 0;
+  flex-wrap: wrap;
 }
 </style>
