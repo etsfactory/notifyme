@@ -22,11 +22,7 @@
       <template v-if="isObject(data)">
         <tr v-for="(item, i) in sortedData" :key="i">
           <slot name="row" :row="item">
-            <td
-              v-for="(column, j) in columns"
-              :key="j"
-              v-if="hasValue(item, column)"
-            >{{itemValue(item, column)}}</td>
+            <td v-for="(column, j) in columns" :key="j" v-if="hasValue(item, column)">{{itemValue(item, column)}}</td>
           </slot>
         </tr>
       </template>
@@ -195,28 +191,34 @@ export default {
   background: transparent;
   width: 100%;
   border-collapse: collapse;
-  tr:nth-child(even) {
-    background: $color-main-light;
+  tr {
+    border-bottom: 1px solid #bdbdbd;
+    &:hover .actions {
+      opacity: 1;
+    }
   }
   tbody tr:hover td {
-    background-color: $color-secondary-light;
+    background-color: rgb(236, 236, 236);
   }
-  tbody th,
-  tbody td {
-    border-right: 3px solid #e7e7e7;
+  th {
+    padding: 1.15rem 1rem;
+    &::after {
+      color: $color-main;
+      font-size: 0.8rem;
+    }
   }
-  th,
   td {
-    padding: 0.4rem 1rem;
+    padding: 0.9rem 1rem;
     text-align: left;
     white-space: nowrap;
+    color: #4f4f4f;
   }
 }
 .sorteable {
   cursor: pointer;
 }
 .header {
-  border-bottom: 2px solid $color-main;
+  border-bottom: 2px solid black;
   vertical-align: middle;
   position: relative;
   text-align: left;
@@ -224,16 +226,31 @@ export default {
 }
 .headerSortUp::after {
   content: "▼";
-  font-size: 8px;
   position: absolute;
   right: 5px;
   top: 30%;
 }
 .headerSortDown::after {
   content: "▲";
-  font-size: 8px;
   position: absolute;
   right: 5px;
   top: 30%;
+}
+.actions {
+  opacity: 0;
+  text-align: center !important;
+  &:hover {
+    opacity: 1;
+  }
+}
+.icon {
+  padding: 0 1rem;
+  cursor: pointer;
+}
+.fa-eye {
+  color: #828282 !important;
+}
+.fa-trash-alt {
+  color: $color-main !important;
 }
 </style>

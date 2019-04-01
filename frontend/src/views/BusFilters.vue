@@ -1,9 +1,13 @@
 <template>
   <div class="bus_filters">
-    <h1>
-      <i class="fas fa-filter"></i> Bus filters
-      <i class="fas fa-plus-circle create-icon" @click="createBusFilter"></i>
-    </h1>
+    <the-header>
+      <template slot="title">Bus Filters</template>
+      <template slot="buttons">
+        <button class="button-main" @click="createBusFilter">
+          <img svg-inline class="icon create-icon" src="../assets/icons/plus.svg">Create bus filter
+        </button>
+      </template>
+    </the-header>
     <error v-if="error" :error="error"/>
     <bus-filters-table v-if="busFilters" :bus-filters="busFilters" @deleted="showModal"/>
     <confirm-modal
@@ -19,6 +23,7 @@
 import busFiltersApi from "@/logic/bus_filters";
 
 import BusFiltersTable from "@/components/BusFiltersTable.vue";
+import TheHeader from "@/components/TheHeader.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateBusFilter from "@/components/CreateBusFilter.vue";
 import Error from "@/components/Error.vue";
@@ -28,6 +33,7 @@ export default {
   components: {
     BusFiltersTable,
     ConfirmModal,
+    TheHeader,
     CreateBusFilter,
     Error
   },

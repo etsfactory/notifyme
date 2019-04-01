@@ -8,6 +8,8 @@
         {{ text }} user
       </h2>
       <error v-if="error" :error="error"/>
+      <p class="center">* If an id is not provided automatically an id will be generated.</p>
+      <p class="center">ID cannot be change.</p>
       <vue-form-generator
         @validated="onValidated"
         class="user-form"

@@ -1,31 +1,35 @@
 <template>
   <div class="bus-filter-subscription">
-    <ul class="bus-filter-list">Bus filters not suscribed to this user:
+    <div class="bus-filter-list">Bus filters not suscribed to this user:
       <div class="warning" v-if="busFiltersFiltered.length === 0">
         <strong>No filters found.</strong> Please go to
         <router-link to="/bus_filters">filters page</router-link>and create some
       </div>
-      <li v-for="(busFilter,i) in busFiltersFiltered" :key="i" class="bus-filter">
-        <div class="info">
-          <div class="name">
-            <span class="id">{{busFilter.exchange}}</span>
-            {{busFilter.key}}
+      <ul class="list">
+        <li v-for="(busFilter,i) in busFiltersFiltered" :key="i" class="bus-filter">
+          <div class="info">
+            <div class="name">
+              <span class="id">{{busFilter.exchange}}</span>
+              {{busFilter.key}}
+            </div>
+            <div>{{busFilter.description}}</div>
           </div>
-          <div>{{busFilter.description}}</div>
-        </div>
-        <div class="button">
-          <div class="toggler">
-            <toggler :toggled="isSuscribed(busFilter.id)" @click="select(busFilter, $event)"/>
+          <div class="button">
+            <div class="toggler">
+              <toggler :toggled="isSuscribed(busFilter.id)" @click="select(busFilter, $event)"/>
+            </div>
           </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
     <div class="center">
       <button
         v-if="busFiltersFiltered.length !== 0"
-        class="button-main"
+        class="button-main button-submit"
         @click="$emit('click', selectedbusFilters)"
-      >Add bus filters</button>
+      >
+        <img svg-inline class="icon create-icon" src="../assets/icons/plus.svg"> Add bus filters
+      </button>
     </div>
   </div>
 </template>
@@ -85,25 +89,27 @@ export default {
 .bus-filter-subscription {
   width: 100%;
   margin: 0;
-  padding: 0;
 }
 .bus-filter-list {
   overflow-y: auto;
   max-height: 700px;
+  padding: 1rem 0;
 }
 .bus-filter {
+  width: 48%;
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.03);
   margin-top: 1rem;
+  background: #f2f2f2;
+  border-radius: 5px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 .info {
   width: 80%;
   padding: 1rem;
 }
 .button {
-  width: 15%;
+  padding: 1rem;
 }
 .name {
   font-size: 1.2rem;
@@ -122,5 +128,10 @@ export default {
 }
 .sub-button {
   margin-top: 3rem;
+}
+.list {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
 }
 </style>

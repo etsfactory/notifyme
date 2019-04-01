@@ -1,34 +1,43 @@
 <template>
-  <div class="template">
-    <h1>
-      <i class="fas fa-envelope"></i> Template
-    </h1>
+  <div>
     <error v-if="error" :error="error"/>
     <div v-if="template">
-      <div class="template-container">
-        <key-value-table class="info" :data="template" disable="text"/>
-        <div class="buttons">
-          <action-buttons @edit="showEditModal" @remove="showDeleteTemplate = true"></action-buttons>
-          <confirm-modal
-            :visible.sync="showDeleteTemplate"
-            @accept="deleteTemplate"
-            subtitle="This action can not be undone. All bus filters asociated with this template will be replaced with default template"
+      <the-header>
+        <template slot="title">Template</template>
+        <template slot="buttons">
+          <router-link to="/bus_filters" class="link">
+            <i class="fas fa-chevron-left"></i>Back to templates
+          </router-link>
+        </template>
+      </the-header>
+      <div class="template">
+        <div class="template-container">
+          <div class="buttons">
+            <action-buttons @edit="showEditModal" @remove="showDeleteTemplate = true"></action-buttons>
+            <confirm-modal
+              :visible.sync="showDeleteTemplate"
+              @accept="deleteTemplate"
+              subtitle="This action can not be undone. All bus filters asociated with this template will be replaced with default template"
+            />
+            <key-value-table class="info" :data="template" disable="text"/>
+          </div>
+        </div>
+        <div class="right">
+          <div class="text">
+            <h2>Body of the email:</h2>
+            <pre v-highlightjs>
+          <code class="html text-body">{{textHTML}}</code>
+        </pre>
+          </div>
+          <create-template
+            :model="template"
+            :visible.sync="showCreateModal"
+            :edit="true"
+            @created="$router.go(0)"
+            :code="textHTML"
           />
         </div>
       </div>
-      <div class="text">
-        <h2>Body of the email:</h2>
-        <pre v-highlightjs>
-          <code class="html text-body">{{textHTML}}</code>
-        </pre>
-      </div>
-      <create-template
-        :model="template"
-        :visible.sync="showCreateModal"
-        :edit="true"
-        @created="$router.go(0)"
-        :code="textHTML"
-      />
     </div>
   </div>
 </template>
@@ -37,6 +46,7 @@
 import templatesApi from "@/logic/templates";
 import beautify from "js-beautify";
 import KeyValueTable from "@/components/KeyValueTable.vue";
+import TheHeader from "@/components/TheHeader.vue";
 import ActionButtons from "@/components/ActionButtons.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import CreateTemplate from "@/components/CreateTemplate.vue";
@@ -48,6 +58,7 @@ export default {
     KeyValueTable,
     ActionButtons,
     ConfirmModal,
+    TheHeader,
     CreateTemplate,
     Error
   },
@@ -104,8 +115,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header {
+  width: 24%;
+}
 .template {
   position: relative;
+  display: flex;
 }
 .notifications-table /deep/.actions {
   text-align: center !important;
@@ -114,27 +129,24 @@ export default {
   padding: 0 3rem;
   cursor: pointer;
   &:hover {
-    color: $color-main-dark;
+    color: $color-secundary;
   }
-}
-.info {
-  width: 40%;
 }
 .users {
   margin-top: 3rem;
 }
 .template-container {
+  width: 25%;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  padding-right: 3rem;
 }
 .buttons {
-  width: 35%;
-}
-.text {
-  margin-top: 2rem;
+  width: 100%;
 }
 .text-body {
-  padding: 0;
+  padding: 1rem 2rem;
 }
 .button-grey {
   margin-left: 1rem;
@@ -144,5 +156,17 @@ export default {
 }
 pre {
   margin: 0;
+}
+.right {
+  width: 75%;
+  margin-top: -78px;
+}
+.link {
+  text-decoration: none;
+  color: #828282;
+}
+.fa-chevron-left {
+  color: $color-main;
+  margin-right: 0.5rem;
 }
 </style>

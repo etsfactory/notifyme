@@ -94,7 +94,7 @@ class RethinkHandler():
             try:
                 if key:
                     return r.table(table_name).get(key).run(conn)
-                return r.table(table_name).run(conn)
+                return r.table(table_name).run(conn, time_format="raw")
 
             except BaseException:
                 raise ReadError()

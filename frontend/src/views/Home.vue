@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <h1><i class="fas fa-cog"></i> Control panel</h1>
-    <div class="menu">
+    <!-- <div class="menu">
       <div class="item">
         <router-link class="link" to="/users">
           <div class="item-container">
@@ -40,17 +39,49 @@
           </div>
         </router-link>
       </div>
+    </div>-->
+    <div class="section">
+      <h1>Latest messages</h1>
+      <messages :messages="messages"/>
     </div>
   </div>
 </template>
 
 <script>
+import messagesApi from "@/logic/messages";
+import Messages from "@/components/Messages.vue";
+
 export default {
-  name: "Home"
+  name: "Home",
+  components: {
+    Messages
+  },
+  data: () => ({
+    messages: null,
+    error: null
+  }),
+  created() {
+    this.getMessages();
+  },
+  methods: {
+    async getMessages() {
+      try {
+        let response = await messagesApi.getAll();
+        this.messages = response.data.sort((a, b) => {
+          return new Date(b.date) - new Date(a.date);
+        });
+      } catch (error) {
+        this.error = error.response;
+      }
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+.home {
+  margin-top: 2.2rem;
+}
 .menu {
   display: grid;
   grid-template-columns: repeat(3, 150px);
@@ -73,7 +104,7 @@ export default {
   align-content: center;
   justify-content: center;
   &:hover {
-    background-color: $color-main-light;
+    background-color: rgba(0, 0, 0, 0.02);
   }
 }
 .icon {
@@ -89,5 +120,8 @@ export default {
 .link {
   color: black;
   text-decoration: none;
+}
+.section {
+  margin-top: 3rem;
 }
 </style>

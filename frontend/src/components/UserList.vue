@@ -1,31 +1,35 @@
 <template>
   <div class="users-subscription">
-    <ul class="user-list">Users not suscribed to this bus filter:
+    <div class="user-list">Users not suscribed to this bus filter:
       <div class="warning" v-if="usersFiltered.length === 0">
         <strong>No users found.</strong> Please go to
         <router-link to="/users">users page</router-link>and create some
       </div>
-      <li v-for="(user,i) in usersFiltered" :key="i" class="user">
-        <div class="info">
-          <div class="name">
-            <span class="id">{{user.id}}</span>
-            {{user.name}}
+      <ul class="list">
+        <li v-for="(user,i) in usersFiltered" :key="i" class="user">
+          <div class="info">
+            <div class="name">
+              <span class="id">{{user.id}}</span>
+              {{user.name}}
+            </div>
+            <div>{{user.email}}</div>
           </div>
-          <div>{{user.email}}</div>
-        </div>
-        <div class="button">
-          <div class="toggler">
-            <toggler :toggled="isSuscribed(user.id)" @click="select(user, $event)"/>
+          <div class="button">
+            <div class="toggler">
+              <toggler :toggled="isSuscribed(user.id)" @click="select(user, $event)"/>
+            </div>
           </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
     <div class="center">
       <button
         v-if="usersFiltered.length !== 0"
-        class="button-main"
+        class="button-main button-submit"
         @click="$emit('click', selectedUsers)"
-      >Add users</button>
+      >
+        <img svg-inline class="icon create-icon" src="../assets/icons/plus.svg"> Add users
+      </button>
     </div>
   </div>
 </template>
@@ -85,28 +89,30 @@ export default {
 .users-subscription {
   width: 100%;
   margin: 0;
-  padding: 0;
 }
 .user-list {
   overflow-y: auto;
   max-height: 700px;
+  padding: 1rem 0;
 }
 .user {
+  width: 48%;
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.03);
   margin-top: 1rem;
+  background: #f2f2f2;
+  border-radius: 5px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 .info {
   width: 80%;
   padding: 1rem;
 }
-.button {
-  width: 15%;
-}
 .name {
   font-size: 1.2rem;
+}
+.button {
+  padding: 1rem;
 }
 .id {
   font-weight: bold;
@@ -122,5 +128,10 @@ export default {
 }
 .sub-button {
   margin-top: 3rem;
+}
+.list {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
 }
 </style>

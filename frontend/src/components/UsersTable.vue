@@ -5,8 +5,8 @@
       <td>{{ user.row.email }}</td>
       <td>{{ user.row.name }}</td>
       <td class="actions">
-        <i class="far fa-eye icon" @click="navigateToUser(user.row.id)"></i>
-        <i class="far fa-trash-alt icon" @click="deleteUser(user.row.id)"></i>
+        <img svg-inline class="icon" src="../assets/icons/eye.svg" @click="navigateToUser(user.row.id)">
+        <img svg-inline class="icon trash" src="../assets/icons/trash.svg" @click="deleteUser(user.row.id)">
       </td>
     </template>
   </sorteable-table>
@@ -28,7 +28,7 @@ export default {
   },
   data: () => ({
     columns: [
-      { text: "Id", key: "id", sorteable: true },
+      { text: "ID", key: "id", sorteable: true },
       { text: "Email", key: "email", sorteable: true },
       { text: "Name", key: "name", sorteable: true },
       { text: "", key: "actions", sorteable: false }
@@ -46,14 +46,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.users-table /deep/.actions {
-  text-align: center !important;
-}
-.icon {
-  padding: 0 3rem;
-  cursor: pointer;
-  &:hover {
-    color: $color-main-dark;
-  }
-}
 </style>

@@ -7,8 +7,8 @@
       <td>{{busFilter.row.category}}</td>
       <td class="multiline">{{busFilter.row.description}}</td>
       <td class="actions">
-        <i class="far fa-eye icon" @click="navigateToBusFilter(busFilter.row.id)"></i>
-        <i class="far fa-trash-alt icon" @click="deleteBusFilter(busFilter.row.id)"></i>
+        <img svg-inline class="icon" src="../assets/icons/eye.svg" @click="navigateToBusFilter(busFilter.row.id)">
+        <img svg-inline class="icon trash" src="../assets/icons/trash.svg" @click="deleteBusFilter(busFilter.row.id)">
       </td>
     </template>
   </sorteable-table>
@@ -30,7 +30,7 @@ export default {
   },
   data: () => ({
     columns: [
-      { text: "Id", key: "id", sorteable: true },
+      { text: "ID", key: "id", sorteable: true },
       { text: "Exchange", key: "exchange", sorteable: true },
       { text: "Exchange Type", key: "exchange_type", sorteable: true },
       { text: "Category", key: "category", sorteable: true },
@@ -50,18 +50,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.users-table /deep/.actions {
-  text-align: center !important;
-}
 .users-table /deep/.multiline {
   white-space: pre-line;
   word-wrap: break-word;
-}
-.icon {
-  padding: 0 3rem;
-  cursor: pointer;
-  &:hover {
-    color: $color-main-dark;
-  }
 }
 </style>

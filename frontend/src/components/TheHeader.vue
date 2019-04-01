@@ -1,92 +1,34 @@
 <template>
   <header class="header">
-    <nav class="link-list">
-      <ul class="menu">
-        <li>
-          <router-link class="logo" to="/">
-            <h1 class="title">Notify.me</h1>
-          </router-link>
-        </li>
-        <li v-for="(section, i) in sections" :key="i">
-          <router-link class="link" :to="section.url">
-            <div class="link-container">
-              <i class="icon" :class="section.icon"></i>
-              {{ section.name }}
-            </div>
-          </router-link>
-        </li>
-        <li class="about">
-          <router-link to="/about">
-            <h1 class="title">
-              <i class="fas fa-info-circle"></i>
-            </h1>
-          </router-link>
-        </li>
-      </ul>
-    </nav>
+    <h1 class="title">
+      <slot name="title"></slot>
+    </h1>
+    <div class="buttons">
+      <slot name="buttons"></slot>
+    </div>
   </header>
 </template>
 
 <script>
 export default {
-  name: "TheHeader",
-  props: {
-    sections: {
-      type: Array,
-      default: () => []
-    }
-  }
+  name: "TheHeader"
 };
 </script>
 
 <style lang="scss" scoped>
 .header {
-  background: linear-gradient(to right, $color-main-dark, $color-secondary);
-  color: white;
-  height: 50px;
+  background: transparent;
+  color: #4f4f4f;
+  height: 96px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .title {
-  margin-left: 1rem;
-  display: inline;
-  font-size: 1.4rem;
-}
-.logo {
-  color: white;
-}
-.link-list {
-  height: 100%;
-}
-.menu {
-  height: 100%;
-  display: flex;
+  font-size: 1.65rem;
   margin: 0;
   padding: 0;
-  margin-left: 40px;
-  list-style: none;
-  align-items: center;
-  & :nth-child(2) {
-    margin-left: 40px;
-  }
-}
-.link {
-  padding: 0 1.5rem;
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  width: 100%;
-  height: 100%;
-  display: block;
-  font-size: 1.2rem;
-}
-.icon {
-  margin-right: 0.2rem;
-}
-.about {
-  margin-left: auto;
-  margin-right: 50px;
-  .fa-info-circle {
-    color: white;
-  }
+  font-weight: normal;
 }
 </style>

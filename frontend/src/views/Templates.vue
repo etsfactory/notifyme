@@ -1,9 +1,14 @@
 <template>
   <div class="templates">
-    <h1>
-      <i class="fas fa-envelope"></i> Templates
-      <i class="fas fa-plus-circle create-icon" @click="createTemplate"></i>
-    </h1>
+    <the-header>
+      <template slot="title">Templates</template>
+      <template slot="buttons">
+        <button class="button-main" @click="createTemplate">
+          <img svg-inline class="icon create-icon" src="../assets/icons/plus.svg">Create template
+        </button>
+      </template>
+    </the-header>
+
     <error v-if="error" :error="error"/>
     <template-table v-if="templates" :templates="templates" @deleted="showModal"/>
     <confirm-modal :visible.sync="showDeleteModal" @accept="deleteTemplate"/>
@@ -16,6 +21,7 @@ import templatesApi from "@/logic/templates";
 
 import TemplateTable from "@/components/TemplateTable.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
+import TheHeader from "@/components/TheHeader.vue";
 import CreateTemplate from "@/components/CreateTemplate.vue";
 import Error from "@/components/Error.vue";
 
@@ -25,6 +31,7 @@ export default {
     TemplateTable,
     ConfirmModal,
     CreateTemplate,
+    TheHeader,
     Error
   },
   data: () => ({

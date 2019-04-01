@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="actions">
     <button class="button edit" @click="$emit('edit')">
-      <i class="fas fa-edit"></i> Edit
+      <img svg-inline class="icon" src="../assets/icons/pencil.svg">
     </button>
     <button class="button delete" @click="$emit('remove')">
-      <i class="far fa-trash-alt"></i> Delete
+      <img svg-inline class="icon" src="../assets/icons/trash.svg">
     </button>
   </div>
 </template>
@@ -16,25 +16,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.actions {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-top: 1rem;
+}
 .button {
   border: none;
-  margin: 0px auto;
-  padding: 0.7rem 1.5rem;
   font-weight: bold;
   color: white;
-  margin-bottom: 1rem;
-  display: block;
-  width: 300px;
-  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
   cursor: pointer;
-  & i {
-    margin-right: 0.5rem;
-  }
+  font-size: 1.1rem;
 }
 .edit {
-  background-color: $color-main-dark;
+  background-color: rgba(0, 145, 255, 0.2);
+  color: #0091ff;
+  &:hover {
+    background-color: rgba(0, 145, 255, 0.5);
+  }
 }
 .delete {
-  background-color: #994c63;
+  margin-left: 0.7rem;
+  background-color: rgba(235, 87, 87, 0.2);
+  color: #eb5757;
+  &:hover {
+    background-color: rgba(235, 87, 87, 0.5);
+  }
 }
 </style>

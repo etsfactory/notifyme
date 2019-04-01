@@ -179,6 +179,14 @@ class SubscriptionsHandler():
             {'filter_id': bus_filter['id']})
         for sub in subscriptions:
             self.delete(sub['id'])
+    
+    def edit_subscriptions_template(self, bus_filter):
+        subscriptions = self.db_handler.filter_data({'filter_id': bus_filter.get('id')})
+        for subs in subscriptions:
+            subs['template_id'] = bus_filter.get('template_id')
+            print(subs)
+            self.edit(subs, subs['id'])
+
 
     def subscriptions_template(self, template_id):
         """
