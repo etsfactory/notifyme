@@ -3,7 +3,9 @@ from marshmallow import Schema, fields
 
 import settings as st
 import datetime
+import dateutil.parser
 
+import rethinkdb as r
 
 from bussiness.db_handler import DBHandler
 
@@ -32,8 +34,12 @@ class MessagesHandler():
         """
         messages = self.get()
         for message in messages:
-            if message['date'] < str(datetime.datetime.today().date()):
-                self.delete(message.id)
+            today = datetime.datetime.today()
+            week_before = today - datetime.timedelta(days=7)
+            date =  datetime.datetime.timestamp(week_before)
+            message_date = datetime.datetime.timestamp(dateutil.parser.parse(message['date']))
+            if (date > message_date):
+                self.delete(message['id'])
 
         return self.db_handler.insert_data(msgs)
 
