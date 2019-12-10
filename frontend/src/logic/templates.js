@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const TEMPLATES_PATH = "/templates";
-const TEMPLATES_ENDPOINT = process.env.VUE_APP_NOTIFYME_HOST + TEMPLATES_PATH;
+const TEMPLATES_ENDPOINT = process.env.VUE_APP_NOTIFYME_HOST + "/v1" + TEMPLATES_PATH;
 
 export default {
   get(templateId) {

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const USERS_PATH = "/users";
 const BUS_FILTERS_PATH = "/bus_filters";
-const USERS_ENDPOINT = process.env.VUE_APP_NOTIFYME_HOST + USERS_PATH;
+const USERS_ENDPOINT = process.env.VUE_APP_NOTIFYME_HOST + "/v1" + USERS_PATH;
 
 export default {
   get(userId) {
