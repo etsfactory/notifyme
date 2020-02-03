@@ -7,7 +7,7 @@
         <i class="fas fa-filter"></i>
         {{ text }} bus filter
       </h2>
-      <error v-if="error" :error="error"/>
+      <error v-if="error" :error="error" />
       <p class="center">* If an id is not provided automatically an id will be generated.</p>
       <p class="center">ID cannot be change.</p>
       <vue-form-generator
@@ -41,7 +41,7 @@ export default {
         exchange: "",
         key: "",
         exchange_type: "fanout",
-        durable: false,
+        durable: true,
         description: "",
         category: ""
       })
@@ -71,6 +71,12 @@ export default {
           featured: true
         },
         {
+          type: "select",
+          label: "Exchange type",
+          model: "exchange_type",
+          values: ["fanout", "direct"]
+        },
+        {
           type: "input",
           inputType: "text",
           label: "Key",
@@ -78,16 +84,10 @@ export default {
           placeholder: "Key for the exchange"
         },
         {
-          type: "select",
-          label: "Exchange type",
-          model: "exchange_type",
-          values: ["fanout", "direct"]
-        },
-        {
           type: "checkbox",
           label: "Durable",
           model: "durable",
-          default: false
+          default: true
         },
         {
           type: "input",
