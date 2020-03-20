@@ -96,3 +96,22 @@ class TemplateView(Resource):
                 response = {'deleted': True}
                 return response
         return {'message': 'Template not found'}, 404
+
+class TemplatesBusFiltersView(Resource):
+    """
+    Specific templates with bus filters endpoints /templates/:id/bus_filters
+    """
+
+    @staticmethod
+    def get(template_id):
+        """
+        Get a list of bus filters assigned to the template id
+        """
+        print(template_id)
+        template = templates.get(template_id)
+
+        if template:
+            bus_filters = subscriptions.get_filters_by_template(template)
+            return bus_filters
+
+        return {'message': 'Template not found'}, 404
