@@ -1,8 +1,8 @@
 {
   "bus": {
-    "host": "/ETS/configs/config.ini/bus/host",
-    "user": "/ETS/configs/config.ini/bus/user",
-    "password": "/ETS/configs/config.ini/bus/password",
+    "host": "localhost",
+    "user": "guest",
+    "password": "guest",
     "queue_name": "notifyme",
     "error_exchange": "notifymeError"
   },
@@ -16,7 +16,7 @@
     "ttls": true
   },
   "logging": {
-    "root_path": "/ETS/configs/config.ini/logging/root_path"
+    "root_path": "../logs"
   },
   "db": {
     "server":"localhost",

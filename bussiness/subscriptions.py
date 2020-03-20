@@ -115,6 +115,13 @@ class SubscriptionsHandler():
         """
         return self.db_handler.filter_data({'template_id': template['id']})
 
+    def get_by_template_id(self, template_id):
+        """
+        Get subscription searching by his template id
+        :template_id: Template id to search for
+        """
+        return self.db_handler.filter_data({'template_id': template_id})
+
     def get_by_filter(self, bus_filter):
         """
         Get subscription by his id
@@ -205,7 +212,6 @@ class SubscriptionsHandler():
             subs['template_id'] = bus_filter.get('template_id')
             print(subs)
             self.edit(subs, subs['id'])
-
 
     def subscriptions_template(self, template_id):
         """
