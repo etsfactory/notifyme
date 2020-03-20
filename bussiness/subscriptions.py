@@ -98,7 +98,7 @@ class SubscriptionsHandler():
         subscriptions = self.get_by_template(template)
         for subscription in subscriptions:
             bfilter = self.filters.get(subscription['filter_id'])
-            if any(bus_filter['id'] == bfilter['id'] for bus_filter in filters):
+            if not any(bus_filter['id'] == bfilter['id'] for bus_filter in filters):
                 filters.append(bfilter)
         return filters
 
