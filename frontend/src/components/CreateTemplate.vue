@@ -201,6 +201,8 @@ export default {
   background-color: white;
   border: 1px solid grey;
   border-radius: 10px;
-  min-height: 300px;
+  min-height: 200px;
+  max-height: 250px;
+  overflow-y: auto;
 }
 </style>

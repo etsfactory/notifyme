@@ -2,11 +2,11 @@
   <div id="app">
     <div class="grid">
       <div class="sidebar">
-        <the-sidebar/>
+        <TheSidebar />
       </div>
       <div class="content">
         <main class="main-content">
-          <router-view></router-view>
+          <router-view />
         </main>
       </div>
     </div>
@@ -163,7 +163,7 @@ button {
 .field-wrap input[type="submit"],
 .button-submit {
   padding: 0.8rem 2rem !important;
-  margin-top: 2rem;
+  margin: 2rem 0;
 }
 .field-wrap input[type="submit"],
 .button-template {
@@ -206,7 +206,7 @@ button {
   opacity: 1;
   &-inner {
     position: relative;
-    margin: 5% auto;
+    margin: 3% auto;
     display: flex;
     align-items: center;
     flex-direction: column;

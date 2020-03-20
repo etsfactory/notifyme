@@ -109,7 +109,6 @@ class TemplatesBusFiltersView(Resource):
         """
         Get a list of bus filters assigned to the template id
         """
-        print(template_id)
         template = templates.get(template_id)
 
         if template:
@@ -133,7 +132,6 @@ class TemplatesBusFiltersView(Resource):
         if isinstance(json_data, list):
             response = json_data
             for bfilter_json in response:
-                print(bfilter_json)
                 bfilter, errors = bus_filter_schema.load(bfilter_json)
                 if errors:
                     return errors, 422

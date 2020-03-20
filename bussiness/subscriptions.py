@@ -97,8 +97,8 @@ class SubscriptionsHandler():
         filters = []
         subscriptions = self.get_by_template(template)
         for subscription in subscriptions:
-            template = self.templates.get(subscription['template_id'])
-            filters.append(template)
+            bfilter = self.filters.get(subscription['filter_id'])
+            filters.append(bfilter)
         return filters
 
     def get_by_id(self, subsc_id):
