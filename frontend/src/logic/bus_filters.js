@@ -4,7 +4,7 @@ const USERS_PATH = "/users";
 const BUS_FILTERS_PATH = "/bus_filters";
 const TEMPLATE_PATH = "/templates";
 const BUS_FILTERS_ENDPOINT =
-  process.env.VUE_APP_NOTIFYME_HOST + BUS_FILTERS_PATH;
+  process.env.VUE_APP_NOTIFYME_HOST + "/v1" + BUS_FILTERS_PATH;
 
 export default {
   get(busId) {

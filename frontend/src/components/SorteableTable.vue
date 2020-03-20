@@ -185,7 +185,6 @@ export default {
   width: auto;
   min-width: 100%;
   border: 0;
-  border-bottom: 4px solid $color-main;
   border-spacing: 0;
   border-collapse: collapse;
   background: transparent;

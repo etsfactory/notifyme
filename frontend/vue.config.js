@@ -1,5 +1,7 @@
 // vue.config.js
 const fs = require("fs");
+const merge = require("webpack-merge");
+const readConfig = require("./readConfig");
 
 module.exports = {
   css: {
@@ -10,6 +12,9 @@ module.exports = {
     }
   },
   chainWebpack: config => {
+    config.plugin("define").tap(args => {
+      return [merge(args[0], readConfig())];
+    });
     config.module
       .rule("vue")
       .use("vue-svg-inline-loader")

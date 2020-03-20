@@ -4,6 +4,7 @@
       <td>{{busFilter.row.id}}</td>
       <td>{{busFilter.row.exchange}}</td>
       <td>{{busFilter.row.exchange_type}}</td>
+      <td>{{busFilter.row.key}}</td>
       <td>{{busFilter.row.category}}</td>
       <td class="multiline">{{busFilter.row.description}}</td>
       <td class="actions">
@@ -33,6 +34,7 @@ export default {
       { text: "ID", key: "id", sorteable: true },
       { text: "Exchange", key: "exchange", sorteable: true },
       { text: "Exchange Type", key: "exchange_type", sorteable: true },
+      { text: "Routing key", key: "key", sorteable: true },
       { text: "Category", key: "category", sorteable: true },
       { text: "Description", key: "description", sorteable: true },
       { text: "", key: "actions", sorteable: false }
