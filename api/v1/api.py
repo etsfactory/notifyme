@@ -18,7 +18,7 @@ from api.v1.api_bus_filters import (
     BusFilterTemplateView
 )
 from api.v1.api_subscriptions import SubscriptionsView, SubscriptionView
-from api.v1.api_templates import TemplatesView, TemplateView
+from api.v1.api_templates import TemplatesView, TemplateView, TemplatesBusFiltersView
 from api.v1.api_messages import MessagesView
 
 
@@ -62,6 +62,8 @@ class ApiHandler(threading.Thread):
 
         api.add_resource(TemplatesView, '/templates')
         api.add_resource(TemplateView, '/templates/<string:template_id>')
+        api.add_resource(TemplatesBusFiltersView,
+                         '/templates/<string:template_id>/bus_filters')
 
         api.add_resource(Documentation, '/spec')
         api.add_resource(MessagesView, '/messages')

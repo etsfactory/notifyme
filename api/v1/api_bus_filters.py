@@ -29,7 +29,6 @@ class BusFiltersView(Resource):
         Get bus filters from the db
         """
         group_by = request.args.get('group_by')
-            
         bus_filters = filters.get()
         if group_by:
             modified_data = {}
@@ -257,7 +256,7 @@ class BusFilterUsersView(Resource):
 
         return {'message': 'User not found'}, 404
 
-        
+
 class BusFilterUserView(Resource):
     def delete(self, bus_filter_id, user_id):
         """

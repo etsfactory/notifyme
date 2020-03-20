@@ -52,8 +52,7 @@ export default {
     }
   },
   data: () => ({
-    selectedbusFilters: [],
-    busFilterSelected: false
+    selectedbusFilters: []
   }),
   computed: {
     busFiltersFiltered() {
@@ -75,7 +74,6 @@ export default {
           this.selectedbusFilters.splice(index, 1);
         }
       }
-      this.busFilterSelected = toggled;
     },
     isSuscribed(id) {
       return this.subscriptions.some(item => item.id === id);

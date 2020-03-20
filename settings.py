@@ -10,7 +10,7 @@ APP_CHARSET = 'UTF-8'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Config file paths
-CONFIGURATION_JSON_FILE = '/ETS/git/notifyme/config.json'
+CONFIGURATION_JSON_FILE = 'config.json'
 CONFIGURATION_JOSN_FILE_DEV = 'config_development.json'
 
 config = ConfigManager(CONFIGURATION_JSON_FILE, CONFIGURATION_JOSN_FILE_DEV)

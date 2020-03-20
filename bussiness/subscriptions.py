@@ -89,12 +89,38 @@ class SubscriptionsHandler():
             filters.append(bus_filter)
         return filters
 
+    def get_filters_by_template(self, template):
+        """
+        Get bus filters assigned to a template
+        :template: Template to search for his filters
+        """
+        filters = []
+        subscriptions = self.get_by_template(template)
+        for subscription in subscriptions:
+            bfilter = self.filters.get(subscription['filter_id'])
+            filters.append(bfilter)
+        return filters
+
     def get_by_id(self, subsc_id):
         """
         Get subscription by his id
         :subsc_id: ID of the subscription to search
         """
         return self.db_handler.filter_data({'id': subsc_id})
+
+    def get_by_template(self, template):
+        """
+        Get subscription searching by his template
+        :template: Template to search for
+        """
+        return self.db_handler.filter_data({'template_id': template['id']})
+
+    def get_by_template_id(self, template_id):
+        """
+        Get subscription searching by his template id
+        :template_id: Template id to search for
+        """
+        return self.db_handler.filter_data({'template_id': template_id})
 
     def get_by_filter(self, bus_filter):
         """
@@ -179,14 +205,13 @@ class SubscriptionsHandler():
             {'filter_id': bus_filter['id']})
         for sub in subscriptions:
             self.delete(sub['id'])
-    
+
     def edit_subscriptions_template(self, bus_filter):
         subscriptions = self.db_handler.filter_data({'filter_id': bus_filter.get('id')})
         for subs in subscriptions:
             subs['template_id'] = bus_filter.get('template_id')
             print(subs)
             self.edit(subs, subs['id'])
-
 
     def subscriptions_template(self, template_id):
         """

@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "lintfix": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
     "axios": "0.18.0",
@@ -24,8 +25,8 @@
     "@vue/eslint-config-prettier": "4.0.1",
     "babel-eslint": "10.0.1",
     "configparser": "0.3.6",
-    "eslint": "5.8.0",
-    "eslint-plugin-vue": "5.0.0",
+    "eslint": "6.8.0",
+    "eslint-plugin-vue": "v7.0.0-alpha.0",
     "lint-staged": "8.1.0",
     "node-sass": "4.9.0",
     "sass-loader": "7.0.1",

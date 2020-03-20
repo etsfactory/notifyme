@@ -9,7 +9,7 @@
       <td class="multiline">{{busFilter.row.description}}</td>
       <td class="actions">
         <img svg-inline class="icon" src="../assets/icons/eye.svg" @click="navigateToBusFilter(busFilter.row.id)">
-        <img svg-inline class="icon trash" src="../assets/icons/trash.svg" @click="deleteBusFilter(busFilter.row.id)">
+        <img v-if="!disableDelete" svg-inline class="icon trash" src="../assets/icons/trash.svg" @click="deleteBusFilter(busFilter.row.id)">
       </td>
     </template>
   </sorteable-table>
@@ -27,6 +27,10 @@ export default {
     busFilters: {
       type: Array,
       required: true
+    },
+    disableDelete: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
