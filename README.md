@@ -1,4 +1,6 @@
-# Notify.me
+<p align="center"><img width="100" src="./logo.png" alt="Notifyme logo"></p>
+
+# Notifyme
 
 Notify.me es un servicio creado en python para el manejo de notificaciones a usuarios de mensajes del bus de RabbitMQ. En principio las notificaciones se envían al email de los usuarios. La aplicación, mediante API, permite crear y modificar usuarios, así como tipos de notificaciones a los que los usuarios se pueden suscribir. Además se permite crear templates (plantillas para las notificaciones) de tal forma que se puede indicar en el mensaje y el asunto de la notificatión variables que porvengan en el mensaje del bus.
 
