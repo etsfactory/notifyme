@@ -98,7 +98,7 @@ Variables que puedes definir:
 
 Una configuración típica sería:
 
-````json
+```json
 {
   "bus": {
     "host": "localhost",
