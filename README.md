@@ -1,10 +1,22 @@
-<p align="center"><img width="100" src="./logo.png" alt="Notifyme logo"></p>
+<p align="center"><img width="250" src="./logo.png" alt="Notifyme logo"></p>
+
+<p align="center">
+  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+  <br>
+  [![Python](https://img.shields.io/badge/python-v3-3776AB?logo=python)](https://img.shields.io/badge/python-v3-3776AB?logo=python)
+  [![Vue](https://img.shields.io/badge/Vue-v3-4FC08D?logo=vue.js)](https://img.shields.io/badge/Vue-v3-4FC08D?logo=vue.js)
+</p>
 
 # Notifyme
 
-Notify.me es un servicio creado en python para el manejo de notificaciones a usuarios de mensajes del bus de RabbitMQ. En principio las notificaciones se envían al email de los usuarios. La aplicación, mediante API, permite crear y modificar usuarios, así como tipos de notificaciones a los que los usuarios se pueden suscribir. Además se permite crear templates (plantillas para las notificaciones) de tal forma que se puede indicar en el mensaje y el asunto de la notificatión variables que porvengan en el mensaje del bus.
+Notifyme es un servicio de gestión de notificaciones para colas RabbitMQ.
 
-Notify.me crea una cola desde la que se conecta a los exchanges del bus que el usuario indique, de la forma que cuando llega un mensaje a uno de los exchanges conectados envía una notificación a los usuarios suscritos.
+El servicio se puede configurar para enviar emails a los usuarios suscritos a exchanges y keys cada vez que llega un mensaje al bus. Además, se pueden crear 
+plantillas para los mensajes de tal forma que se peuden incluir variables que vengan incluídas dentro del mensaje enviado al bus.
+
+Además de una API, el servicio ofrece un panel de control para gestionar de forma más sencilla las notificaciones.
+
+Notifyme está pensado para no modificar el bus al que se conecta. El servicio crea su propia cola para no eliminar mensajes del bus al ser leídos.
 
 ## Getting Started
 
