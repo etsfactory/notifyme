@@ -2,7 +2,6 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome">
-  <br>
   <img src="https://img.shields.io/badge/python-v3-3776AB?logo=python" alt="Python">
   <img src="https://img.shields.io/badge/Vue-v3-4FC08D?logo=vue.js" alt="Vue">
 </p>
