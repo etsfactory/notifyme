@@ -1,22 +1,22 @@
 {
   "bus": {
-    "host": "/ETS/configs/config.ini/bus/host",
-    "user": "/ETS/configs/config.ini/bus/user",
-    "password": "/ETS/configs/config.ini/bus/password",
+    "host": "localhost",
+    "user": "guest",
+    "password": "guest",
     "queue_name": "notifyme",
     "error_exchange": "notifymeError"
   },
   "smtp": {
-    "server": "/ETS/configs/config.ini/smtp/server",
-    "port": "/ETS/configs/config.ini/smtp/port",
-    "email": "/ETS/configs/config.ini/smtp/email",
-    "password": "",
-    "name": "Expert Timing Systems Intl.",
-    "send_emails": "/ETS/configs/config.ini/notifications/notifyme",
+    "server": "smtp.gmail.com",
+    "port": "465",
+    "email": "<TU EMAIL DE GMAIL>",
+    "password": "<CONTRASEÑA DEL EMAIL>",
+    "name": "Nombre del remitente",
+    "send_emails": true,
     "ttls": true
   },
   "logging": {
-    "root_path": "/ETS/configs/config.ini/logging/root_path"
+    "root_path": "<RUTA AL FICHERO DE LOGGIN>"
   },
   "db": {
     "server":"localhost",

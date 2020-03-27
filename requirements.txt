@@ -4,6 +4,7 @@ rethinkdb==2.3.0
 Flask==1.0.2
 Flask-Cors==3.0.2
 flask-restful==0.3.6
-marshmallow>=2.15.1
-Jinja2==2.10
-git+http://ETSGIT1/Snakes/raccoon.git@develop#egg=raccoon
+marshmallow==2.15.1
+Jinja2==2.10.1
+-e git://github.com/etsfactory/raccoon.git#master
+python-dateutil==2.8.0

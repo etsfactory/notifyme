@@ -1,0 +1,49 @@
+{
+  "name": "notifyme",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "lintfix": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "axios": "0.18.0",
+    "dayjs": "1.8.10",
+    "highlight.js": "9.13.1",
+    "js-beautify": "1.8.9",
+    "vue": "2.5.21",
+    "vue-form-generator": "2.3.3",
+    "vue-router": "3.0.1",
+    "vuex": "3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "3.2.0",
+    "@vue/cli-plugin-eslint": "3.2.0",
+    "@vue/cli-service": "3.2.0",
+    "@vue/eslint-config-prettier": "4.0.1",
+    "babel-eslint": "10.0.1",
+    "configparser": "0.3.6",
+    "eslint": "6.8.0",
+    "eslint-plugin-vue": "v7.0.0-alpha.0",
+    "lint-staged": "8.1.0",
+    "node-sass": "4.9.0",
+    "sass-loader": "7.0.1",
+    "vue-svg-inline-loader": "1.2.13",
+    "vue-template-compiler": "2.5.21"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "vue-cli-service lint",
+      "git add"
+    ],
+    "*.vue": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
+}

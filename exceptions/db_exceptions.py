@@ -35,5 +35,5 @@ class ConnectionLost(DBException):
     def __init__(self, msg=None):
         self.name = 'DB connection error'
         if msg is None:
-            msg = "Database error"
+            msg = "Database connection lost"
         super(ConnectionLost, self).__init__(self.name, msg)

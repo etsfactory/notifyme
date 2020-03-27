@@ -40,7 +40,7 @@ class Realtime():
                 if subscription['old_val'] and not subscription['new_val']:
                     # When a subscription is deleted
                     self.on_subscription_delete(subscription['old_val'])
-                if subscription['new_val'] and not subscription['new_val']:
+                if subscription['new_val'] and not subscription['old_val']:
                     # When a subscription is added
                     self.start_connection()
         except BaseException:
@@ -64,6 +64,10 @@ class Realtime():
                     if old_bus.get('exchange') != new_bus.get(
                             'exchange') or old_bus.get('key') != new_bus.get('key'):
                         self.start_connection()
+                    
+                    if old_bus.get('template_id') != new_bus.get(
+                            'template_id'):
+                        self.subscriptions.edit_subscriptions_template(new_bus)
         except BaseException:
             raise ConnectionLost()
 
