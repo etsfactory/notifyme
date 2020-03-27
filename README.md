@@ -1,10 +1,10 @@
 <p align="center"><img width="250" src="./logo.png" alt="Notifyme logo"></p>
 
 <p align="center">
-  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome">
   <br>
-  [![Python](https://img.shields.io/badge/python-v3-3776AB?logo=python)](https://img.shields.io/badge/python-v3-3776AB?logo=python)
-  [![Vue](https://img.shields.io/badge/Vue-v3-4FC08D?logo=vue.js)](https://img.shields.io/badge/Vue-v3-4FC08D?logo=vue.js)
+  <img src="https://img.shields.io/badge/python-v3-3776AB?logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/Vue-v3-4FC08D?logo=vue.js" alt="Vue">
 </p>
 
 # Notifyme
