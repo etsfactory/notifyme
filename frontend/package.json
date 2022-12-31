@@ -20,8 +20,8 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "3.2.0",
-    "@vue/cli-plugin-eslint": "3.2.0",
-    "@vue/cli-service": "3.2.0",
+    "@vue/cli-plugin-eslint": "5.0.8",
+    "@vue/cli-service": "5.0.8",
     "@vue/eslint-config-prettier": "4.0.1",
     "babel-eslint": "10.0.1",
     "configparser": "0.3.6",
@@ -29,8 +29,8 @@
     "eslint-plugin-vue": "v7.0.0-alpha.0",
     "lint-staged": "8.1.0",
     "node-sass": "7.0.0",
-    "sass-loader": "7.0.1",
-    "vue-svg-inline-loader": "1.2.13",
+    "sass-loader": "13.2.0",
+    "vue-svg-inline-loader": "1.5.1",
     "vue-template-compiler": "2.5.21"
   },
   "gitHooks": {
