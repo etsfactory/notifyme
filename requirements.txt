@@ -1,7 +1,7 @@
 ujson==5.2.0
 pika==0.12.0
 rethinkdb==2.3.0
-Flask==1.0.2
+Flask==2.3.2
 Flask-Cors==3.0.9
 flask-restful==0.3.6
 marshmallow==2.15.1
